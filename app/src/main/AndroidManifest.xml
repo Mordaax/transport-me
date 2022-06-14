@@ -15,6 +15,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TransportMe">
         <activity
+            android:name=".RegistrationPage"
+            android:parentActivityName=".LoginPage"
+            android:exported="false" />
+        <activity
+            android:name=".LoginPage"
+            android:exported="true">
+        </activity>
+        <activity
             android:name=".LoadingScreen"
             android:exported="true">
             <intent-filter>
@@ -30,12 +38,8 @@
 
         <activity
             android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:exported="false">
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

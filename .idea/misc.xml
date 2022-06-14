@@ -3,6 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml" value="0.14722222222222223" />
+        <entry key="..\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_login_page.xml" value="0.358695652173913" />
+        <entry key="..\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_registration_page.xml" value="0.358695652173913" />
+        <entry key="..\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_service_layout.xml" value="0.18802083333333333" />
+        <entry key="..\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_stop_layout.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml" value="0.15625" />
         <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_service_layout.xml" value="0.2708333333333333" />
@@ -13,6 +18,7 @@
       </map>
     </option>
   </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
