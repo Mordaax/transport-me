@@ -18,33 +18,124 @@
                 android:id="@+id/ServiceNumber"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.5"
+                android:layout_weight="1.2"
                 android:padding="10sp"
-                android:text="busNumber" />
+                android:text="busNumber"
+                android:textColor="#000000"
+                android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/NextBus1"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="10sp"
-                android:text="Bus1" />
+                android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/NextBus2"
+                <TextView
+                    android:id="@+id/NextBus1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingLeft="5sp"
+                    android:paddingTop="5sp"
+                    android:paddingRight="5sp"
+                    android:text="Bus1"
+                    android:textAlignment="textEnd"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/NextBus1Type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5sp"
+                    android:paddingRight="5sp"
+                    android:paddingBottom="1sp"
+                    android:text="Bus1Type"
+                    android:textAlignment="textEnd"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/NextBus1" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="10sp"
-                android:text="Bus2" />
+                android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/NextBus3"
+                <TextView
+                    android:id="@+id/NextBus2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingLeft="5sp"
+                    android:paddingTop="5sp"
+                    android:paddingRight="5sp"
+                    android:text="Bus2"
+                    android:textAlignment="textEnd"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/NextBus2Type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5sp"
+                    android:paddingRight="5sp"
+                    android:paddingBottom="1sp"
+                    android:text="Bus2Type"
+                    android:textAlignment="textEnd"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/NextBus2" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="10sp"
-                android:text="Bus3" />
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/NextBus3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingLeft="5sp"
+                    android:paddingTop="5sp"
+                    android:paddingRight="5sp"
+                    android:text="Bus3"
+                    android:textAlignment="textEnd"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/NextBus3Type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5sp"
+                    android:paddingRight="5sp"
+                    android:paddingBottom="1sp"
+                    android:text="Bus3Type"
+                    android:textAlignment="textEnd"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/NextBus3" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </TableRow>
 

@@ -5,7 +5,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-public class BusStopViewHolder extends RecyclerView.ViewHolder {
+public class BusStopViewHolder extends RecyclerView.ViewHolder{
     TextView Description;
     TextView BusStopCode;
     RecyclerView RecyclerView2;
