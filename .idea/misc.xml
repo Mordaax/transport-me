@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml" value="0.15625" />
+        <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_main.xml" value="0.264" />
+        <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_service_layout.xml" value="0.2708333333333333" />
         <entry key="..\:/Users/cyrus/Desktop/MAD/TransportMe/app/src/main/res/layout/activity_main.xml" value="0.23007246376811594" />
       </map>
     </option>
