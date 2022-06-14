@@ -32,7 +32,7 @@ public class BusStopAdapter
     @NonNull
     @Override
     public BusStopViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.bus_stop_layout, null,false);
+        View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.bus_stop_layout, parent,false);
 
         return new BusStopViewHolder(item);
     }
