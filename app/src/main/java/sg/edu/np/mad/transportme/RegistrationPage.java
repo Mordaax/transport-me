@@ -90,7 +90,7 @@ public class RegistrationPage extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             //storing user information (need to add bus stops list)
-                            User user = new User(name, email);
+                            User user = new User(name, email, null);
 
 
                             FirebaseDatabase database = FirebaseDatabase.getInstance("https://authuser-17b26-default-rtdb.asia-southeast1.firebasedatabase.app/");
