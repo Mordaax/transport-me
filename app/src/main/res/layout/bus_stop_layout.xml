@@ -65,7 +65,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView
-                        android:id="@+id/DropdownArrow"
+                        android:id="@+id/DropDownArrow"
                         android:layout_width="20dp"
                         android:layout_height="30dp"
                         android:src="@drawable/arrow_down_sign_to_navigate"
