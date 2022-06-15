@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "930651071311",
+    "project_id": "mad-asg-78f43",
+    "storage_bucket": "mad-asg-78f43.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:930651071311:android:cf9abde1118a4b543a5b3a",
+        "android_client_info": {
+          "package_name": "sg.edu.np.mad.transportme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "930651071311-22rvs0h4tt3mp5asb1h7at5vu465p820.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbZA4argtCl2EyjBS8tFIWTLMGrFxCkfQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "930651071311-22rvs0h4tt3mp5asb1h7at5vu465p820.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

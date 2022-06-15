@@ -20,9 +20,9 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginPage extends AppCompatActivity implements View.OnClickListener{
 
-    private TextView register;
+    //private TextView register;
     private EditText editTextEmail, editTextPassword;
-    private Button signIn;
+    private Button signIn, register;
 
     private FirebaseAuth mAuth;
     private ProgressBar progressBar;
