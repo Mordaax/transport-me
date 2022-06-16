@@ -29,7 +29,7 @@ public class LoadingScreen extends AppCompatActivity {
             @Override
             public void onResponse(ArrayList<BusStop> busStops) {
                 globalBusStops = busStops;
-                Intent goToLoginPage = new Intent(LoadingScreen.this, MainActivity.class);
+                Intent goToLoginPage = new Intent(LoadingScreen.this, LoginPage.class);
                 startActivity(goToLoginPage);
             }
         });
