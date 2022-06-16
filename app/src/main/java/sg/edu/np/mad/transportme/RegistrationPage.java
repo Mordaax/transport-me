@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +27,7 @@ public class RegistrationPage extends AppCompatActivity {
     private Button registerUser, switchtoLogin;
     private EditText editTextName, editTextEmail, editTextPassword;
     private ProgressBar progressBar;
+    private boolean register;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +43,18 @@ public class RegistrationPage extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
 
         switchtoLogin = findViewById(R.id.gotologinpage);
+        registerUser = findViewById(R.id.registerbutton);
 
+        Intent regIntent = new Intent(RegistrationPage.this, LoginPage.class);
+        registerUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                registerUser();
+                if (register){
+                    startActivity(regIntent);
+                }
+            }
+        });
         Intent myIntent = new Intent(this, LoginPage.class);
         switchtoLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,20 +120,13 @@ public class RegistrationPage extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         Toast.makeText(RegistrationPage.this, "User has been registered Successfully", Toast.LENGTH_LONG).show();
-
+                                        register = true;
                                         //redirect to login layout
                                         //Intent intent = new Intent(RegistrationPage.this, MainActivity.class);
-                                        registerUser = findViewById(R.id.registerbutton);
-                                        Intent myIntent = new Intent(RegistrationPage.this, LoginPage.class);
-                                        registerUser.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                registerUser();
-                                                startActivity(myIntent);
-                                            }
-                                        });
+
                                     } else {
                                         Toast.makeText(RegistrationPage.this, "Registration failed! Try again!", Toast.LENGTH_LONG).show();
+                                        register = false;
                                         editTextEmail.setEnabled(true);
                                         editTextName.setEnabled(true);
                                         editTextPassword.setEnabled(true);
@@ -131,6 +137,7 @@ public class RegistrationPage extends AppCompatActivity {
                             });
                         } else {
                             Toast.makeText(RegistrationPage.this, "Registration failed! Try again!", Toast.LENGTH_LONG).show();
+                            register = false;
                             editTextEmail.setEnabled(true);
                             editTextName.setEnabled(true);
                             editTextPassword.setEnabled(true);
