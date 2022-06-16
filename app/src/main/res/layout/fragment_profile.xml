@@ -35,7 +35,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Your Favourite Bus App"
+            android:text="Your Favourite Transport App"
             android:layout_toRightOf="@id/AppSplashIcon"
             android:layout_below="@id/TransportMe"
             android:layout_marginLeft="10dp"
@@ -59,6 +59,7 @@
                 android:drawableLeft="@drawable/ic_baseline_person_24"
                 android:drawablePadding="15dp"
                 android:text="USERNAME PLACEHOLDER"
+                android:fontFamily="@font/inter_bold"
                 android:layout_marginBottom="30dp"
                 android:background="@color/white"/>
 
@@ -73,6 +74,7 @@
                 android:drawableLeft="@drawable/ic_baseline_email_24"
                 android:drawablePadding="15dp"
                 android:text="EMAIL PLACEHOLDER"
+                android:fontFamily="@font/inter_bold"
                 android:layout_marginBottom="30dp"
                 android:background="@color/white"/>
 
@@ -87,6 +89,7 @@
                 android:drawableLeft="@drawable/ic_baseline_lock_24"
                 android:drawablePadding="15dp"
                 android:text="PASSWORD PLACEHOLDER"
+                android:fontFamily="@font/inter_bold"
                 android:layout_marginBottom="30dp"
                 android:background="@color/white"/>
 

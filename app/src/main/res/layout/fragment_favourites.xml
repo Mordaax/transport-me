@@ -6,9 +6,20 @@
     tools:context=".FavouritesFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="favoruites" />
+        android:layout_height="wrap_content">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/favouritesrecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="2dp"
+            android:layout_weight="1"
+            android:clipToPadding="false">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </LinearLayout>
+
 
 </FrameLayout>
