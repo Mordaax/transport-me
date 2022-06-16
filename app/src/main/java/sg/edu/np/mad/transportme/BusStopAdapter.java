@@ -6,6 +6,9 @@ import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -47,10 +50,21 @@ public class BusStopAdapter
             @Override
             public void onClick(View view) {
                 if (holder.itemView.findViewById(R.id.recyclerView2).getVisibility() == View.VISIBLE){
+
+                    RotateAnimation rotate = new RotateAnimation(-90, 0, Animation.RELATIVE_TO_SELF, 0.5f,          Animation.RELATIVE_TO_SELF, 0.5f);
+                    rotate.setDuration(250);
+                    rotate.setInterpolator(new LinearInterpolator());
+                    holder.itemView.findViewById(R.id.DropDownArrow).startAnimation(rotate);
+                    holder.itemView.findViewById(R.id.DropDownArrow).setRotation(90);
                     TransitionManager.beginDelayedTransition(cardView,new AutoTransition());
                     holder.itemView.findViewById(R.id.recyclerView2).setVisibility(View.GONE);
                 }
                 else{
+                    RotateAnimation rotate = new RotateAnimation(90, 0, Animation.RELATIVE_TO_SELF, 0.5f,          Animation.RELATIVE_TO_SELF, 0.5f);
+                    rotate.setDuration(250);
+                    rotate.setInterpolator(new LinearInterpolator());
+                    holder.itemView.findViewById(R.id.DropDownArrow).startAnimation(rotate);
+                    holder.itemView.findViewById(R.id.DropDownArrow).setRotation(0);
                     TransitionManager.beginDelayedTransition(cardView,new AutoTransition());
                     hiddenView.setVisibility(View.VISIBLE);
                 }

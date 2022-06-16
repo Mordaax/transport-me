@@ -1,0 +1,391 @@
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"DesignSurface\">\r\n    <option name=\"filePathToZoomLevelMap\">\r\n      <map>\r\n        <entry key=\"..\\:/Downloads/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml\" value=\"0.14722222222222223\" />\r\n        <entry key=\"..\\:/Downloads/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_login_page.xml\" value=\"0.25\" />\r\n        <entry key=\"..\\:/Downloads/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_registration_page.xml\" value=\"0.25\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml\" value=\"0.15625\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_main.xml\" value=\"0.264\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_service_layout.xml\" value=\"0.2708333333333333\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD/TransportMe/app/src/main/res/layout/activity_main.xml\" value=\"0.23007246376811594\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG GitHub AGAIN/app/src/main/res/layout/activity_loading_screen.xml\" value=\"0.18802083333333333\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG GitHub AGAIN/app/src/main/res/layout/bus_service_layout.xml\" value=\"0.4796044499381953\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG GitHub AGAIN/app/src/main/res/layout/bus_stop_layout.xml\" value=\"0.5\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG Github/app/src/main/res/layout/activity_main.xml\" value=\"0.17831813576494426\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG Github/app/src/main/res/layout/bus_service_layout.xml\" value=\"0.17831813576494426\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG Github/app/src/main/res/layout/bus_stop_layout.xml\" value=\"0.33\" />\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_11\" default=\"true\" project-jdk-name=\"Android Studio default JDK\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 99d6773b533d3cec8c9bb46756808cceb6109157)
++++ b/.idea/misc.xml	(date 1655383343032)
+@@ -3,22 +3,29 @@
+   <component name="DesignSurface">
+     <option name="filePathToZoomLevelMap">
+       <map>
+-        <entry key="..\:/Downloads/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml" value="0.14722222222222223" />
+-        <entry key="..\:/Downloads/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_login_page.xml" value="0.25" />
+-        <entry key="..\:/Downloads/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_registration_page.xml" value="0.25" />
++        <entry key="..\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml" value="0.14722222222222223" />
++        <entry key="..\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_login_page.xml" value="0.358695652173913" />
++        <entry key="..\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_registration_page.xml" value="0.358695652173913" />
++        <entry key="..\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_service_layout.xml" value="0.18802083333333333" />
++        <entry key="..\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_stop_layout.xml" value="0.18802083333333333" />
++        <entry key="..\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/drawable/edittext_bg.xml" value="0.2985" />
++        <entry key="..\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/drawable/ic_baseline_person_24.xml" value="0.32" />
++        <entry key="..\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml" value="0.25" />
++        <entry key="..\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_login_page.xml" value="0.2" />
++        <entry key="..\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
++        <entry key="..\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_registration_page.xml" value="0.25" />
++        <entry key="..\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_profile.xml" value="0.33" />
+         <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml" value="0.15625" />
+         <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_main.xml" value="0.264" />
+         <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_service_layout.xml" value="0.2708333333333333" />
+         <entry key="..\:/Users/cyrus/Desktop/MAD/TransportMe/app/src/main/res/layout/activity_main.xml" value="0.23007246376811594" />
+-        <entry key="..\:/Users/voidi/Desktop/MAD/ASG GitHub AGAIN/app/src/main/res/layout/activity_loading_screen.xml" value="0.18802083333333333" />
+-        <entry key="..\:/Users/voidi/Desktop/MAD/ASG GitHub AGAIN/app/src/main/res/layout/bus_service_layout.xml" value="0.4796044499381953" />
+-        <entry key="..\:/Users/voidi/Desktop/MAD/ASG GitHub AGAIN/app/src/main/res/layout/bus_stop_layout.xml" value="0.5" />
+         <entry key="..\:/Users/voidi/Desktop/MAD/ASG Github/app/src/main/res/layout/activity_main.xml" value="0.17831813576494426" />
+-        <entry key="..\:/Users/voidi/Desktop/MAD/ASG Github/app/src/main/res/layout/bus_service_layout.xml" value="0.17831813576494426" />
++        <entry key="..\:/Users/voidi/Desktop/MAD/ASG Github/app/src/main/res/layout/bus_service_layout.xml" value="0.33" />
+         <entry key="..\:/Users/voidi/Desktop/MAD/ASG Github/app/src/main/res/layout/bus_stop_layout.xml" value="0.33" />
+       </map>
+     </option>
+   </component>
++  <component name="ExternalStorageConfigurationManager" enabled="true" />
+   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/build/classes" />
+   </component>
+Index: app/src/main/res/layout/fragment_profile.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_profile.xml b/app/src/main/res/layout/fragment_profile.xml
+new file mode 100644
+--- /dev/null	(date 1655384158779)
++++ b/app/src/main/res/layout/fragment_profile.xml	(date 1655384158779)
+@@ -0,0 +1,114 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    tools:context=".ProfileFragment"
++    android:orientation="vertical">
++
++    <RelativeLayout
++        android:layout_width="match_parent"
++        android:layout_height="175dp"
++        android:background="#E9B872"
++        android:padding="20dp">
++
++        <ImageView
++            android:id="@+id/AppSplashIcon"
++            android:layout_width="75dp"
++            android:layout_height="75dp"
++            android:layout_centerVertical="true"
++            android:src="@drawable/appsplashicon"></ImageView>
++
++        <TextView
++            android:id="@+id/TransportMe"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:layout_centerVertical="true"
++            android:layout_marginLeft="10dp"
++            android:layout_toRightOf="@id/AppSplashIcon"
++            android:fontFamily="@font/inter_bold"
++            android:text="TransportMe"
++            android:textColor="@color/white"
++            android:textSize="25dp"
++            android:includeFontPadding="false">
++        </TextView>
++        <TextView
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text="Your Favourite Bus App"
++            android:layout_toRightOf="@id/AppSplashIcon"
++            android:layout_below="@id/TransportMe"
++            android:layout_marginLeft="10dp"
++            android:textColor="@color/white">
++        </TextView>
++    </RelativeLayout>
++    
++    <LinearLayout
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:padding="20dp"
++        android:orientation="vertical">
++
++        <com.google.android.material.textfield.TextInputLayout
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:hint="Full Name">
++            <com.google.android.material.textfield.TextInputEditText
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:drawableLeft="@drawable/ic_baseline_person_24"
++                android:drawablePadding="15dp"
++                android:text="USERNAME PLACEHOLDER"
++                android:layout_marginBottom="30dp"
++                android:background="@color/white"/>
++
++        </com.google.android.material.textfield.TextInputLayout>
++        <com.google.android.material.textfield.TextInputLayout
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:hint="Email Address">
++            <com.google.android.material.textfield.TextInputEditText
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:drawableLeft="@drawable/ic_baseline_person_24"
++                android:drawablePadding="15dp"
++                android:text="EMAIL PLACEHOLDER"
++                android:layout_marginBottom="30dp"
++                android:background="@color/white"/>
++
++        </com.google.android.material.textfield.TextInputLayout>
++        <com.google.android.material.textfield.TextInputLayout
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:hint="Password">
++            <com.google.android.material.textfield.TextInputEditText
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:drawableLeft="@drawable/ic_baseline_person_24"
++                android:drawablePadding="15dp"
++                android:text="PASSWORD PLACEHOLDER"
++                android:layout_marginBottom="30dp"
++                android:background="@color/white"/>
++
++        </com.google.android.material.textfield.TextInputLayout>
++    </LinearLayout>
++
++    <LinearLayout
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:layout_marginStart="30dp"
++        android:layout_marginEnd="30dp"
++        android:orientation="vertical">
++        <Button
++            android:id="@+id/signoutbutton"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:backgroundTint="#A63D40"
++            android:fontFamily="@font/inter_bold"
++            android:padding="16dp"
++            android:text="sign out" />
++    </LinearLayout>
++
++
++    
++</LinearLayout>
+\ No newline at end of file
+Index: app/google-services.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\r\n  \"project_info\": {\r\n    \"project_number\": \"930651071311\",\r\n    \"project_id\": \"mad-asg-78f43\",\r\n    \"storage_bucket\": \"mad-asg-78f43.appspot.com\"\r\n  },\r\n  \"client\": [\r\n    {\r\n      \"client_info\": {\r\n        \"mobilesdk_app_id\": \"1:930651071311:android:cf9abde1118a4b543a5b3a\",\r\n        \"android_client_info\": {\r\n          \"package_name\": \"sg.edu.np.mad.transportme\"\r\n        }\r\n      },\r\n      \"oauth_client\": [\r\n        {\r\n          \"client_id\": \"930651071311-22rvs0h4tt3mp5asb1h7at5vu465p820.apps.googleusercontent.com\",\r\n          \"client_type\": 3\r\n        }\r\n      ],\r\n      \"api_key\": [\r\n        {\r\n          \"current_key\": \"AIzaSyAbZA4argtCl2EyjBS8tFIWTLMGrFxCkfQ\"\r\n        }\r\n      ],\r\n      \"services\": {\r\n        \"appinvite_service\": {\r\n          \"other_platform_oauth_client\": [\r\n            {\r\n              \"client_id\": \"930651071311-22rvs0h4tt3mp5asb1h7at5vu465p820.apps.googleusercontent.com\",\r\n              \"client_type\": 3\r\n            }\r\n          ]\r\n        }\r\n      }\r\n    }\r\n  ],\r\n  \"configuration_version\": \"1\"\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/google-services.json b/app/google-services.json
+--- a/app/google-services.json	(revision 99d6773b533d3cec8c9bb46756808cceb6109157)
++++ b/app/google-services.json	(date 1655370931761)
+@@ -1,33 +1,71 @@
+ {
+   "project_info": {
+-    "project_number": "930651071311",
+-    "project_id": "mad-asg-78f43",
+-    "storage_bucket": "mad-asg-78f43.appspot.com"
++    "project_number": "1006867201908",
++    "firebase_url": "https://authuser-17b26-default-rtdb.asia-southeast1.firebasedatabase.app",
++    "project_id": "authuser-17b26",
++    "storage_bucket": "authuser-17b26.appspot.com"
+   },
+   "client": [
+     {
+       "client_info": {
+-        "mobilesdk_app_id": "1:930651071311:android:cf9abde1118a4b543a5b3a",
++        "mobilesdk_app_id": "1:1006867201908:android:c17c365068c95f0c30b621",
+         "android_client_info": {
+           "package_name": "sg.edu.np.mad.transportme"
+         }
+       },
+       "oauth_client": [
+         {
+-          "client_id": "930651071311-22rvs0h4tt3mp5asb1h7at5vu465p820.apps.googleusercontent.com",
++          "client_id": "1006867201908-tjdita5al8ahosi4j4cdrfo0d5d3078i.apps.googleusercontent.com",
+           "client_type": 3
+         }
+       ],
+       "api_key": [
+         {
+-          "current_key": "AIzaSyAbZA4argtCl2EyjBS8tFIWTLMGrFxCkfQ"
++          "current_key": "AIzaSyAYB3U7VKd_O8kY8d8KPhFZSkXc4iQ09Y0"
+         }
+       ],
+       "services": {
+         "appinvite_service": {
+           "other_platform_oauth_client": [
+             {
+-              "client_id": "930651071311-22rvs0h4tt3mp5asb1h7at5vu465p820.apps.googleusercontent.com",
++              "client_id": "1006867201908-tjdita5al8ahosi4j4cdrfo0d5d3078i.apps.googleusercontent.com",
++              "client_type": 3
++            }
++          ]
++        }
++      }
++    },
++    {
++      "client_info": {
++        "mobilesdk_app_id": "1:1006867201908:android:6f0bd60e5b102e8130b621",
++        "android_client_info": {
++          "package_name": "sg.edu.np.mad.transportmetest"
++        }
++      },
++      "oauth_client": [
++        {
++          "client_id": "1006867201908-rjg4dpc46rpik693cebbv2tbvvtbijn5.apps.googleusercontent.com",
++          "client_type": 1,
++          "android_info": {
++            "package_name": "sg.edu.np.mad.transportmetest",
++            "certificate_hash": "53ca119295bee77ab9157004ae732252f602dec2"
++          }
++        },
++        {
++          "client_id": "1006867201908-tjdita5al8ahosi4j4cdrfo0d5d3078i.apps.googleusercontent.com",
++          "client_type": 3
++        }
++      ],
++      "api_key": [
++        {
++          "current_key": "AIzaSyAYB3U7VKd_O8kY8d8KPhFZSkXc4iQ09Y0"
++        }
++      ],
++      "services": {
++        "appinvite_service": {
++          "other_platform_oauth_client": [
++            {
++              "client_id": "1006867201908-tjdita5al8ahosi4j4cdrfo0d5d3078i.apps.googleusercontent.com",
+               "client_type": 3
+             }
+           ]
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources>\r\n    <string name=\"app_name\">TransportMe</string>\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+--- a/app/src/main/res/values/strings.xml	(revision 99d6773b533d3cec8c9bb46756808cceb6109157)
++++ b/app/src/main/res/values/strings.xml	(date 1655371514743)
+@@ -1,3 +1,5 @@
+ <resources>
+     <string name="app_name">TransportMe</string>
++    <!-- TODO: Remove or change this placeholder text -->
++    <string name="hello_blank_fragment">Hello blank fragment</string>
+ </resources>
+\ No newline at end of file
+Index: app/src/main/java/sg/edu/np/mad/transportme/ProfileFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/sg/edu/np/mad/transportme/ProfileFragment.java b/app/src/main/java/sg/edu/np/mad/transportme/ProfileFragment.java
+new file mode 100644
+--- /dev/null	(date 1655371515108)
++++ b/app/src/main/java/sg/edu/np/mad/transportme/ProfileFragment.java	(date 1655371515108)
+@@ -0,0 +1,64 @@
++package sg.edu.np.mad.transportme;
++
++import android.os.Bundle;
++
++import androidx.fragment.app.Fragment;
++
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++
++/**
++ * A simple {@link Fragment} subclass.
++ * Use the {@link ProfileFragment#newInstance} factory method to
++ * create an instance of this fragment.
++ */
++public class ProfileFragment extends Fragment {
++
++    // TODO: Rename parameter arguments, choose names that match
++    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
++    private static final String ARG_PARAM1 = "param1";
++    private static final String ARG_PARAM2 = "param2";
++
++    // TODO: Rename and change types of parameters
++    private String mParam1;
++    private String mParam2;
++
++    public ProfileFragment() {
++        // Required empty public constructor
++    }
++
++    /**
++     * Use this factory method to create a new instance of
++     * this fragment using the provided parameters.
++     *
++     * @param param1 Parameter 1.
++     * @param param2 Parameter 2.
++     * @return A new instance of fragment ProfileFragment.
++     */
++    // TODO: Rename and change types and number of parameters
++    public static ProfileFragment newInstance(String param1, String param2) {
++        ProfileFragment fragment = new ProfileFragment();
++        Bundle args = new Bundle();
++        args.putString(ARG_PARAM1, param1);
++        args.putString(ARG_PARAM2, param2);
++        fragment.setArguments(args);
++        return fragment;
++    }
++
++    @Override
++    public void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++        if (getArguments() != null) {
++            mParam1 = getArguments().getString(ARG_PARAM1);
++            mParam2 = getArguments().getString(ARG_PARAM2);
++        }
++    }
++
++    @Override
++    public View onCreateView(LayoutInflater inflater, ViewGroup container,
++                             Bundle savedInstanceState) {
++        // Inflate the layout for this fragment
++        return inflater.inflate(R.layout.fragment_profile, container, false);
++    }
++}
+\ No newline at end of file
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\r\n    id 'com.android.application'\r\n    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'\r\n    id 'com.google.gms.google-services'\r\n}\r\n\r\nandroid {\r\n    compileSdk 32\r\n\r\n    defaultConfig {\r\n        applicationId \"sg.edu.np.mad.transportme\"\r\n        minSdk 21\r\n        targetSdk 32\r\n        versionCode 1\r\n        versionName \"1.0\"\r\n\r\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\r\n        vectorDrawables.useSupportLibrary = true\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n    compileOptions {\r\n        sourceCompatibility JavaVersion.VERSION_1_8\r\n        targetCompatibility JavaVersion.VERSION_1_8\r\n    }\r\n}\r\n\r\ndependencies {\r\n\r\n    implementation 'androidx.appcompat:appcompat:1.4.2'\r\n    implementation 'com.google.android.material:material:1.6.1'\r\n    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'\r\n    implementation 'com.google.android.gms:play-services-maps:18.0.2'\r\n\r\n    implementation 'com.android.volley:volley:1.2.1'\r\n    implementation 'com.google.firebase:firebase-auth:21.0.5'\r\n    implementation 'com.google.firebase:firebase-database:20.0.5'\r\n    testImplementation 'junit:junit:4.13.2'\r\n    androidTestImplementation 'androidx.test.ext:junit:1.1.3'\r\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle b/app/build.gradle
+--- a/app/build.gradle	(revision 99d6773b533d3cec8c9bb46756808cceb6109157)
++++ b/app/build.gradle	(date 1655371514600)
+@@ -40,6 +40,7 @@
+     implementation 'com.android.volley:volley:1.2.1'
+     implementation 'com.google.firebase:firebase-auth:21.0.5'
+     implementation 'com.google.firebase:firebase-database:20.0.5'
++    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+     testImplementation 'junit:junit:4.13.2'
+     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+Index: app/src/main/res/drawable/ic_baseline_person_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_baseline_person_24.xml b/app/src/main/res/drawable/ic_baseline_person_24.xml
+new file mode 100644
+--- /dev/null	(date 1655383326165)
++++ b/app/src/main/res/drawable/ic_baseline_person_24.xml	(date 1655383326165)
+@@ -0,0 +1,10 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal">
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M12,12c2.21,0 4,-1.79 4,-4s-1.79,-4 -4,-4 -4,1.79 -4,4 1.79,4 4,4zM12,14c-2.67,0 -8,1.34 -8,4v2h16v-2c0,-2.66 -5.33,-4 -8,-4z"/>
++</vector>

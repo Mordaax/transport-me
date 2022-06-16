@@ -7,4 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="app_yellow">#FFE9B872</color>
+    <color name="app_red">#FFA63B40</color>
+    <color name="nav_gray">#FF48484a</color>
 </resources>

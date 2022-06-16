@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".LoadingScreen"
     android:background="#E9b872">
+
     <ImageView
         android:id="@+id/AppSplashIcon"
         android:layout_width="150dp"
@@ -14,9 +15,11 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></ImageView>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.36"></ImageView>
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/inter_bold"
@@ -28,5 +31,27 @@
         app:layout_constraintTop_toBottomOf="@+id/AppSplashIcon">
 
     </TextView>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="174dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="32dp"
+        android:progressTint="@color/app_red"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/progress_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

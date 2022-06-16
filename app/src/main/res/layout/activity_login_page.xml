@@ -7,88 +7,100 @@
     android:background="#E9B872"
     tools:context=".LoginPage">
 
-    <ImageView
-        android:id="@+id/AppSplashIcon"
-        android:layout_width="170dp"
-        android:layout_height="170dp"
-        android:src="@drawable/appsplashicon"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.071"></ImageView>
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/AppSplashIcon"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginEnd="30dp">
-        <TextView
-            android:id="@+id/transportmeheader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/inter_bold"
-            android:text="TransportMe"
-            android:textSize="35dp"
-            android:textColor="@color/white"/>
-        <TextView
-            android:id="@+id/signinMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/inter_bold"
-            android:text="Please sign in to continue"
-            android:textSize="15dp"
-            android:textColor="@color/white"/>
-        <EditText
-            android:id="@+id/emailAddress"
-            android:background="@drawable/edittext_bg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:padding="16dp"
-            android:hint="Email"
-            android:textColorHint="#E9B872"
-            android:fontFamily="@font/inter_bold"
-            android:inputType="textEmailAddress"/>
-        <EditText
-            android:id="@+id/password"
-            android:background="@drawable/edittext_bg"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:padding="16dp"
-            android:hint="Password"
-            android:textColorHint="#E9B872"
-            android:fontFamily="@font/inter_bold"
-            android:inputType="textPassword"/>
-        <Button
-            android:id="@+id/loginbutton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:fontFamily="@font/inter_bold"
-            android:text="Login"
-            android:padding="16dp"
-            android:backgroundTint="#A63D40"/>
-        <Button
-            android:id="@+id/gotoregisterpage"
-            android:backgroundTint="#E9B872"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/inter_bold"
-            android:layout_marginTop="30dp"
-            android:text="Need an account? SIGN UP"
-            android:textSize="15dp"
-            android:textColor="@color/white"
-            />
-    </LinearLayout>
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/AppSplashIcon"
+                android:layout_width="170dp"
+                android:layout_height="170dp"
+                android:layout_gravity="center"
+                android:src="@drawable/appsplashicon"></ImageView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/transportmeheader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="TransportMe"
+                    android:textColor="@color/white"
+                    android:textSize="35dp" />
+
+                <TextView
+                    android:id="@+id/signinMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="Please sign in to continue"
+                    android:textColor="@color/white"
+                    android:textSize="15dp" />
+
+                <EditText
+                    android:id="@+id/emailAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="50dp"
+                    android:background="@drawable/edittext_bg"
+                    android:fontFamily="@font/inter_bold"
+                    android:hint="Email"
+                    android:inputType="textEmailAddress"
+                    android:padding="16dp"
+                    android:textColorHint="#E9B872" />
+
+                <EditText
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/edittext_bg"
+                    android:fontFamily="@font/inter_bold"
+                    android:hint="Password"
+                    android:inputType="textPassword"
+                    android:padding="16dp"
+                    android:textColorHint="#E9B872" />
+
+                <Button
+                    android:id="@+id/loginbutton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:backgroundTint="#A63D40"
+                    android:fontFamily="@font/inter_bold"
+                    android:padding="16dp"
+                    android:text="Login" />
+
+                <Button
+                    android:id="@+id/gotoregisterpage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:backgroundTint="#E9B872"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="Need an account? SIGN UP"
+                    android:textColor="@color/white"
+                    android:textSize="15dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
 
     <!--

@@ -14,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,7 +33,8 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_page);
-
+        /*Remove this lol */
+        //startActivity(new Intent(LoginPage.this, MainActivity.class));
         signIn = findViewById(R.id.loginbutton);
         signIn.setOnClickListener(this);
 
@@ -84,9 +87,26 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
             return;
         }
 
+        editTextEmail.setEnabled(false);
+        editTextPassword.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
 
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        mAuth.signInWithEmailAndPassword(editTextEmail.getText().toString(),editTextPassword.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult authResult) {
+                startActivity(new Intent(LoginPage.this, MainActivity.class));
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(LoginPage.this, "Invalid Credentials, please try again", Toast.LENGTH_LONG).show();
+                editTextEmail.setEnabled(true);
+                editTextPassword.setEnabled(true);
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        /**mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
@@ -96,9 +116,21 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                 }
                 else{
                     Toast.makeText(LoginPage.this, "Invalid Credentials, please try again", Toast.LENGTH_LONG).show();
+                    editTextEmail.setEnabled(true);
+                    editTextPassword.setEnabled(true);
+                    progressBar.setVisibility(View.INVISIBLE);
                 }
                 progressBar.setVisibility(View.GONE);
             }
-        });
+        });**/
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+    }
+}
 }
