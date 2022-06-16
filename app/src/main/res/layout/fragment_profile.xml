@@ -94,14 +94,6 @@
                 android:background="@color/white"/>
 
         </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:orientation="vertical">
         <Button
             android:id="@+id/signoutbutton"
             android:layout_width="match_parent"
@@ -110,6 +102,32 @@
             android:fontFamily="@font/inter_bold"
             android:padding="16dp"
             android:text="sign out" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#E9B872">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="About Us"
+            android:gravity="center"
+            android:fontFamily="@font/inter_bold"
+            android:textColor="@color/white"
+            android:textSize="20dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:text="TransportMe is a transport app made to provide users with data that helps ease the process of transportation, it is an app coded on Android Studios by 5 Ngee Ann Polytechnic Students"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:fontFamily="@font/inter_bold"/>
+
+
     </LinearLayout>
 
 
