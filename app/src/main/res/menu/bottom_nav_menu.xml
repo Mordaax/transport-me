@@ -11,10 +11,10 @@
         android:title="Search" />
     <item
         android:id="@+id/favourites"
-        android:icon="@drawable/heart"
+        android:icon="@drawable/favourite"
         android:title="Favourites" />
     <item
         android:id="@+id/profile"
         android:icon="@drawable/ic_baseline_person_24"
-        android:title="Item" />
+        android:title="Profile" />
 </menu>
