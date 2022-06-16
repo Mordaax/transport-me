@@ -109,7 +109,58 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 10, new LocationListener() {
+                @Override
+                public void onLocationChanged(@NonNull Location location) {
+                    Double Latitude = location.getLatitude();
+                    Double Longitude = location.getLongitude();
+                    LatLng latLng = new LatLng(Latitude, Longitude);
+                    Geocoder geocoder = new Geocoder(getApplicationContext());
+
+                    /* For testing purposes, Remove at the end */
+                    /*Latitude = 1.332346;
+                    Longitude = 103.777561;*/
+
+                    Double Closeness = 0.00504;
+                    ArrayList<BusStop> closeBusStops = new ArrayList<>();
+                    for (int i = 0; i < busStops.size(); i++){
+                        BusStop busStop = busStops.get(i);
+                        if (busStop.Longitude < Longitude+Closeness && busStop.Longitude > Longitude-Closeness
+                                && busStop.Latitude < Latitude+Closeness && busStop.Latitude > Latitude-Closeness){
+                            closeBusStops.add(busStop);
+                            LatLng latlongmarker = new LatLng(busStop.Latitude, busStop.Longitude);
+                            map.addMarker(new MarkerOptions().position(latlongmarker).title(busStop.Description));
+                        }
+                    }
+                    ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);
+                    apiBusStopService.getBusService(closeBusStops,new ApiBusStopService.VolleyResponseListener2() {
+                        @Override
+                        public void onError(String message) {
+                            Toast.makeText(MainActivity.this,"Cannot Get Bus Stops",Toast.LENGTH_LONG).show();
+                        }
+                        @Override
+                        public void onResponse(ArrayList<BusStop> busStopsLoaded) {
+                            RecyclerView rv = findViewById(R.id.recyclerView);
+                            BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,MainActivity.this);
+                            LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);
+                            rv.setAdapter(adapter);
+                            rv.setLayoutManager(layout);
+                        }
+                    });
+                    try {
+                        List<Address> addressList = geocoder.getFromLocation(Latitude, Longitude, 1);
+                        String str = addressList.get(0).getLocality()+", ";
+                        str += addressList.get(0).getCountryName();
+
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16.2f));
+                    } catch (IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        else if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60000, 10, new LocationListener() {
                 @Override
                 public void onLocationChanged(@NonNull Location location) {
@@ -117,8 +168,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     Double Longitude = location.getLongitude();
 
                     /* For testing purposes, Remove at the end */
-                    Latitude = 1.332346;
-                    Longitude = 103.777561;
+                    /*Latitude = 1.332346;
+                    Longitude = 103.777561;*/
 
                     LatLng latLng = new LatLng(Latitude, Longitude);
                     Geocoder geocoder = new Geocoder(getApplicationContext());
@@ -132,6 +183,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         if (busStop.Longitude < Longitude+Closeness && busStop.Longitude > Longitude-Closeness
                                 && busStop.Latitude < Latitude+Closeness && busStop.Latitude > Latitude-Closeness){
                             closeBusStops.add(busStop);
+                            LatLng latlongmarker = new LatLng(busStop.Latitude, busStop.Longitude);
+                            map.addMarker(new MarkerOptions().position(latlongmarker).title(busStop.Description));
                         }
                     }
 
@@ -157,64 +210,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         List<Address> addressList = geocoder.getFromLocation(Latitude, Longitude, 1);
                         String str = addressList.get(0).getLocality()+", ";
                         str += addressList.get(0).getCountryName();
-
-                        map.addMarker(new MarkerOptions().position(latLng).title(str));
-                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17.2f));
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16.2f));
                     } catch (IOException e){
                         e.printStackTrace();
                     }
                 }
             });
         }
-        else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 10, new LocationListener() {
-                @Override
-                public void onLocationChanged(@NonNull Location location) {
-                    Double Latitude = location.getLatitude();
-                    Double Longitude = location.getLongitude();
-                    LatLng latLng = new LatLng(Latitude, Longitude);
-                    Geocoder geocoder = new Geocoder(getApplicationContext());
 
-                    /* For testing purposes, Remove at the end */
-                    Latitude = 1.332346;
-                    Longitude = 103.777561;
-
-                    Double Closeness = 0.00504;
-                    ArrayList<BusStop> closeBusStops = new ArrayList<>();
-                    for (int i = 0; i < busStops.size(); i++){
-                        BusStop busStop = busStops.get(i);
-                        if (busStop.Longitude < Longitude+Closeness && busStop.Longitude > Longitude-Closeness
-                                && busStop.Latitude < Latitude+Closeness && busStop.Latitude > Latitude-Closeness){
-                            closeBusStops.add(busStop);
-                        }
-                    }
-                    ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);
-                    apiBusStopService.getBusService(closeBusStops,new ApiBusStopService.VolleyResponseListener2() {
-                        @Override
-                        public void onError(String message) {
-                            Toast.makeText(MainActivity.this,"Cannot Get Bus Stops",Toast.LENGTH_LONG).show();
-                        }
-                        @Override
-                        public void onResponse(ArrayList<BusStop> busStopsLoaded) {
-                            RecyclerView rv = findViewById(R.id.recyclerView);
-                            BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,MainActivity.this);
-                            LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);
-                            rv.setAdapter(adapter);
-                            rv.setLayoutManager(layout);
-                        }
-                    });
-                    try {
-                        List<Address> addressList = geocoder.getFromLocation(Latitude, Longitude, 1);
-                        String str = addressList.get(0).getLocality()+", ";
-                        str += addressList.get(0).getCountryName();
-                        map.addMarker(new MarkerOptions().position(latLng).title(str));
-                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17.2f));
-                    } catch (IOException e){
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
 
 
 
