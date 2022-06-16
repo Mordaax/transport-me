@@ -122,7 +122,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     /*Latitude = 1.332346;
                     Longitude = 103.777561;*/
 
-                    Double Closeness = 0.00504;
+                    Double Closeness = 0.00304;
                     ArrayList<BusStop> closeBusStops = new ArrayList<>();
                     for (int i = 0; i < busStops.size(); i++){
                         BusStop busStop = busStops.get(i);
