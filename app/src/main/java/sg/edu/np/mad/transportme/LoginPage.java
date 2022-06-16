@@ -97,6 +97,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                 else{
                     Toast.makeText(LoginPage.this, "Invalid Credentials, please try again", Toast.LENGTH_LONG).show();
                 }
+                progressBar.setVisibility(View.GONE);
             }
         });
     }
