@@ -31,7 +31,8 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_page);
-
+        /*Remove this lol */
+        startActivity(new Intent(LoginPage.this, MainActivity.class));
         signIn = findViewById(R.id.loginbutton);
         signIn.setOnClickListener(this);
 
