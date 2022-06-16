@@ -1,0 +1,680 @@
+Index: app/src/main/res/layout/activity_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".MainActivity\">\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:orientation=\"vertical\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\">\r\n\r\n        <fragment\r\n            android:id=\"@+id/map\"\r\n            android:name=\"com.google.android.gms.maps.SupportMapFragment\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"match_parent\"\r\n            android:layout_weight=\"1\"\r\n            tools:context=\".MapsActivity\" />\r\n\r\n        <androidx.recyclerview.widget.RecyclerView\r\n            android:id=\"@+id/recyclerView\"\r\n            android:clipToPadding=\"false\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"match_parent\"\r\n            android:layout_marginStart=\"1dp\"\r\n            android:layout_marginTop=\"2dp\"\r\n            android:layout_weight=\"1\"\r\n            app:layout_constraintBottom_toBottomOf=\"parent\"\r\n            app:layout_constraintEnd_toEndOf=\"parent\"\r\n            app:layout_constraintStart_toStartOf=\"parent\"\r\n            app:layout_constraintTop_toTopOf=\"parent\" />\r\n    </LinearLayout>\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_main.xml b/app/src/main/res/layout/activity_main.xml
+--- a/app/src/main/res/layout/activity_main.xml	(revision 8ed10de668db9817413c7ca54585151cf3ad0ed8)
++++ b/app/src/main/res/layout/activity_main.xml	(date 1655384896648)
+@@ -7,11 +7,11 @@
+     tools:context=".MainActivity">
+ 
+     <LinearLayout
++        android:id="@+id/MapAndRV"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:orientation="vertical"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent">
++        android:visibility="visible">
+ 
+         <fragment
+             android:id="@+id/map"
+@@ -23,15 +23,37 @@
+ 
+         <androidx.recyclerview.widget.RecyclerView
+             android:id="@+id/recyclerView"
+-            android:clipToPadding="false"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:layout_marginStart="1dp"
+             android:layout_marginTop="2dp"
+             android:layout_weight="1"
++            android:clipToPadding="false"
+             app:layout_constraintBottom_toBottomOf="parent"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintTop_toTopOf="parent" />
+     </LinearLayout>
++
++    <FrameLayout
++        android:id="@+id/frame_layout"
++        android:layout_width="0dp"
++        android:layout_height="0dp"
++        android:visibility="gone"
++        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent">
++
++    </FrameLayout>
++
++    <com.google.android.material.bottomnavigation.BottomNavigationView
++        android:id="@+id/bottomNavigationView"
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:menu="@menu/bottom_nav_menu" />
++
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/java/sg/edu/np/mad/transportme/LoginPage.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package sg.edu.np.mad.transportme;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.util.Patterns;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.ProgressBar;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.google.android.gms.tasks.OnCompleteListener;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.firebase.auth.AuthResult;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\n\r\npublic class LoginPage extends AppCompatActivity implements View.OnClickListener{\r\n\r\n    //private TextView register;\r\n    private EditText editTextEmail, editTextPassword;\r\n    private Button signIn, register;\r\n\r\n    private FirebaseAuth mAuth;\r\n    private ProgressBar progressBar;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_login_page);\r\n\r\n        signIn = findViewById(R.id.loginbutton);\r\n        signIn.setOnClickListener(this);\r\n\r\n        register = findViewById(R.id.gotoregisterpage);\r\n        register.setOnClickListener(this);\r\n\r\n        editTextEmail = findViewById(R.id.emailAddress);\r\n        editTextPassword = findViewById(R.id.password);\r\n\r\n        progressBar = findViewById(R.id.progressBar);\r\n\r\n        mAuth = FirebaseAuth.getInstance();\r\n    }\r\n\r\n    @Override\r\n    public void onClick(View v) {\r\n        switch (v.getId()){\r\n            case R.id.loginbutton:\r\n                userLogin();\r\n                break;\r\n            case R.id.gotoregisterpage:\r\n                startActivity(new Intent(this, RegistrationPage.class));\r\n                break;\r\n        }\r\n    }\r\n\r\n    private void userLogin() {\r\n        String email = editTextEmail.getText().toString().trim();\r\n        String password = editTextPassword.getText().toString().trim();\r\n\r\n        if(email.isEmpty()){\r\n            editTextEmail.setError(\"Email is required\");\r\n            editTextEmail.requestFocus();\r\n            return;\r\n        }\r\n        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){\r\n            editTextEmail.setError(\"Please enter a valid email\");\r\n            editTextEmail.requestFocus();\r\n            return;\r\n        }\r\n\r\n        if(password.isEmpty()){\r\n            editTextPassword.setError(\"Password is empty\");\r\n            editTextPassword.requestFocus();\r\n            return;\r\n        }\r\n        if(password.length() < 6){\r\n            editTextPassword.setError(\"Min password length is 6 characters\");\r\n            editTextPassword.requestFocus();\r\n            return;\r\n        }\r\n\r\n        editTextEmail.setEnabled(false);\r\n        editTextPassword.setEnabled(false);\r\n        progressBar.setVisibility(View.VISIBLE);\r\n\r\n        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {\r\n            @Override\r\n            public void onComplete(@NonNull Task<AuthResult> task) {\r\n                if (task.isSuccessful()){\r\n                    //redirect to user profile (get main page from github)\r\n                    startActivity(new Intent(LoginPage.this, MainActivity.class));\r\n\r\n                }\r\n                else{\r\n                    Toast.makeText(LoginPage.this, \"Invalid Credentials, please try again\", Toast.LENGTH_LONG).show();\r\n                    editTextEmail.setEnabled(true);\r\n                    editTextPassword.setEnabled(true);\r\n                    progressBar.setVisibility(View.INVISIBLE);\r\n                }\r\n            }\r\n        });\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/sg/edu/np/mad/transportme/LoginPage.java b/app/src/main/java/sg/edu/np/mad/transportme/LoginPage.java
+--- a/app/src/main/java/sg/edu/np/mad/transportme/LoginPage.java	(revision 8ed10de668db9817413c7ca54585151cf3ad0ed8)
++++ b/app/src/main/java/sg/edu/np/mad/transportme/LoginPage.java	(date 1655382330904)
+@@ -31,7 +31,8 @@
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_login_page);
+-
++        /*Remove this lol */
++        startActivity(new Intent(LoginPage.this, MainActivity.class));
+         signIn = findViewById(R.id.loginbutton);
+         signIn.setOnClickListener(this);
+ 
+Index: app/src/main/java/sg/edu/np/mad/transportme/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package sg.edu.np.mad.transportme;\r\n\r\nimport static android.Manifest.permission.ACCESS_COARSE_LOCATION;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.RequiresApi;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.core.app.ActivityCompat;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.fragment.app.FragmentActivity;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport android.Manifest;\r\nimport android.annotation.SuppressLint;\r\nimport android.content.pm.PackageManager;\r\nimport android.location.Address;\r\nimport android.location.Geocoder;\r\nimport android.location.Location;\r\nimport android.location.LocationListener;\r\nimport android.location.LocationManager;\r\nimport android.os.Build;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.widget.Toast;\r\n\r\nimport com.google.android.gms.common.api.GoogleApiClient;\r\nimport com.google.android.gms.maps.CameraUpdateFactory;\r\nimport com.google.android.gms.maps.GoogleMap;\r\nimport com.google.android.gms.maps.OnMapReadyCallback;\r\nimport com.google.android.gms.maps.SupportMapFragment;\r\nimport com.google.android.gms.maps.model.LatLng;\r\nimport com.google.android.gms.maps.model.MarkerOptions;\r\n\r\nimport java.io.IOException;\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class MainActivity extends FragmentActivity implements OnMapReadyCallback  {\r\n\r\n    GoogleMap map;\r\n    LocationManager locationManager;\r\n\r\n    private static final String[] LOCATION_PERMS={\r\n            Manifest.permission.ACCESS_COARSE_LOCATION,\r\n            Manifest.permission.ACCESS_FINE_LOCATION\r\n    };\r\n\r\n    private static final int LOCATION_REQUEST=1337;\r\n\r\n    @RequiresApi(api = Build.VERSION_CODES.M)\r\n    @SuppressLint(\"MissingPermission\")\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_main);\r\n\r\n        requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);\r\n\r\n        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);\r\n        mapFragment.getMapAsync(this);\r\n        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);\r\n\r\n        ArrayList<BusStop> busStops = LoadingScreen.globalBusStops;\r\n\r\n        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {\r\n            // TODO: Consider calling\r\n            //    ActivityCompat#requestPermissions\r\n            // here to request the missing permissions, and then overriding\r\n            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,\r\n            //                                          int[] grantResults)\r\n            // to handle the case where the user grants the permission. See the documentation\r\n            // for ActivityCompat#requestPermissions for more details.\r\n            return;\r\n        }\r\n        if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){\r\n            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60000, 10, new LocationListener() {\r\n                @Override\r\n                public void onLocationChanged(@NonNull Location location) {\r\n                    Double Latitude = location.getLatitude();\r\n                    Double Longitude = location.getLongitude();\r\n\r\n                    /* For testing purposes, Remove at the end */\r\n                    Latitude = 1.332346;\r\n                    Longitude = 103.777561;\r\n\r\n                    LatLng latLng = new LatLng(Latitude, Longitude);\r\n                    Geocoder geocoder = new Geocoder(getApplicationContext());\r\n\r\n                    /* +-0.00904 lat and long per km */\r\n                    Double Closeness = 0.00504;\r\n\r\n                    ArrayList<BusStop> closeBusStops = new ArrayList<>();\r\n                    for (int i = 0; i < busStops.size(); i++){\r\n                        BusStop busStop = busStops.get(i);\r\n                        if (busStop.Longitude < Longitude+Closeness && busStop.Longitude > Longitude-Closeness\r\n                                && busStop.Latitude < Latitude+Closeness && busStop.Latitude > Latitude-Closeness){\r\n                            closeBusStops.add(busStop);\r\n                        }\r\n                    }\r\n\r\n                    ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);\r\n                    apiBusStopService.getBusService(closeBusStops,new ApiBusStopService.VolleyResponseListener2() {\r\n                        @Override\r\n                        public void onError(String message) {\r\n                            Toast.makeText(MainActivity.this,\"Cannot Get Bus Stops\",Toast.LENGTH_LONG).show();\r\n                        }\r\n                        @Override\r\n                        public void onResponse(ArrayList<BusStop> busStopsLoaded) {\r\n\r\n                            RecyclerView rv = findViewById(R.id.recyclerView);\r\n                            BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,MainActivity.this);\r\n                            LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);\r\n                            rv.setAdapter(adapter);\r\n                            rv.setLayoutManager(layout);\r\n\r\n                            Log.d(\"workslol\", busStopsLoaded.toString());\r\n\r\n                        }\r\n                    });\r\n\r\n\r\n                    try {\r\n                        List<Address> addressList = geocoder.getFromLocation(Latitude, Longitude, 1);\r\n                        String str = addressList.get(0).getLocality()+\", \";\r\n                        str += addressList.get(0).getCountryName();\r\n                        Log.d(\"hello\", str);\r\n                        map.addMarker(new MarkerOptions().position(latLng).title(str));\r\n                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10.2f));\r\n                    } catch (IOException e){\r\n                        e.printStackTrace();\r\n                    }\r\n                }\r\n            });\r\n        }\r\n        else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {\r\n            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 10, new LocationListener() {\r\n                @Override\r\n                public void onLocationChanged(@NonNull Location location) {\r\n                    Double Latitude = location.getLatitude();\r\n                    Double Longitude = location.getLongitude();\r\n                    LatLng latLng = new LatLng(Latitude, Longitude);\r\n                    Geocoder geocoder = new Geocoder(getApplicationContext());\r\n\r\n                    /* For testing purposes, Remove at the end */\r\n                    Latitude = 1.332346;\r\n                    Longitude = 103.777561;\r\n\r\n                    Double Closeness = 0.00504;\r\n                    ArrayList<BusStop> closeBusStops = new ArrayList<>();\r\n                    for (int i = 0; i < busStops.size(); i++){\r\n                        BusStop busStop = busStops.get(i);\r\n                        if (busStop.Longitude < Longitude+Closeness && busStop.Longitude > Longitude-Closeness\r\n                                && busStop.Latitude < Latitude+Closeness && busStop.Latitude > Latitude-Closeness){\r\n                            closeBusStops.add(busStop);\r\n                        }\r\n                    }\r\n                    Log.d(\"stopcount\", String.valueOf(closeBusStops.size()));\r\n\r\n                    ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);\r\n                    apiBusStopService.getBusService(closeBusStops,new ApiBusStopService.VolleyResponseListener2() {\r\n                        @Override\r\n                        public void onError(String message) {\r\n                            Toast.makeText(MainActivity.this,\"Cannot Get Bus Stops\",Toast.LENGTH_LONG).show();\r\n                        }\r\n                        @Override\r\n                        public void onResponse(ArrayList<BusStop> busStopsLoaded) {\r\n                            RecyclerView rv = findViewById(R.id.recyclerView);\r\n                            BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,MainActivity.this);\r\n                            LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);\r\n                            rv.setAdapter(adapter);\r\n                            rv.setLayoutManager(layout);\r\n                            Log.d(\"workslol\", busStopsLoaded.toString());\r\n                        }\r\n                    });\r\n                    try {\r\n                        List<Address> addressList = geocoder.getFromLocation(Latitude, Longitude, 1);\r\n                        String str = addressList.get(0).getLocality()+\", \";\r\n                        str += addressList.get(0).getCountryName();\r\n                        map.addMarker(new MarkerOptions().position(latLng).title(str));\r\n                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10.2f));\r\n                    } catch (IOException e){\r\n                        e.printStackTrace();\r\n                    }\r\n                }\r\n            });\r\n        }\r\n\r\n\r\n\r\n\r\n    }\r\n\r\n\r\n    @SuppressLint(\"MissingPermission\")\r\n    @Override\r\n    public void onMapReady(@NonNull GoogleMap googleMap) {\r\n        map = googleMap;\r\n        map.setMyLocationEnabled(true);\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/sg/edu/np/mad/transportme/MainActivity.java b/app/src/main/java/sg/edu/np/mad/transportme/MainActivity.java
+--- a/app/src/main/java/sg/edu/np/mad/transportme/MainActivity.java	(revision 8ed10de668db9817413c7ca54585151cf3ad0ed8)
++++ b/app/src/main/java/sg/edu/np/mad/transportme/MainActivity.java	(date 1655385260673)
+@@ -6,8 +6,11 @@
+ import androidx.annotation.RequiresApi;
+ import androidx.appcompat.app.AppCompatActivity;
+ import androidx.core.app.ActivityCompat;
++import androidx.core.app.ActivityManagerCompat;
+ import androidx.fragment.app.Fragment;
+ import androidx.fragment.app.FragmentActivity;
++import androidx.fragment.app.FragmentManager;
++import androidx.fragment.app.FragmentTransaction;
+ import androidx.recyclerview.widget.LinearLayoutManager;
+ import androidx.recyclerview.widget.RecyclerView;
+ 
+@@ -22,6 +25,9 @@
+ import android.os.Build;
+ import android.os.Bundle;
+ import android.util.Log;
++import android.view.View;
++import android.widget.FrameLayout;
++import android.widget.LinearLayout;
+ import android.widget.Toast;
+ 
+ import com.google.android.gms.common.api.GoogleApiClient;
+@@ -31,11 +37,13 @@
+ import com.google.android.gms.maps.SupportMapFragment;
+ import com.google.android.gms.maps.model.LatLng;
+ import com.google.android.gms.maps.model.MarkerOptions;
++import com.google.android.material.bottomnavigation.BottomNavigationView;
+ 
+ import java.io.IOException;
+ import java.util.ArrayList;
+ import java.util.List;
+ 
++
+ public class MainActivity extends FragmentActivity implements OnMapReadyCallback  {
+ 
+     GoogleMap map;
+@@ -55,6 +63,34 @@
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_main);
+ 
++        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
++        bottomNavigationView.setOnItemSelectedListener(item ->{
++            LinearLayout mapandrv = findViewById(R.id.MapAndRV);
++            FrameLayout fragmentlayout = findViewById(R.id.frame_layout);
++            switch(item.getItemId()){
++                case R.id.home:
++                    fragmentlayout.setVisibility(View.INVISIBLE);
++                    mapandrv.setVisibility(View.VISIBLE);
++                    break;
++                case R.id.favourites:
++                    mapandrv.setVisibility(View.INVISIBLE);
++                    fragmentlayout.setVisibility(View.VISIBLE);
++                    replaceFragment(new FavouritesFragment());
++                    break;
++                case R.id.search:
++                    mapandrv.setVisibility(View.INVISIBLE);
++                    fragmentlayout.setVisibility(View.VISIBLE);
++                    replaceFragment(new SearchFragment());
++                    break;
++                case R.id.profile:
++                    mapandrv.setVisibility(View.INVISIBLE);
++                    fragmentlayout.setVisibility(View.VISIBLE);
++                    replaceFragment(new ProfileFragment());
++                    break;
++            }
++            return true;
++        });
++
+         requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
+ 
+         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+@@ -190,7 +226,12 @@
+ 
+ 
+     }
+-
++    private void replaceFragment(Fragment fragment){
++        FragmentManager fragmentManager = getSupportFragmentManager();
++        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
++        fragmentTransaction.replace(R.id.frame_layout,fragment);
++        fragmentTransaction.commit();
++    }
+ 
+     @SuppressLint("MissingPermission")
+     @Override
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\r\n    id 'com.android.application'\r\n    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'\r\n    id 'com.google.gms.google-services'\r\n}\r\n\r\nandroid {\r\n    compileSdk 32\r\n\r\n    defaultConfig {\r\n        applicationId \"sg.edu.np.mad.transportme\"\r\n        minSdk 21\r\n        targetSdk 32\r\n        versionCode 1\r\n        versionName \"1.0\"\r\n\r\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\r\n        vectorDrawables.useSupportLibrary = true\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n    compileOptions {\r\n        sourceCompatibility JavaVersion.VERSION_1_8\r\n        targetCompatibility JavaVersion.VERSION_1_8\r\n    }\r\n}\r\n\r\ndependencies {\r\n\r\n    implementation 'androidx.appcompat:appcompat:1.4.2'\r\n    implementation 'com.google.android.material:material:1.6.1'\r\n    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'\r\n    implementation 'com.google.android.gms:play-services-maps:18.0.2'\r\n\r\n    implementation 'com.android.volley:volley:1.2.1'\r\n    implementation 'com.google.firebase:firebase-auth:21.0.5'\r\n    implementation 'com.google.firebase:firebase-database:20.0.5'\r\n    testImplementation 'junit:junit:4.13.2'\r\n    androidTestImplementation 'androidx.test.ext:junit:1.1.3'\r\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle b/app/build.gradle
+--- a/app/build.gradle	(revision 8ed10de668db9817413c7ca54585151cf3ad0ed8)
++++ b/app/build.gradle	(date 1655383800921)
+@@ -24,6 +24,7 @@
+             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+         }
+     }
++
+     compileOptions {
+         sourceCompatibility JavaVersion.VERSION_1_8
+         targetCompatibility JavaVersion.VERSION_1_8
+@@ -40,6 +41,7 @@
+     implementation 'com.android.volley:volley:1.2.1'
+     implementation 'com.google.firebase:firebase-auth:21.0.5'
+     implementation 'com.google.firebase:firebase-database:20.0.5'
++    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+     testImplementation 'junit:junit:4.13.2'
+     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+Index: app/src/main/java/sg/edu/np/mad/transportme/ProfileFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/sg/edu/np/mad/transportme/ProfileFragment.java b/app/src/main/java/sg/edu/np/mad/transportme/ProfileFragment.java
+new file mode 100644
+--- /dev/null	(date 1655382581180)
++++ b/app/src/main/java/sg/edu/np/mad/transportme/ProfileFragment.java	(date 1655382581180)
+@@ -0,0 +1,64 @@
++package sg.edu.np.mad.transportme;
++
++import android.os.Bundle;
++
++import androidx.fragment.app.Fragment;
++
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++
++/**
++ * A simple {@link Fragment} subclass.
++ * Use the {@link ProfileFragment#newInstance} factory method to
++ * create an instance of this fragment.
++ */
++public class ProfileFragment extends Fragment {
++
++    // TODO: Rename parameter arguments, choose names that match
++    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
++    private static final String ARG_PARAM1 = "param1";
++    private static final String ARG_PARAM2 = "param2";
++
++    // TODO: Rename and change types of parameters
++    private String mParam1;
++    private String mParam2;
++
++    public ProfileFragment() {
++        // Required empty public constructor
++    }
++
++    /**
++     * Use this factory method to create a new instance of
++     * this fragment using the provided parameters.
++     *
++     * @param param1 Parameter 1.
++     * @param param2 Parameter 2.
++     * @return A new instance of fragment ProfileFragment.
++     */
++    // TODO: Rename and change types and number of parameters
++    public static ProfileFragment newInstance(String param1, String param2) {
++        ProfileFragment fragment = new ProfileFragment();
++        Bundle args = new Bundle();
++        args.putString(ARG_PARAM1, param1);
++        args.putString(ARG_PARAM2, param2);
++        fragment.setArguments(args);
++        return fragment;
++    }
++
++    @Override
++    public void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++        if (getArguments() != null) {
++            mParam1 = getArguments().getString(ARG_PARAM1);
++            mParam2 = getArguments().getString(ARG_PARAM2);
++        }
++    }
++
++    @Override
++    public View onCreateView(LayoutInflater inflater, ViewGroup container,
++                             Bundle savedInstanceState) {
++        // Inflate the layout for this fragment
++        return inflater.inflate(R.layout.fragment_profile, container, false);
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources>\r\n    <string name=\"app_name\">TransportMe</string>\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+--- a/app/src/main/res/values/strings.xml	(revision 8ed10de668db9817413c7ca54585151cf3ad0ed8)
++++ b/app/src/main/res/values/strings.xml	(date 1655382618444)
+@@ -1,3 +1,5 @@
+ <resources>
+     <string name="app_name">TransportMe</string>
++    <!-- TODO: Remove or change this placeholder text -->
++    <string name="hello_blank_fragment">Hello blank fragment</string>
+ </resources>
+\ No newline at end of file
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+new file mode 100644
+--- /dev/null	(date 1655383535097)
++++ b/.idea/deploymentTargetDropDown.xml	(date 1655383535097)
+@@ -0,0 +1,17 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="deploymentTargetDropDown">
++    <runningDeviceTargetSelectedWithDropDown>
++      <Target>
++        <type value="RUNNING_DEVICE_TARGET" />
++        <deviceKey>
++          <Key>
++            <type value="VIRTUAL_DEVICE_PATH" />
++            <value value="C:\Users\cyrus\.android\avd\Pixel_4_API_30.avd" />
++          </Key>
++        </deviceKey>
++      </Target>
++    </runningDeviceTargetSelectedWithDropDown>
++    <timeTargetWasSelectedWithDropDown value="2022-06-16T12:45:33.217021Z" />
++  </component>
++</project>
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_search.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_search.xml b/app/src/main/res/layout/fragment_search.xml
+new file mode 100644
+--- /dev/null	(date 1655382842181)
++++ b/app/src/main/res/layout/fragment_search.xml	(date 1655382842181)
+@@ -0,0 +1,14 @@
++<?xml version="1.0" encoding="utf-8"?>
++<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    tools:context=".SearchFragment">
++
++    <!-- TODO: Update blank fragment layout -->
++    <TextView
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:text="search" />
++
++</FrameLayout>
+\ No newline at end of file
+Index: app/src/main/java/sg/edu/np/mad/transportme/SearchFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/sg/edu/np/mad/transportme/SearchFragment.java b/app/src/main/java/sg/edu/np/mad/transportme/SearchFragment.java
+new file mode 100644
+--- /dev/null	(date 1655382595247)
++++ b/app/src/main/java/sg/edu/np/mad/transportme/SearchFragment.java	(date 1655382595247)
+@@ -0,0 +1,64 @@
++package sg.edu.np.mad.transportme;
++
++import android.os.Bundle;
++
++import androidx.fragment.app.Fragment;
++
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++
++/**
++ * A simple {@link Fragment} subclass.
++ * Use the {@link SearchFragment#newInstance} factory method to
++ * create an instance of this fragment.
++ */
++public class SearchFragment extends Fragment {
++
++    // TODO: Rename parameter arguments, choose names that match
++    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
++    private static final String ARG_PARAM1 = "param1";
++    private static final String ARG_PARAM2 = "param2";
++
++    // TODO: Rename and change types of parameters
++    private String mParam1;
++    private String mParam2;
++
++    public SearchFragment() {
++        // Required empty public constructor
++    }
++
++    /**
++     * Use this factory method to create a new instance of
++     * this fragment using the provided parameters.
++     *
++     * @param param1 Parameter 1.
++     * @param param2 Parameter 2.
++     * @return A new instance of fragment SearchFragment.
++     */
++    // TODO: Rename and change types and number of parameters
++    public static SearchFragment newInstance(String param1, String param2) {
++        SearchFragment fragment = new SearchFragment();
++        Bundle args = new Bundle();
++        args.putString(ARG_PARAM1, param1);
++        args.putString(ARG_PARAM2, param2);
++        fragment.setArguments(args);
++        return fragment;
++    }
++
++    @Override
++    public void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++        if (getArguments() != null) {
++            mParam1 = getArguments().getString(ARG_PARAM1);
++            mParam2 = getArguments().getString(ARG_PARAM2);
++        }
++    }
++
++    @Override
++    public View onCreateView(LayoutInflater inflater, ViewGroup container,
++                             Bundle savedInstanceState) {
++        // Inflate the layout for this fragment
++        return inflater.inflate(R.layout.fragment_search, container, false);
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/drawable/ic_baseline_home_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_baseline_home_24.xml b/app/src/main/res/drawable/ic_baseline_home_24.xml
+new file mode 100644
+--- /dev/null	(date 1655382188267)
++++ b/app/src/main/res/drawable/ic_baseline_home_24.xml	(date 1655382188267)
+@@ -0,0 +1,10 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal">
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M10,20v-6h4v6h5v-8h3L12,3 2,12h3v8z"/>
++</vector>
+Index: app/src/main/res/drawable/ic_baseline_search_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_baseline_search_24.xml b/app/src/main/res/drawable/ic_baseline_search_24.xml
+new file mode 100644
+--- /dev/null	(date 1655382222632)
++++ b/app/src/main/res/drawable/ic_baseline_search_24.xml	(date 1655382222632)
+@@ -0,0 +1,10 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal">
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M15.5,14h-0.79l-0.28,-0.27C15.41,12.59 16,11.11 16,9.5 16,5.91 13.09,3 9.5,3S3,5.91 3,9.5 5.91,16 9.5,16c1.61,0 3.09,-0.59 4.23,-1.57l0.27,0.28v0.79l5,4.99L20.49,19l-4.99,-5zM9.5,14C7.01,14 5,11.99 5,9.5S7.01,5 9.5,5 14,7.01 14,9.5 11.99,14 9.5,14z"/>
++</vector>
+Index: app/src/main/res/drawable/ic_baseline_bookmark_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_baseline_bookmark_24.xml b/app/src/main/res/drawable/ic_baseline_bookmark_24.xml
+new file mode 100644
+--- /dev/null	(date 1655382207749)
++++ b/app/src/main/res/drawable/ic_baseline_bookmark_24.xml	(date 1655382207749)
+@@ -0,0 +1,10 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal">
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M17,3H7c-1.1,0 -1.99,0.9 -1.99,2L5,21l7,-3 7,3V5c0,-1.1 -0.9,-2 -2,-2z"/>
++</vector>
+Index: app/src/main/res/layout/fragment_favourites.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_favourites.xml b/app/src/main/res/layout/fragment_favourites.xml
+new file mode 100644
+--- /dev/null	(date 1655382842176)
++++ b/app/src/main/res/layout/fragment_favourites.xml	(date 1655382842176)
+@@ -0,0 +1,14 @@
++<?xml version="1.0" encoding="utf-8"?>
++<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    tools:context=".FavouritesFragment">
++
++    <!-- TODO: Update blank fragment layout -->
++    <TextView
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:text="favoruites" />
++
++</FrameLayout>
+\ No newline at end of file
+Index: app/src/main/java/sg/edu/np/mad/transportme/FavouritesFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/sg/edu/np/mad/transportme/FavouritesFragment.java b/app/src/main/java/sg/edu/np/mad/transportme/FavouritesFragment.java
+new file mode 100644
+--- /dev/null	(date 1655382618550)
++++ b/app/src/main/java/sg/edu/np/mad/transportme/FavouritesFragment.java	(date 1655382618550)
+@@ -0,0 +1,64 @@
++package sg.edu.np.mad.transportme;
++
++import android.os.Bundle;
++
++import androidx.fragment.app.Fragment;
++
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++
++/**
++ * A simple {@link Fragment} subclass.
++ * Use the {@link FavouritesFragment#newInstance} factory method to
++ * create an instance of this fragment.
++ */
++public class FavouritesFragment extends Fragment {
++
++    // TODO: Rename parameter arguments, choose names that match
++    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
++    private static final String ARG_PARAM1 = "param1";
++    private static final String ARG_PARAM2 = "param2";
++
++    // TODO: Rename and change types of parameters
++    private String mParam1;
++    private String mParam2;
++
++    public FavouritesFragment() {
++        // Required empty public constructor
++    }
++
++    /**
++     * Use this factory method to create a new instance of
++     * this fragment using the provided parameters.
++     *
++     * @param param1 Parameter 1.
++     * @param param2 Parameter 2.
++     * @return A new instance of fragment FavouritesFragment.
++     */
++    // TODO: Rename and change types and number of parameters
++    public static FavouritesFragment newInstance(String param1, String param2) {
++        FavouritesFragment fragment = new FavouritesFragment();
++        Bundle args = new Bundle();
++        args.putString(ARG_PARAM1, param1);
++        args.putString(ARG_PARAM2, param2);
++        fragment.setArguments(args);
++        return fragment;
++    }
++
++    @Override
++    public void onCreate(Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++        if (getArguments() != null) {
++            mParam1 = getArguments().getString(ARG_PARAM1);
++            mParam2 = getArguments().getString(ARG_PARAM2);
++        }
++    }
++
++    @Override
++    public View onCreateView(LayoutInflater inflater, ViewGroup container,
++                             Bundle savedInstanceState) {
++        // Inflate the layout for this fragment
++        return inflater.inflate(R.layout.fragment_favourites, container, false);
++    }
++}
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"DesignSurface\">\r\n    <option name=\"filePathToZoomLevelMap\">\r\n      <map>\r\n        <entry key=\"..\\:/Downloads/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml\" value=\"0.14722222222222223\" />\r\n        <entry key=\"..\\:/Downloads/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_login_page.xml\" value=\"0.25\" />\r\n        <entry key=\"..\\:/Downloads/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_registration_page.xml\" value=\"0.25\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml\" value=\"0.15625\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_main.xml\" value=\"0.264\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_service_layout.xml\" value=\"0.2708333333333333\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD/TransportMe/app/src/main/res/layout/activity_main.xml\" value=\"0.23007246376811594\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG GitHub AGAIN/app/src/main/res/layout/activity_loading_screen.xml\" value=\"0.18802083333333333\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG GitHub AGAIN/app/src/main/res/layout/bus_service_layout.xml\" value=\"0.4796044499381953\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG GitHub AGAIN/app/src/main/res/layout/bus_stop_layout.xml\" value=\"0.5\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG Github/app/src/main/res/layout/activity_main.xml\" value=\"0.17831813576494426\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG Github/app/src/main/res/layout/bus_service_layout.xml\" value=\"0.17831813576494426\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG Github/app/src/main/res/layout/bus_stop_layout.xml\" value=\"0.33\" />\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_11\" default=\"true\" project-jdk-name=\"Android Studio default JDK\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 8ed10de668db9817413c7ca54585151cf3ad0ed8)
++++ b/.idea/misc.xml	(date 1655383328482)
+@@ -9,6 +9,8 @@
+         <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml" value="0.15625" />
+         <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_main.xml" value="0.264" />
+         <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_service_layout.xml" value="0.2708333333333333" />
++        <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_search.xml" value="0.22826086956521738" />
++        <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/menu/bottom_nav_menu.xml" value="0.36666666666666664" />
+         <entry key="..\:/Users/cyrus/Desktop/MAD/TransportMe/app/src/main/res/layout/activity_main.xml" value="0.23007246376811594" />
+         <entry key="..\:/Users/voidi/Desktop/MAD/ASG GitHub AGAIN/app/src/main/res/layout/activity_loading_screen.xml" value="0.18802083333333333" />
+         <entry key="..\:/Users/voidi/Desktop/MAD/ASG GitHub AGAIN/app/src/main/res/layout/bus_service_layout.xml" value="0.4796044499381953" />
+Index: app/src/main/res/menu/bottom_nav_menu.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/menu/bottom_nav_menu.xml b/app/src/main/res/menu/bottom_nav_menu.xml
+new file mode 100644
+--- /dev/null	(date 1655385135996)
++++ b/app/src/main/res/menu/bottom_nav_menu.xml	(date 1655385135996)
+@@ -0,0 +1,20 @@
++<?xml version="1.0" encoding="utf-8"?>
++<menu xmlns:android="http://schemas.android.com/apk/res/android">
++
++    <item
++        android:id="@+id/home"
++        android:icon="@drawable/ic_baseline_home_24"
++        android:title="Home" />
++    <item
++        android:id="@+id/favourites"
++        android:icon="@drawable/ic_baseline_bookmark_24"
++        android:title="Favourites" />
++    <item
++        android:id="@+id/search"
++        android:icon="@drawable/ic_baseline_search_24"
++        android:title="Search" />
++    <item
++        android:id="@+id/profile"
++        android:icon="@drawable/ic_baseline_person_24"
++        android:title="Item" />
++</menu>
+\ No newline at end of file
+Index: app/src/main/res/drawable/ic_baseline_person_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_baseline_person_24.xml b/app/src/main/res/drawable/ic_baseline_person_24.xml
+new file mode 100644
+--- /dev/null	(date 1655384988467)
++++ b/app/src/main/res/drawable/ic_baseline_person_24.xml	(date 1655384988467)
+@@ -0,0 +1,10 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal">
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M12,12c2.21,0 4,-1.79 4,-4s-1.79,-4 -4,-4 -4,1.79 -4,4 1.79,4 4,4zM12,14c-2.67,0 -8,1.34 -8,4v2h16v-2c0,-2.66 -5.33,-4 -8,-4z"/>
++</vector>
+Index: app/src/main/res/layout/fragment_profile.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_profile.xml b/app/src/main/res/layout/fragment_profile.xml
+new file mode 100644
+--- /dev/null	(date 1655382842187)
++++ b/app/src/main/res/layout/fragment_profile.xml	(date 1655382842187)
+@@ -0,0 +1,14 @@
++<?xml version="1.0" encoding="utf-8"?>
++<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    tools:context=".ProfileFragment">
++
++    <!-- TODO: Update blank fragment layout -->
++    <TextView
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:text="Profile" />
++
++</FrameLayout>
+\ No newline at end of file
