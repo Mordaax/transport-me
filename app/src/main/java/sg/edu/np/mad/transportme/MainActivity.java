@@ -175,7 +175,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     Geocoder geocoder = new Geocoder(getApplicationContext());
 
                     /* +-0.00904 lat and long per km */
-                    Double Closeness = 0.00504;
+                    Double Closeness = 0.00404;
 
                     ArrayList<BusStop> closeBusStops = new ArrayList<>();
                     for (int i = 0; i < busStops.size(); i++){
