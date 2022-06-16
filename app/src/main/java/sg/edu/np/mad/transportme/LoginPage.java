@@ -84,6 +84,8 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
             return;
         }
 
+        editTextEmail.setEnabled(false);
+        editTextPassword.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
 
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -96,6 +98,9 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                 }
                 else{
                     Toast.makeText(LoginPage.this, "Invalid Credentials, please try again", Toast.LENGTH_LONG).show();
+                    editTextEmail.setEnabled(true);
+                    editTextPassword.setEnabled(true);
+                    progressBar.setVisibility(View.INVISIBLE);
                 }
             }
         });
