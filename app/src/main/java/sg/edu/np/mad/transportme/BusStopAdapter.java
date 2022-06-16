@@ -59,6 +59,7 @@ public class BusStopAdapter
 
         holder.Description.setText(content.Description);
         holder.BusStopCode.setText(content.BusStopCode);
+        holder.RoadName.setText(content.RoadName);
 
         /*RecyclerView rv = c.findViewById(R.id.recyclerView2);*/
         BusServiceAdapter adapterMember = new BusServiceAdapter(content.busServices);

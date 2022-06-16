@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -51,11 +52,39 @@ public class BusServiceAdapter
         holder.ServiceNumber.setText(content.ServiceNumber);
         ArrayList<TextView> nextBusList= new ArrayList<TextView>(Arrays.asList(holder.NextBus1, holder.NextBus2, holder.NextBus3));
         ArrayList<TextView> nextBusTypeList = new ArrayList<TextView>(Arrays.asList(holder.NextBus1Type, holder.NextBus2Type, holder.NextBus3Type));
+        ArrayList<ImageView> nextBusFeatureList = new ArrayList<>(Arrays.asList(holder.NextBus1Feature, holder.NextBus2Feature, holder.NextBus3Feature));
         for (int i = 0; i < nextBusList.size(); i++)
         {
             NextBus nb = content.NextBuses.get(i);
             TextView busTV = nextBusList.get(i);
             TextView busTypeTV = nextBusTypeList.get(i);
+            ImageView busFeatureIV = nextBusFeatureList.get(i);
+            if (nb.EstimatedArrival == "Null")
+            {
+                busTV.setTextColor(Color.parseColor("#000000"));
+                busTV.setText("一");
+                busTypeTV.setText("");
+                busFeatureIV.setVisibility(View.GONE);
+                continue;
+            }
+            else if (Integer.parseInt(nb.EstimatedArrival) == 0)
+            {
+                busTV.setText("Arr");
+            }
+            else if (Integer.parseInt(nb.EstimatedArrival) < 0)
+            {
+                busTV.setText("Left");
+            }
+            else
+            {
+                nextBusList.get(i).setText(nb.EstimatedArrival);
+            }
+
+            if (nb.Feature.equals("none"))
+            {
+                busFeatureIV.setVisibility(View.GONE);
+            }
+
             if (nb.Load.equals("SEA"))
             {
                 busTV.setTextColor(Color.parseColor("#90a959"));
@@ -63,10 +92,12 @@ public class BusServiceAdapter
             else if (nb.Load.equals("SDA"))
             {
                 busTV.setTextColor(Color.parseColor("#e9b872"));
+                busFeatureIV.setImageResource(R.drawable.wheelchair_yellow);
             }
             else
             {
                 busTV.setTextColor(Color.parseColor("#a63d40"));
+                busFeatureIV.setImageResource(R.drawable.wheelchair_red);
             }
 
             if (nb.Type.equals("SD"))
@@ -82,24 +113,7 @@ public class BusServiceAdapter
                 busTypeTV.setText("Bendy");
             }
 
-            if (nb.EstimatedArrival == "Null")
-            {
-                busTV.setTextColor(Color.parseColor("#000000"));
-                busTV.setText("一");
-                busTypeTV.setText("");
-            }
-            else if (Integer.parseInt(nb.EstimatedArrival) == 0)
-            {
-                busTV.setText("Arr");
-            }
-            else if (Integer.parseInt(nb.EstimatedArrival) < 0)
-            {
-                busTV.setText("Left");
-            }
-            else
-            {
-                nextBusList.get(i).setText(nb.EstimatedArrival);
-            }
+
         }
 
         //holder.NextBus1.setText(content.NextBuses.get(0).EstimatedArrival);
