@@ -3,9 +3,11 @@ package sg.edu.np.mad.transportme;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -21,7 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class RegistrationPage extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
-    private TextView registerUser;
+    private Button registerUser, switchtoLogin;
     private EditText editTextName, editTextEmail, editTextPassword;
     private ProgressBar progressBar;
 
@@ -39,10 +41,19 @@ public class RegistrationPage extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
 
         registerUser = findViewById(R.id.registerbutton);
+        Intent myIntent = new Intent(this, LoginPage.class);
         registerUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 registerUser();
+                startActivity(myIntent);
+            }
+        });
+        switchtoLogin = findViewById(R.id.gotologinpage);
+        switchtoLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(myIntent);
             }
         });
 

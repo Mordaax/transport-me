@@ -43,36 +43,56 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
+                    <ImageView
+                        android:id="@+id/BusAppIcon"
+                        android:layout_width="50dp"
+                        android:layout_height="0dp"
+                        android:src="@drawable/appsplashicon"
+                        app:layout_constraintBottom_toTopOf="@+id/recyclerView2"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"></ImageView>
 
                     <TextView
                         android:id="@+id/BusStopCode"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
                         android:text="BusStopCode"
                         android:textColor="#000000"
                         android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/BusAppIcon"
                         app:layout_constraintTop_toBottomOf="@+id/Description" />
 
                     <TextView
                         android:id="@+id/Description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
                         android:text="Description"
                         android:textColor="#000000"
                         android:textSize="24sp"
-                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/BusAppIcon"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView
-                        android:id="@+id/imageView2"
-                        android:layout_width="19dp"
-                        android:layout_height="17dp"
-                        android:layout_marginEnd="8dp"
+                        android:id="@+id/DropDownArrow"
+                        android:layout_width="20dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/arrow_down_sign_to_navigate"
                         app:layout_constraintBottom_toTopOf="@+id/recyclerView2"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/arrow_down_sign_to_navigate" />
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"></ImageView>
+
+                    <TextView
+                        android:id="@+id/RoadName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="RoadName"
+                        android:textColor="#474646"
+                        app:layout_constraintBottom_toBottomOf="@+id/BusStopCode"
+                        app:layout_constraintStart_toEndOf="@+id/BusStopCode"
+                        app:layout_constraintTop_toTopOf="@+id/BusStopCode" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerView2"

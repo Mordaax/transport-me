@@ -7,8 +7,10 @@
 
     <TableLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:stretchColumns="*"
-        android:layout_height="match_parent">
+        tools:layout_editor_absoluteX="-16dp"
+        tools:layout_editor_absoluteY="51dp">
 
         <TableRow
             android:layout_width="match_parent"
@@ -29,12 +31,23 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
+                <ImageView
+                    android:id="@+id/NextBus1Feature"
+                    android:layout_width="22dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/wheelchair_green"
+                    app:layout_constraintBottom_toTopOf="@+id/NextBus1Type"
+                    app:layout_constraintEnd_toStartOf="@+id/NextBus1"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0"></ImageView>
+
                 <TextView
                     android:id="@+id/NextBus1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:paddingLeft="5sp"
+                    android:paddingLeft="0sp"
                     android:paddingTop="5sp"
                     android:paddingRight="5sp"
                     android:text="Bus1"
@@ -42,7 +55,6 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
@@ -72,7 +84,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:paddingLeft="5sp"
+                    android:paddingLeft="0sp"
                     android:paddingTop="5sp"
                     android:paddingRight="5sp"
                     android:text="Bus2"
@@ -80,8 +92,6 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
@@ -98,6 +108,18 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/NextBus2" />
+
+                <ImageView
+                    android:id="@+id/NextBus2Feature"
+                    android:layout_width="22dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/wheelchair_green"
+                    app:layout_constraintBottom_toTopOf="@+id/NextBus2Type"
+                    app:layout_constraintEnd_toStartOf="@+id/NextBus2"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0"></ImageView>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -110,7 +132,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:paddingLeft="5sp"
+                    android:paddingLeft="0sp"
                     android:paddingTop="5sp"
                     android:paddingRight="5sp"
                     android:text="Bus3"
@@ -118,7 +140,6 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
@@ -135,6 +156,17 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/NextBus3" />
+
+                <ImageView
+                    android:id="@+id/NextBus3Feature"
+                    android:layout_width="22dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/wheelchair_green"
+                    app:layout_constraintBottom_toTopOf="@+id/NextBus3Type"
+                    app:layout_constraintEnd_toStartOf="@+id/NextBus3"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0"></ImageView>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </TableRow>
