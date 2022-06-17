@@ -62,8 +62,8 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
     }
 
     private void userLogin() {
-        String email = editTextEmail.getText().toString().trim();
-        String password = editTextPassword.getText().toString().trim();
+        String email = editTextEmail.getText().toString();
+        String password = editTextPassword.getText().toString();
 
         if(email.isEmpty()){
             editTextEmail.setError("Email is required");
@@ -91,10 +91,11 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
         editTextPassword.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
 
-        mAuth.signInWithEmailAndPassword(editTextEmail.getText().toString(),editTextPassword.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+        mAuth.signInWithEmailAndPassword(email,password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
             public void onSuccess(AuthResult authResult) {
                 startActivity(new Intent(LoginPage.this, MainActivity.class));
+                finish();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
