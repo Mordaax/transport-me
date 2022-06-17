@@ -9,10 +9,19 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -75,6 +84,23 @@ public class BusStopAdapter
         holder.BusStopCode.setText(content.BusStopCode);
         holder.RoadName.setText(content.RoadName);
 
+        //isFavourited(content.BusStopCode, holder.Favourite);
+        holder.Favourite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (holder.Favourite.getTag() == "Favourite")           //it might need to be 0 and 1s
+                {
+                    holder.Favourite.setImageResource(R.drawable.filled_favourite);
+                    holder.Favourite.setTag("Favourited");
+                }
+                else
+                {
+                    holder.Favourite.setImageResource(R.drawable.favourite);
+                    holder.Favourite.setTag("Favourite");
+                }
+            }
+        });
+
         /*RecyclerView rv = c.findViewById(R.id.recyclerView2);*/
         BusServiceAdapter adapterMember = new BusServiceAdapter(content.busServices);
         LinearLayoutManager layout = new LinearLayoutManager(c);
@@ -83,6 +109,37 @@ public class BusStopAdapter
         holder.RecyclerView2.setLayoutManager(layout);
         holder.RecyclerView2.setAdapter(adapterMember);
     }
+
+    /*
+    private void isFavourited(String busStopCode, ImageView favouritedView)
+    {
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+                .child("users")
+                .child(firebaseUser.getUid())
+                .child("Favourited");
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.child(busStopCode).exists())
+                {
+                    favouritedView.setImageResource(R.drawable.filled_favourite);
+                    favouritedView.setTag("Favourited");
+                }
+                else
+                {
+                    favouritedView.setImageResource(R.drawable.favourite);
+                    favouritedView.setTag("Favourite");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }*/
 
     @Override
     public int getItemCount() {

@@ -36,7 +36,7 @@ public class LoadingScreen extends AppCompatActivity {
             public void onResponse(ArrayList<BusStop> busStops) {
                 progressBar.setProgress(100);
                 globalBusStops = busStops;
-                Intent goToLoginPage = new Intent(LoadingScreen.this, LoginPage.class);
+                Intent goToLoginPage = new Intent(LoadingScreen.this, MainActivity.class);
                 startActivity(goToLoginPage);
             }
         });

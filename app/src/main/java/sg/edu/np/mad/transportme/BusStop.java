@@ -8,6 +8,7 @@ public class BusStop {
     String Description;
     Double Latitude;
     Double Longitude;
+    Boolean Favourited;
     ArrayList<BusService> busServices;
 
     public BusStop(String BusStopCode, String RoadName, String Description, Double Latitude, Double Longitude){
