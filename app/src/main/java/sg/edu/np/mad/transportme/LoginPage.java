@@ -100,6 +100,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                //Toast.makeText(LoginPage.this, "Error"+ authResult.getException().getMessage(), Toast.LENGTH_LONG).show();
                 Toast.makeText(LoginPage.this, "Invalid Credentials, please try again", Toast.LENGTH_LONG).show();
                 editTextEmail.setEnabled(true);
                 editTextPassword.setEnabled(true);
@@ -125,7 +126,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
             }
         });**/
     }
-
+/**
     @Override
     protected void onStart() {
         super.onStart();
@@ -133,5 +134,5 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
             startActivity(new Intent(this, MainActivity.class));
             finish();
     }
-}
+}**/
 }
