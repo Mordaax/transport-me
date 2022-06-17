@@ -15,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,6 +46,11 @@ public class RegistrationPage extends AppCompatActivity {
 
         switchtoLogin = findViewById(R.id.gotologinpage);
         registerUser = findViewById(R.id.registerbutton);
+
+        if (mAuth.getCurrentUser() != null){
+            startActivity(new Intent(RegistrationPage.this, MainActivity.class));
+            finish();
+        }
 
         Intent regIntent = new Intent(RegistrationPage.this, LoginPage.class);
         registerUser.setOnClickListener(new View.OnClickListener() {
@@ -104,6 +111,25 @@ public class RegistrationPage extends AppCompatActivity {
         editTextName.setEnabled(false);
         editTextPassword.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
+        /**mAuth.createUserWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult authResult) {
+                Log.d("Key", "Success");
+
+                startActivity(new Intent(RegistrationPage.this, MainActivity.class));
+                finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Key", "FUCK");
+                editTextEmail.setEnabled(true);
+                editTextName.setEnabled(true);
+                editTextPassword.setEnabled(true);
+                progressBar.setVisibility(View.INVISIBLE);
+                Toast.makeText(RegistrationPage.this, "Registration failed! Try again!", Toast.LENGTH_LONG).show();
+            }
+        });**/
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(RegistrationPage.this, new OnCompleteListener<AuthResult>() {
                     @Override
