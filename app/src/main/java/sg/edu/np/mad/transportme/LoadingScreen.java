@@ -36,7 +36,7 @@ public class LoadingScreen extends AppCompatActivity {
                     busStopDBHandler.addBusStops(busStops);
                     progressBar.setProgress(100);
                     globalBusStops = busStops;
-                    Intent goToLoginPage = new Intent(LoadingScreen.this, MainActivity.class);
+                    Intent goToLoginPage = new Intent(LoadingScreen.this, LoginPage.class);
                     startActivity(goToLoginPage);
                 }
             });
@@ -74,7 +74,7 @@ public class LoadingScreen extends AppCompatActivity {
                     }
                 }
             }, 200);
-            Intent goToLoginPage = new Intent(LoadingScreen.this, MainActivity.class);
+            Intent goToLoginPage = new Intent(LoadingScreen.this, LoginPage.class);
             startActivity(goToLoginPage);
 
         }
