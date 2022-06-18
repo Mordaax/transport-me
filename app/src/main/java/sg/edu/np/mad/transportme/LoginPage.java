@@ -27,6 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 
 public class LoginPage extends AppCompatActivity implements View.OnClickListener{
+    public static String globalEmail = "";
 
     //private TextView register;
     private EditText editTextEmail, editTextPassword;
@@ -97,6 +98,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                                     startActivity(new Intent(LoginPage.this, MainActivity.class));
                                     Toast.makeText(LoginPage.this, "Login Successful!", Toast.LENGTH_LONG).show();
                                     verified = false;
+                                    globalEmail = email;
                                 }
                             }
                         }
