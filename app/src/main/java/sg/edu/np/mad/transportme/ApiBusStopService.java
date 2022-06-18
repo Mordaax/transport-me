@@ -1,5 +1,4 @@
 package sg.edu.np.mad.transportme;
-
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
