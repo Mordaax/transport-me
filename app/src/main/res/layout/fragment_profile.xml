@@ -1,138 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ProfileFragment"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="175dp"
-        android:background="#E9B872"
-        android:padding="20dp">
-
-        <ImageView
-            android:id="@+id/AppSplashIcon"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_centerVertical="true"
-            android:src="@drawable/appsplashicon"></ImageView>
-
-        <TextView
-            android:id="@+id/TransportMe"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@id/AppSplashIcon"
-            android:fontFamily="@font/inter_bold"
-            android:text="TransportMe"
-            android:textColor="@color/white"
-            android:textSize="25dp"
-            android:includeFontPadding="false">
-        </TextView>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Your Favourite Transport App"
-            android:layout_toRightOf="@id/AppSplashIcon"
-            android:layout_below="@id/TransportMe"
-            android:layout_marginLeft="10dp"
-            android:textColor="@color/white">
-        </TextView>
-    </RelativeLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:orientation="vertical">
+        android:orientation="vertical" >
 
-        <com.google.android.material.textfield.TextInputLayout
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="175dp"
+            android:background="#E9B872"
+            android:padding="20dp">
+
+            <ImageView
+                android:id="@+id/AppSplashIcon"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/appsplashicon"></ImageView>
+
+            <TextView
+                android:id="@+id/TransportMe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/AppSplashIcon"
+                android:fontFamily="@font/inter_bold"
+                android:includeFontPadding="false"
+                android:text="TransportMe"
+                android:textColor="@color/white"
+                android:textSize="25dp"></TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/TransportMe"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/AppSplashIcon"
+                android:text="Your Favourite Transport App"
+                android:textColor="@color/white"></TextView>
+        </RelativeLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Full Name">
-            <com.google.android.material.textfield.TextInputEditText
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_baseline_person_24"
-                android:drawablePadding="15dp"
-                android:text="USERNAME PLACEHOLDER"
-                android:fontFamily="@font/inter_bold"
-                android:layout_marginBottom="30dp"
-                android:background="@color/white"/>
+                android:hint="Full Name">
 
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Email Address">
-            <com.google.android.material.textfield.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="30dp"
+                    android:background="@color/white"
+                    android:drawableLeft="@drawable/ic_baseline_person_24"
+                    android:drawablePadding="15dp"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="USERNAME PLACEHOLDER" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_baseline_email_24"
-                android:drawablePadding="15dp"
-                android:text="EMAIL PLACEHOLDER"
-                android:fontFamily="@font/inter_bold"
-                android:layout_marginBottom="30dp"
-                android:background="@color/white"/>
+                android:hint="Email Address">
 
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Password">
-            <com.google.android.material.textfield.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="30dp"
+                    android:background="@color/white"
+                    android:drawableLeft="@drawable/ic_baseline_email_24"
+                    android:drawablePadding="15dp"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="EMAIL PLACEHOLDER" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_baseline_lock_24"
-                android:drawablePadding="15dp"
-                android:text="PASSWORD PLACEHOLDER"
-                android:fontFamily="@font/inter_bold"
-                android:layout_marginBottom="30dp"
-                android:background="@color/white"/>
+                android:hint="Password">
 
-        </com.google.android.material.textfield.TextInputLayout>
-        <Button
-            android:id="@+id/signoutbutton"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="30dp"
+                    android:background="@color/white"
+                    android:drawableLeft="@drawable/ic_baseline_lock_24"
+                    android:drawablePadding="15dp"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="PASSWORD PLACEHOLDER" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/signoutbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="40dp"
+                android:backgroundTint="#A63D40"
+                android:fontFamily="@font/inter_bold"
+                android:padding="16dp"
+                android:text="sign out" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#A63D40"
-            android:fontFamily="@font/inter_bold"
-            android:padding="16dp"
-            android:text="sign out"
-            android:layout_marginBottom="40dp"/>
+            android:layout_height="match_parent"
+            android:background="#E9B872"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:fontFamily="@font/inter_bold"
+                android:gravity="center"
+                android:text="About Us"
+                android:textColor="@color/white"
+                android:textSize="20dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_bold"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="TransportMe is a transport app made to provide users with data that helps ease the process of transportation, it is an app coded on Android Studios by 5 Ngee Ann Polytechnic Students"
+                android:textColor="@color/white" />
+
+
+        </LinearLayout>
+
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#E9B872"
-        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:fontFamily="@font/inter_bold"
-            android:gravity="center"
-            android:text="About Us"
-            android:textColor="@color/white"
-            android:textSize="20dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/inter_bold"
-            android:gravity="center"
-            android:padding="20dp"
-            android:text="TransportMe is a transport app made to provide users with data that helps ease the process of transportation, it is an app coded on Android Studios by 5 Ngee Ann Polytechnic Students"
-            android:textColor="@color/white" />
-
-
-    </LinearLayout>
-
-
-
-</LinearLayout>
+</ScrollView>
