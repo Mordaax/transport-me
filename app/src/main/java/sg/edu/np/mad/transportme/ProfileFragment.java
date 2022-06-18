@@ -66,7 +66,9 @@ public class ProfileFragment extends Fragment {
         Button signoutButton = rootView.findViewById(R.id.signoutbutton);
         signoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
+                LoginPage.globalEmail = "";
                 startActivity(intent);
             }
         });

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -20,8 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,6 +34,7 @@ public class BusStopAdapter
 {
     ArrayList<BusStop> data;
     Context c;
+    FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/");
     public BusStopAdapter(ArrayList<BusStop> data, Context c)
     {
         this.c = c;
@@ -58,14 +58,15 @@ public class BusStopAdapter
     @Override
     public void onBindViewHolder(@NonNull BusStopViewHolder holder, int position) {
         BusStop content = data.get(position);
-        /*
+
         if (c.getClass().getSimpleName().equals("FavouritesFragment"))
         {
             String busStopCode = content.BusStopCode;
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
-                    .child("users")
-                    .child(firebaseUser.getUid())
+            //FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            DatabaseReference reference = db.getReference()
+                    .child("User")
+                    //.child(firebaseUser.getUid())
+                    .child("-N4rCMRCzeWBzId4jTJN")      //TEMP SOLUTION, use .child(globalEmail)
                     .child("Favourited");
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -83,7 +84,7 @@ public class BusStopAdapter
             });
             return;
         }
-        */
+
         ViewGroup cardView = holder.itemView.findViewById(R.id.base_cardview);
         View hiddenView = holder.itemView.findViewById(R.id.recyclerView2);
 
@@ -120,20 +121,29 @@ public class BusStopAdapter
         holder.BusStopCode.setText(content.BusStopCode);
         holder.RoadName.setText(content.RoadName);
 
-        //isFavourited(content.BusStopCode, holder.Favourite);
+        isFavourited(content.BusStopCode, holder.Favourite);
         holder.Favourite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                DatabaseReference reference = db.getReference()
+                        .child("User")
+                        //.child(firebaseUser.getUid())
+                        .child("-N4rCMRCzeWBzId4jTJN")      //TEMP SOLUTION, use .child(globalEmail)
+                        .child("Favourited")
+                        .child(content.BusStopCode);
 
-                if (holder.Favourite.getTag() == "Favourite")           //it might need to be 0 and 1s
+                if (holder.Favourite.getTag() == "Favourite")
                 {
                     holder.Favourite.setImageResource(R.drawable.filled_favourite);
                     holder.Favourite.setTag("Favourited");
+                    reference.setValue(true);
                 }
                 else
                 {
                     holder.Favourite.setImageResource(R.drawable.favourite);
                     holder.Favourite.setTag("Favourite");
+                    reference.setValue(null);
+
                 }
             }
         });
@@ -147,19 +157,22 @@ public class BusStopAdapter
         holder.RecyclerView2.setAdapter(adapterMember);
     }
 
-    /*
+
     private void isFavourited(String busStopCode, ImageView favouritedView)
     {
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
-                .child("users")
-                .child(firebaseUser.getUid())
-                .child("Favourited");
+        //FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference reference = db.getReference()
+                .child("User")
+                //.child(firebaseUser.getUid())
+                .child("-N4rCMRCzeWBzId4jTJN")      //TEMP SOLUTION
+                .child("Favourited")
+                .child(busStopCode);
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.child(busStopCode).exists())
+                Log.w("null anot? ","" + snapshot.getValue());
+                if (snapshot.getValue() != null)
                 {
                     favouritedView.setImageResource(R.drawable.filled_favourite);
                     favouritedView.setTag("Favourited");
@@ -176,7 +189,7 @@ public class BusStopAdapter
 
             }
         });
-    }*/
+    }
 
     @Override
     public int getItemCount() {
