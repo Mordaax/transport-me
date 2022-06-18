@@ -27,10 +27,12 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -216,8 +218,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
 
-
-
+    }
+    public void moveMapsCamera(Double latitude, Double longitude){
+        LatLng latlongmove = new LatLng(latitude, longitude);
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(latlongmove)
+                .zoom(17f)
+                .build();
+        CameraUpdate cu = CameraUpdateFactory.newCameraPosition(cameraPosition);
+        map.animateCamera(cu);
 
     }
     private void replaceFragment(Fragment fragment){
