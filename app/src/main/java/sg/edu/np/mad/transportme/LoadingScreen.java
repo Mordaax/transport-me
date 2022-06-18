@@ -21,8 +21,7 @@ public class LoadingScreen extends AppCompatActivity {
 
         ProgressBar progressBar = findViewById(R.id.progress_bar);
         TextView progressText = findViewById(R.id.progress_text);
-        /* Load Bus Stops API, can add persistent storage i guess?
-         */
+
         BusStopDBHandler busStopDBHandler = new BusStopDBHandler(LoadingScreen.this,null,null,1);
         globalBusStops = busStopDBHandler.getBusStops();
         if(globalBusStops.size() == 0){

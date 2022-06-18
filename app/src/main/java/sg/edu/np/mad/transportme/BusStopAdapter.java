@@ -1,5 +1,6 @@
 package sg.edu.np.mad.transportme;
 
+import android.app.Activity;
 import android.content.Context;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
@@ -11,8 +12,13 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
@@ -24,7 +30,8 @@ public class BusStopAdapter
     public BusStopAdapter(ArrayList<BusStop> data, Context c)
     {
         this.c = c;
-        this.data = data;                                       //this = this class / object
+        this.data = data;
+        //this = this class / object
     }
     /* Remove This????? */
     @Override
@@ -49,8 +56,10 @@ public class BusStopAdapter
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (holder.itemView.findViewById(R.id.recyclerView2).getVisibility() == View.VISIBLE){
+                ((MainActivity)c).moveMapsCamera(content.Latitude,content.Longitude);
 
+
+                if (holder.itemView.findViewById(R.id.recyclerView2).getVisibility() == View.VISIBLE){
                     RotateAnimation rotate = new RotateAnimation(-90, 0, Animation.RELATIVE_TO_SELF, 0.5f,          Animation.RELATIVE_TO_SELF, 0.5f);
                     rotate.setDuration(250);
                     rotate.setInterpolator(new LinearInterpolator());
@@ -79,6 +88,7 @@ public class BusStopAdapter
         holder.Favourite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 if (holder.Favourite.getTag() == "Favourite")           //it might need to be 0 and 1s
                 {
                     holder.Favourite.setImageResource(R.drawable.filled_favourite);
