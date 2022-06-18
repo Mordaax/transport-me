@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -50,14 +58,42 @@ public class BusStopAdapter
     @Override
     public void onBindViewHolder(@NonNull BusStopViewHolder holder, int position) {
         BusStop content = data.get(position);
+        /*
+        if (c.getClass().getSimpleName().equals("FavouritesFragment"))
+        {
+            String busStopCode = content.BusStopCode;
+            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+                    .child("users")
+                    .child(firebaseUser.getUid())
+                    .child("Favourited");
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (!snapshot.child(busStopCode).exists())
+                    {
+                        return;
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+            return;
+        }
+        */
         ViewGroup cardView = holder.itemView.findViewById(R.id.base_cardview);
         View hiddenView = holder.itemView.findViewById(R.id.recyclerView2);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity)c).moveMapsCamera(content.Latitude,content.Longitude);
-
+                if (c.getClass().getSimpleName().equals("MainActivity"))
+                {
+                    ((MainActivity)c).moveMapsCamera(content.Latitude,content.Longitude);
+                }
 
                 if (holder.itemView.findViewById(R.id.recyclerView2).getVisibility() == View.VISIBLE){
                     RotateAnimation rotate = new RotateAnimation(-90, 0, Animation.RELATIVE_TO_SELF, 0.5f,          Animation.RELATIVE_TO_SELF, 0.5f);
