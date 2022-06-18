@@ -85,30 +85,26 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                 editTextEmail.setEnabled(false);
                 editTextPassword.setEnabled(false);
                 progressBar.setVisibility(View.VISIBLE);
-
                 FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/");
                 DatabaseReference myRef = db.getReference("User");
                 myRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        boolean verified = true;
                         for(DataSnapshot user : snapshot.getChildren()) {
                             if (user.child("email").getValue().toString().equals(email)) {
                                 if (BCrypt.verifyer().verify(password.toCharArray(), user.child("password").getValue().toString()).verified){
                                     startActivity(new Intent(LoginPage.this, MainActivity.class));
-                                }
-                                else {
-                                    Toast.makeText(LoginPage.this, "Invalid Credentials, please try again", Toast.LENGTH_LONG).show();
-                                    editTextEmail.setEnabled(true);
-                                    editTextPassword.setEnabled(true);
-                                    progressBar.setVisibility(View.INVISIBLE);
+                                    Toast.makeText(LoginPage.this, "Login Successful!", Toast.LENGTH_LONG).show();
+                                    verified = false;
                                 }
                             }
-                            else {
-                                Toast.makeText(LoginPage.this, "Invalid Credentials, please try again", Toast.LENGTH_LONG).show();
-                                editTextEmail.setEnabled(true);
-                                editTextPassword.setEnabled(true);
-                                progressBar.setVisibility(View.INVISIBLE);
-                            }
+                        }
+                        if (verified){
+                            Toast.makeText(LoginPage.this, "Invalid Credentials, please try again", Toast.LENGTH_LONG).show();
+                            editTextEmail.setEnabled(true);
+                            editTextPassword.setEnabled(true);
+                            progressBar.setVisibility(View.INVISIBLE);
                         }
                     }
 
