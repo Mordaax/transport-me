@@ -99,6 +99,7 @@ public class RegistrationPage extends AppCompatActivity {
                 dbUser.add(u).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
+                        Toast.makeText(RegistrationPage.this, "Registration successful!", Toast.LENGTH_LONG).show();
                         startActivity(new Intent(RegistrationPage.this, MainActivity.class));
                         finish();
                     }
@@ -112,9 +113,6 @@ public class RegistrationPage extends AppCompatActivity {
                         Toast.makeText(RegistrationPage.this, "Registration failed! Try again!", Toast.LENGTH_LONG).show();
                     }
                 });
-                if (register){
-                    startActivity(regIntent);
-                }
             }
         });
         Intent myIntent = new Intent(this, LoginPage.class);
