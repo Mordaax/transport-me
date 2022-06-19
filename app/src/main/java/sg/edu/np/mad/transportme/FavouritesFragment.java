@@ -1,7 +1,11 @@
 package sg.edu.np.mad.transportme;
 
+import static sg.edu.np.mad.transportme.LoginPage.globalFavouriteBusStop;
+import static sg.edu.np.mad.transportme.LoginPage.globalName;
+
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,8 +14,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,14 +77,30 @@ public class FavouritesFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_favourites, container, false);
+        ApiBusStopService apiBusStopService = new ApiBusStopService(getContext());
+        apiBusStopService.getBusService(globalFavouriteBusStop,new ApiBusStopService.VolleyResponseListener2() {
+            @Override
+            public void onError(String message) {
+                Toast.makeText(getContext(),"Cannot Get Bus Stops",Toast.LENGTH_LONG).show();
+            }
+            @Override
+            public void onResponse(ArrayList<BusStop> busStopsLoaded) {
 
 
-        RecyclerView rv = rootView.findViewById(R.id.favouritesrecyclerView);
+                RecyclerView rv = rootView.findViewById(R.id.favouritesrecyclerView);
+                BusStopAdapter adapter = new BusStopAdapter(globalFavouriteBusStop,getContext());
+                LinearLayoutManager layout = new LinearLayoutManager(getContext());
+                rv.setAdapter(adapter);
+                rv.setLayoutManager(layout);
+            }
+        });
+
+        /*RecyclerView rv = rootView.findViewById(R.id.favouritesrecyclerView);
         ArrayList<BusStop> busStops = LoadingScreen.globalBusStops;
         BusStopAdapter adapter = new BusStopAdapter(busStops, rootView.getContext());
         LinearLayoutManager layout = new LinearLayoutManager(rootView.getContext());
         rv.setAdapter(adapter);
-        rv.setLayoutManager(layout);
+        rv.setLayoutManager(layout);*/
 
         return rootView;
     }

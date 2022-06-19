@@ -1,5 +1,7 @@
 package sg.edu.np.mad.transportme;
 
+import static sg.edu.np.mad.transportme.LoadingScreen.globalBusStops;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,11 +20,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 import at.favre.lib.crypto.bcrypt.BCrypt;
 
 public class LoginPage extends AppCompatActivity implements View.OnClickListener{
     public static String globalName = "";
     public static Boolean SignedIn = false;
+    public static ArrayList<BusStop> globalFavouriteBusStop = new ArrayList<>();
     //private TextView register;
     private EditText editTextEmail, editTextPassword;
     private Button signIn, register;
@@ -96,7 +101,22 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                                     }
                                 }
                             }
+
                         }
+
+                        if(SignedIn){
+                            globalFavouriteBusStop.clear();
+                            /*DatabaseReference favouriteref = myRef.child(globalName).child("Favourited");*/
+                            for (DataSnapshot favBS : snapshot.child(globalName).child("Favourited").getChildren()) {
+                                String busStopCode = favBS.getKey();
+                                for (int i = 0 ; i< globalBusStops.size(); i++){
+                                    if (busStopCode.equals(globalBusStops.get(i).BusStopCode)){
+                                        globalFavouriteBusStop.add(globalBusStops.get(i));
+                                    }
+                                }
+                            }
+                        }
+
                         if (!SignedIn){
                             Toast.makeText(LoginPage.this, "Invalid Credentials, please try again", Toast.LENGTH_LONG).show();
                             editTextEmail.setEnabled(true);
