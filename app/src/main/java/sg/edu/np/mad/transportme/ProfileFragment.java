@@ -1,5 +1,8 @@
 package sg.edu.np.mad.transportme;
 
+import static sg.edu.np.mad.transportme.LoginPage.globalEmail;
+import static sg.edu.np.mad.transportme.LoginPage.globalName;
+
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -9,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import com.google.android.material.textfield.TextInputEditText;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,14 +66,20 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
+        TextInputEditText username = rootView.findViewById(R.id.profileuserName);
+        TextInputEditText email = rootView.findViewById(R.id.profileuserEmail);
+
+        username.setText(globalName);
+        email.setText(globalEmail);
         Intent intent = new Intent(getActivity(), LoginPage.class);
         Button signoutButton = rootView.findViewById(R.id.signoutbutton);
         signoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
-                LoginPage.globalName = "";
+                globalName = "";
                 LoginPage.SignedIn = false;
                 startActivity(intent);
             }
