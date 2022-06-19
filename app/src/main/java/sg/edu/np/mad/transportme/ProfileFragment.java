@@ -68,7 +68,8 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view)
             {
-                LoginPage.globalEmail = "";
+                LoginPage.globalName = "";
+                LoginPage.SignedIn = false;
                 startActivity(intent);
             }
         });

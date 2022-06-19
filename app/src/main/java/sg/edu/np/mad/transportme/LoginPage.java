@@ -5,19 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,12 +21,11 @@ import com.google.firebase.database.ValueEventListener;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 
 public class LoginPage extends AppCompatActivity implements View.OnClickListener{
-    public static String globalEmail = "";
-
+    public static String globalName = "";
+    public static Boolean SignedIn = false;
     //private TextView register;
     private EditText editTextEmail, editTextPassword;
     private Button signIn, register;
-
     private ProgressBar progressBar;
 
     @Override
@@ -91,18 +84,20 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                 myRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        boolean verified = true;
                         for(DataSnapshot user : snapshot.getChildren()) {
                             if (user.child("email").getValue().toString().equals(email)) {
                                 if (BCrypt.verifyer().verify(password.toCharArray(), user.child("password").getValue().toString()).verified){
-                                    startActivity(new Intent(LoginPage.this, MainActivity.class));
-                                    Toast.makeText(LoginPage.this, "Login Successful!", Toast.LENGTH_LONG).show();
-                                    verified = false;
-                                    globalEmail = email;
+                                    if(!SignedIn)
+                                    {
+                                        Toast.makeText(LoginPage.this, "Login Successful!", Toast.LENGTH_LONG).show();
+                                        globalName = user.child("name").getValue().toString();
+                                        SignedIn = true;
+                                        startActivity(new Intent(LoginPage.this, MainActivity.class));
+                                    }
                                 }
                             }
                         }
-                        if (verified){
+                        if (!SignedIn){
                             Toast.makeText(LoginPage.this, "Invalid Credentials, please try again", Toast.LENGTH_LONG).show();
                             editTextEmail.setEnabled(true);
                             editTextPassword.setEnabled(true);

@@ -1,5 +1,7 @@
 package sg.edu.np.mad.transportme;
 
+import static sg.edu.np.mad.transportme.LoginPage.globalName;
+
 import android.app.Activity;
 import android.content.Context;
 import android.transition.AutoTransition;
@@ -66,7 +68,7 @@ public class BusStopAdapter
             DatabaseReference reference = db.getReference()
                     .child("User")
                     //.child(firebaseUser.getUid())
-                    .child("-N4rCMRCzeWBzId4jTJN")      //TEMP SOLUTION, use .child(globalEmail)
+                    .child(globalName)
                     .child("Favourited");
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -128,7 +130,7 @@ public class BusStopAdapter
                 DatabaseReference reference = db.getReference()
                         .child("User")
                         //.child(firebaseUser.getUid())
-                        .child("-N4rCMRCzeWBzId4jTJN")      //TEMP SOLUTION, use .child(globalEmail)
+                        .child(globalName)
                         .child("Favourited")
                         .child(content.BusStopCode);
 
@@ -164,7 +166,7 @@ public class BusStopAdapter
         DatabaseReference reference = db.getReference()
                 .child("User")
                 //.child(firebaseUser.getUid())
-                .child("-N4rCMRCzeWBzId4jTJN")      //TEMP SOLUTION
+                .child(globalName)
                 .child("Favourited")
                 .child(busStopCode);
 
