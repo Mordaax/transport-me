@@ -26,8 +26,10 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 
 public class LoginPage extends AppCompatActivity implements View.OnClickListener{
     public static String globalName = "";
+    public static String globalEmail = "";
     public static Boolean SignedIn = false;
     public static ArrayList<BusStop> globalFavouriteBusStop = new ArrayList<>();
+
     //private TextView register;
     private EditText editTextEmail, editTextPassword;
     private Button signIn, register;
@@ -96,6 +98,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                                     {
                                         Toast.makeText(LoginPage.this, "Login Successful!", Toast.LENGTH_LONG).show();
                                         globalName = user.child("name").getValue().toString();
+                                        globalEmail = user.child("email").getValue().toString();
                                         SignedIn = true;
                                         startActivity(new Intent(LoginPage.this, MainActivity.class));
                                     }
