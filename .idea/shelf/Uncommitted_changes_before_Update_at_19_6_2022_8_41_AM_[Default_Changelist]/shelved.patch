@@ -1,0 +1,331 @@
+Index: app/src/main/java/sg/edu/np/mad/transportme/SearchFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package sg.edu.np.mad.transportme;\r\n\r\nimport android.os.Bundle;\r\n\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\n\r\n/**\r\n * A simple {@link Fragment} subclass.\r\n * Use the {@link SearchFragment#newInstance} factory method to\r\n * create an instance of this fragment.\r\n */\r\npublic class SearchFragment extends Fragment {\r\n\r\n    // TODO: Rename parameter arguments, choose names that match\r\n    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER\r\n    private static final String ARG_PARAM1 = \"param1\";\r\n    private static final String ARG_PARAM2 = \"param2\";\r\n\r\n    // TODO: Rename and change types of parameters\r\n    private String mParam1;\r\n    private String mParam2;\r\n\r\n    public SearchFragment() {\r\n        // Required empty public constructor\r\n    }\r\n\r\n    /**\r\n     * Use this factory method to create a new instance of\r\n     * this fragment using the provided parameters.\r\n     *\r\n     * @param param1 Parameter 1.\r\n     * @param param2 Parameter 2.\r\n     * @return A new instance of fragment SearchFragment.\r\n     */\r\n    // TODO: Rename and change types and number of parameters\r\n    public static SearchFragment newInstance(String param1, String param2) {\r\n        SearchFragment fragment = new SearchFragment();\r\n        Bundle args = new Bundle();\r\n        args.putString(ARG_PARAM1, param1);\r\n        args.putString(ARG_PARAM2, param2);\r\n        fragment.setArguments(args);\r\n        return fragment;\r\n    }\r\n\r\n    @Override\r\n    public void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        if (getArguments() != null) {\r\n            mParam1 = getArguments().getString(ARG_PARAM1);\r\n            mParam2 = getArguments().getString(ARG_PARAM2);\r\n        }\r\n\r\n\r\n    }\r\n\r\n    @Override\r\n    public View onCreateView(LayoutInflater inflater, ViewGroup container,\r\n                             Bundle savedInstanceState) {\r\n        // Inflate the layout for this fragment\r\n        return inflater.inflate(R.layout.fragment_search, container, false);\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/sg/edu/np/mad/transportme/SearchFragment.java b/app/src/main/java/sg/edu/np/mad/transportme/SearchFragment.java
+--- a/app/src/main/java/sg/edu/np/mad/transportme/SearchFragment.java	(revision c56362856844a30d0bee2510a943d646a2a204aa)
++++ b/app/src/main/java/sg/edu/np/mad/transportme/SearchFragment.java	(date 1655567590036)
+@@ -1,12 +1,36 @@
+ package sg.edu.np.mad.transportme;
+ 
++import static sg.edu.np.mad.transportme.LoadingScreen.globalBusStops;
++
++import android.app.Activity;
++import android.content.Intent;
+ import android.os.Bundle;
+ 
++import androidx.annotation.NonNull;
++import androidx.annotation.Nullable;
+ import androidx.fragment.app.Fragment;
++import androidx.recyclerview.widget.LinearLayoutManager;
++import androidx.recyclerview.widget.RecyclerView;
+ 
++import android.util.Log;
++import android.view.KeyEvent;
+ import android.view.LayoutInflater;
+ import android.view.View;
+ import android.view.ViewGroup;
++import android.view.inputmethod.EditorInfo;
++import android.widget.Button;
++import android.widget.EditText;
++import android.widget.FrameLayout;
++import android.widget.LinearLayout;
++import android.widget.TextView;
++import android.widget.Toast;
++
++import com.google.android.gms.maps.CameraUpdateFactory;
++import com.google.android.gms.maps.GoogleMap;
++import com.google.android.gms.maps.SupportMapFragment;
++import com.google.android.gms.maps.model.LatLng;
++
++import java.util.ArrayList;
+ 
+ /**
+  * A simple {@link Fragment} subclass.
+@@ -25,6 +49,7 @@
+     private String mParam2;
+ 
+     public SearchFragment() {
++
+         // Required empty public constructor
+     }
+ 
+@@ -55,12 +80,71 @@
+         }
+ 
+ 
++
++        /**/
++
+     }
+ 
+     @Override
+-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+-                             Bundle savedInstanceState) {
++    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+         // Inflate the layout for this fragment
+-        return inflater.inflate(R.layout.fragment_search, container, false);
++        View view = inflater.inflate(R.layout.fragment_search, container, false);
++        EditText searchBar = (EditText) view.findViewById(R.id.editTextSearch);
++        Button GoToMap = view.findViewById(R.id.buttonFind);
++       /* Double latitude;
++        Double longitude;
++        GoogleMap map = ((SupportMapFragment) getFragmentManager()
++                .findFragmentById(R.id.map)).getMapAsync();*/
++        searchBar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
++            @Override
++            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
++                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
++                    ArrayList<BusStop> closeBusStops = new ArrayList<>();
++                    for (int i = 0; i<globalBusStops.size();i++){
++                        if (globalBusStops.get(i).BusStopCode.equals(String.valueOf(searchBar.getText()))) {
++                            closeBusStops.add(globalBusStops.get(i));
++                        }
++                    }
++                    ApiBusStopService apiBusStopService = new ApiBusStopService(getActivity());
++                    apiBusStopService.getBusService(closeBusStops,new ApiBusStopService.VolleyResponseListener2() {
++                        @Override
++                        public void onError(String message) {
++
++                        }
++                        @Override
++                        public void onResponse(ArrayList<BusStop> busStopsLoaded) {
++
++                            RecyclerView rv = view.findViewById(R.id.searchrecyclerView);
++                            BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,getActivity());
++                            LinearLayoutManager layout = new LinearLayoutManager(getActivity());
++                            rv.setAdapter(adapter);
++                            rv.setLayoutManager(layout);
++
++                        }
++                    });
++                    GoToMap.setOnClickListener(new View.OnClickListener() {
++                        @Override
++                        public void onClick(View view) {
++                            LinearLayout mapandrv = view.findViewById(R.id.MapAndRV);
++                            FrameLayout fragmentlayout = view.findViewById(R.id.frame_layout);
++                            /*MainActivity main = ;*/
++                            MainActivity main = (MainActivity) getActivity();
++
++                            fragmentlayout.setVisibility(View.INVISIBLE);
++                            mapandrv.setVisibility(View.VISIBLE);
++
++                           /*GoogleMap gmaps= view .findViewById(R.id.map);
++                            gmaps.moveMapsCamera(closeBusStops.get(0).Latitude,closeBusStops.get(0).Longitude);*/
++
++                        }
++                    });
++                    return true;
++                }
++                return false;
++            }
++        });
++
++
++        return view;
+     }
+ }
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_search.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".SearchFragment\"\r\n    android:orientation=\"vertical\">\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\">\r\n\r\n        <EditText\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"match_parent\"\r\n            android:drawableRight=\"@drawable/ic_baseline_search_24\"\r\n            android:hint=\"Search\"\r\n            android:padding=\"20dp\" />\r\n\r\n    </LinearLayout>\r\n\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\">\r\n\r\n        <androidx.recyclerview.widget.RecyclerView\r\n            android:id=\"@+id/searchrecyclerView\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"match_parent\"\r\n            android:layout_marginStart=\"1dp\"\r\n            android:layout_marginTop=\"2dp\"\r\n            android:layout_weight=\"1\"\r\n            android:clipToPadding=\"false\">\r\n\r\n        </androidx.recyclerview.widget.RecyclerView>\r\n    </LinearLayout>\r\n\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_search.xml b/app/src/main/res/layout/fragment_search.xml
+--- a/app/src/main/res/layout/fragment_search.xml	(revision c56362856844a30d0bee2510a943d646a2a204aa)
++++ b/app/src/main/res/layout/fragment_search.xml	(date 1655567590042)
+@@ -1,21 +1,46 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     tools:context=".SearchFragment"
+     android:orientation="vertical">
+ 
++    <LinearLayout
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:orientation="horizontal">
++
++        <TextView
++            android:id="@+id/textView2"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text="Bus Stop Search"
++            android:textSize="34sp" />
++
++        <ImageView
++            android:id="@+id/imageView2"
++            android:layout_width="48dp"
++            android:layout_height="48dp"
++            android:layout_weight="1"
++            android:src="@drawable/appsplashicon" />
++    </LinearLayout>
++
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content">
+ 
+         <EditText
++            android:imeOptions="actionSearch"
++            android:id="@+id/editTextSearch"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:drawableRight="@drawable/ic_baseline_search_24"
+-            android:hint="Search"
+-            android:padding="20dp" />
++            android:hint="Bus Stop Code"
++            android:singleLine="true"
++            android:padding="20dp"
++            />
+ 
+     </LinearLayout>
+ 
+@@ -27,14 +52,23 @@
+         <androidx.recyclerview.widget.RecyclerView
+             android:id="@+id/searchrecyclerView"
+             android:layout_width="match_parent"
+-            android:layout_height="match_parent"
++            android:layout_height="wrap_content"
+             android:layout_marginStart="1dp"
+             android:layout_marginTop="2dp"
+             android:layout_weight="1"
+             android:clipToPadding="false">
+ 
+         </androidx.recyclerview.widget.RecyclerView>
++
+     </LinearLayout>
+ 
++    <Button
++        android:id="@+id/buttonFind"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:capitalize="none"
++        android:text="Find Bus Stop on Map"
++        android:textAllCaps="false" />
++
+ 
+ </LinearLayout>
+\ No newline at end of file
+Index: app/src/main/java/sg/edu/np/mad/transportme/BusStopAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package sg.edu.np.mad.transportme;\r\n\r\nimport android.app.Activity;\r\nimport android.content.Context;\r\nimport android.transition.AutoTransition;\r\nimport android.transition.TransitionManager;\r\nimport android.util.Log;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.view.animation.Animation;\r\nimport android.view.animation.LinearInterpolator;\r\nimport android.view.animation.RotateAnimation;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport com.google.android.gms.maps.CameraUpdateFactory;\r\nimport com.google.android.gms.maps.GoogleMap;\r\nimport com.google.android.gms.maps.model.LatLng;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.util.ArrayList;\r\n\r\npublic class BusStopAdapter\r\n        extends RecyclerView.Adapter<BusStopViewHolder>        //just like list, need declare <data type>\r\n{\r\n    ArrayList<BusStop> data;\r\n    Context c;\r\n    public BusStopAdapter(ArrayList<BusStop> data, Context c)\r\n    {\r\n        this.c = c;\r\n        this.data = data;\r\n        //this = this class / object\r\n    }\r\n    /* Remove This????? */\r\n    @Override\r\n    public int getItemViewType(int position){\r\n        return (position%5==0)?0:1;\r\n    }\r\n\r\n    @NonNull\r\n    @Override\r\n    public BusStopViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {\r\n        View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.bus_stop_layout, parent,false);\r\n\r\n        return new BusStopViewHolder(item);\r\n    }\r\n\r\n    @Override\r\n    public void onBindViewHolder(@NonNull BusStopViewHolder holder, int position) {\r\n        BusStop content = data.get(position);\r\n        /*\r\n        if (c.getClass().getSimpleName().equals(\"FavouritesFragment\"))\r\n        {\r\n            String busStopCode = content.BusStopCode;\r\n            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();\r\n            DatabaseReference reference = FirebaseDatabase.getInstance().getReference()\r\n                    .child(\"users\")\r\n                    .child(firebaseUser.getUid())\r\n                    .child(\"Favourited\");\r\n            reference.addValueEventListener(new ValueEventListener() {\r\n                @Override\r\n                public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                    if (!snapshot.child(busStopCode).exists())\r\n                    {\r\n                        return;\r\n                    }\r\n                }\r\n\r\n                @Override\r\n                public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                }\r\n            });\r\n            return;\r\n        }\r\n        */\r\n        ViewGroup cardView = holder.itemView.findViewById(R.id.base_cardview);\r\n        View hiddenView = holder.itemView.findViewById(R.id.recyclerView2);\r\n\r\n        holder.itemView.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                if (c.getClass().getSimpleName().equals(\"MainActivity\"))\r\n                {\r\n                    ((MainActivity)c).moveMapsCamera(content.Latitude,content.Longitude);\r\n                }\r\n\r\n                if (holder.itemView.findViewById(R.id.recyclerView2).getVisibility() == View.VISIBLE){\r\n                    RotateAnimation rotate = new RotateAnimation(-90, 0, Animation.RELATIVE_TO_SELF, 0.5f,          Animation.RELATIVE_TO_SELF, 0.5f);\r\n                    rotate.setDuration(250);\r\n                    rotate.setInterpolator(new LinearInterpolator());\r\n                    holder.itemView.findViewById(R.id.DropDownArrow).startAnimation(rotate);\r\n                    holder.itemView.findViewById(R.id.DropDownArrow).setRotation(90);\r\n                    TransitionManager.beginDelayedTransition(cardView,new AutoTransition());\r\n                    holder.itemView.findViewById(R.id.recyclerView2).setVisibility(View.GONE);\r\n                }\r\n                else{\r\n                    RotateAnimation rotate = new RotateAnimation(90, 0, Animation.RELATIVE_TO_SELF, 0.5f,          Animation.RELATIVE_TO_SELF, 0.5f);\r\n                    rotate.setDuration(250);\r\n                    rotate.setInterpolator(new LinearInterpolator());\r\n                    holder.itemView.findViewById(R.id.DropDownArrow).startAnimation(rotate);\r\n                    holder.itemView.findViewById(R.id.DropDownArrow).setRotation(0);\r\n                    TransitionManager.beginDelayedTransition(cardView,new AutoTransition());\r\n                    hiddenView.setVisibility(View.VISIBLE);\r\n                }\r\n            }\r\n        });\r\n\r\n        holder.Description.setText(content.Description);\r\n        holder.BusStopCode.setText(content.BusStopCode);\r\n        holder.RoadName.setText(content.RoadName);\r\n\r\n        //isFavourited(content.BusStopCode, holder.Favourite);\r\n        holder.Favourite.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n\r\n                if (holder.Favourite.getTag() == \"Favourite\")           //it might need to be 0 and 1s\r\n                {\r\n                    holder.Favourite.setImageResource(R.drawable.filled_favourite);\r\n                    holder.Favourite.setTag(\"Favourited\");\r\n                }\r\n                else\r\n                {\r\n                    holder.Favourite.setImageResource(R.drawable.favourite);\r\n                    holder.Favourite.setTag(\"Favourite\");\r\n                }\r\n            }\r\n        });\r\n\r\n        /*RecyclerView rv = c.findViewById(R.id.recyclerView2);*/\r\n        BusServiceAdapter adapterMember = new BusServiceAdapter(content.busServices);\r\n        LinearLayoutManager layout = new LinearLayoutManager(c);\r\n        /*rv.setAdapter(adapter);\r\n        rv.setLayoutManager(layout);*/\r\n        holder.RecyclerView2.setLayoutManager(layout);\r\n        holder.RecyclerView2.setAdapter(adapterMember);\r\n    }\r\n\r\n    /*\r\n    private void isFavourited(String busStopCode, ImageView favouritedView)\r\n    {\r\n        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();\r\n        DatabaseReference reference = FirebaseDatabase.getInstance().getReference()\r\n                .child(\"users\")\r\n                .child(firebaseUser.getUid())\r\n                .child(\"Favourited\");\r\n\r\n        reference.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                if (snapshot.child(busStopCode).exists())\r\n                {\r\n                    favouritedView.setImageResource(R.drawable.filled_favourite);\r\n                    favouritedView.setTag(\"Favourited\");\r\n                }\r\n                else\r\n                {\r\n                    favouritedView.setImageResource(R.drawable.favourite);\r\n                    favouritedView.setTag(\"Favourite\");\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n            }\r\n        });\r\n    }*/\r\n\r\n    @Override\r\n    public int getItemCount() {\r\n        return data.size();\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/sg/edu/np/mad/transportme/BusStopAdapter.java b/app/src/main/java/sg/edu/np/mad/transportme/BusStopAdapter.java
+--- a/app/src/main/java/sg/edu/np/mad/transportme/BusStopAdapter.java	(revision c56362856844a30d0bee2510a943d646a2a204aa)
++++ b/app/src/main/java/sg/edu/np/mad/transportme/BusStopAdapter.java	(date 1655567702636)
+@@ -20,8 +20,8 @@
+ import com.google.android.gms.maps.CameraUpdateFactory;
+ import com.google.android.gms.maps.GoogleMap;
+ import com.google.android.gms.maps.model.LatLng;
+-import com.google.firebase.auth.FirebaseAuth;
+-import com.google.firebase.auth.FirebaseUser;
++/*import com.google.firebase.auth.FirebaseAuth;
++import com.google.firebase.auth.FirebaseUser;*/
+ import com.google.firebase.database.DataSnapshot;
+ import com.google.firebase.database.DatabaseError;
+ import com.google.firebase.database.DatabaseReference;
+Index: app/src/main/java/sg/edu/np/mad/transportme/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package sg.edu.np.mad.transportme;\r\n\r\nimport static android.Manifest.permission.ACCESS_COARSE_LOCATION;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.RequiresApi;\r\nimport androidx.core.app.ActivityCompat;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.fragment.app.FragmentActivity;\r\nimport androidx.fragment.app.FragmentManager;\r\nimport androidx.fragment.app.FragmentTransaction;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport android.Manifest;\r\nimport android.annotation.SuppressLint;\r\nimport android.content.Intent;\r\nimport android.content.pm.PackageManager;\r\nimport android.location.Address;\r\nimport android.location.Geocoder;\r\nimport android.location.Location;\r\nimport android.location.LocationListener;\r\nimport android.location.LocationManager;\r\nimport android.os.Build;\r\nimport android.os.Bundle;\r\nimport android.view.View;\r\nimport android.widget.FrameLayout;\r\nimport android.widget.LinearLayout;\r\nimport android.widget.Toast;\r\n\r\nimport com.google.android.gms.maps.CameraUpdate;\r\nimport com.google.android.gms.maps.CameraUpdateFactory;\r\nimport com.google.android.gms.maps.GoogleMap;\r\nimport com.google.android.gms.maps.OnMapReadyCallback;\r\nimport com.google.android.gms.maps.SupportMapFragment;\r\nimport com.google.android.gms.maps.model.CameraPosition;\r\nimport com.google.android.gms.maps.model.LatLng;\r\nimport com.google.android.gms.maps.model.MarkerOptions;\r\nimport com.google.android.material.bottomnavigation.BottomNavigationView;\r\n\r\nimport java.io.IOException;\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\n\r\npublic class MainActivity extends FragmentActivity implements OnMapReadyCallback  {\r\n\r\n    GoogleMap map;\r\n    LocationManager locationManager;\r\n\r\n    private static final String[] LOCATION_PERMS={\r\n            Manifest.permission.ACCESS_COARSE_LOCATION,\r\n            Manifest.permission.ACCESS_FINE_LOCATION\r\n    };\r\n\r\n    private static final int LOCATION_REQUEST=1337;\r\n\r\n    @RequiresApi(api = Build.VERSION_CODES.M)\r\n    @SuppressLint(\"MissingPermission\")\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_main);\r\n\r\n        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);\r\n        bottomNavigationView.setOnItemSelectedListener(item ->{\r\n            LinearLayout mapandrv = findViewById(R.id.MapAndRV);\r\n            FrameLayout fragmentlayout = findViewById(R.id.frame_layout);\r\n            switch(item.getItemId()){\r\n                case R.id.home:\r\n                    fragmentlayout.setVisibility(View.INVISIBLE);\r\n                    mapandrv.setVisibility(View.VISIBLE);\r\n                    break;\r\n                case R.id.favourites:\r\n                    mapandrv.setVisibility(View.INVISIBLE);\r\n                    fragmentlayout.setVisibility(View.VISIBLE);\r\n                    replaceFragment(new FavouritesFragment());\r\n                    break;\r\n                case R.id.search:\r\n                    mapandrv.setVisibility(View.INVISIBLE);\r\n                    fragmentlayout.setVisibility(View.VISIBLE);\r\n                    replaceFragment(new SearchFragment());\r\n                    break;\r\n                case R.id.profile:\r\n                    mapandrv.setVisibility(View.INVISIBLE);\r\n                    fragmentlayout.setVisibility(View.VISIBLE);\r\n                    replaceFragment(new ProfileFragment());\r\n                    break;\r\n            }\r\n            return true;\r\n        });\r\n\r\n        requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);\r\n\r\n        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);\r\n        mapFragment.getMapAsync(this);\r\n        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);\r\n\r\n        ArrayList<BusStop> busStops = LoadingScreen.globalBusStops;\r\n\r\n        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {\r\n            // TODO: Consider calling\r\n            //    ActivityCompat#requestPermissions\r\n            // here to request the missing permissions, and then overriding\r\n            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,\r\n            //                                          int[] grantResults)\r\n            // to handle the case where the user grants the permission. See the documentation\r\n            // for ActivityCompat#requestPermissions for more details.\r\n            return;\r\n        }\r\n        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {\r\n            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 10, new LocationListener() {\r\n                @Override\r\n                public void onLocationChanged(@NonNull Location location) {\r\n                    Double Latitude = location.getLatitude();\r\n                    Double Longitude = location.getLongitude();\r\n                    LatLng latLng = new LatLng(Latitude, Longitude);\r\n                    Geocoder geocoder = new Geocoder(getApplicationContext());\r\n\r\n                    /* For testing purposes, Remove at the end */\r\n                    /*Latitude = 1.332346;\r\n                    Longitude = 103.777561;*/\r\n\r\n                    Double Closeness = 0.00304;\r\n                    ArrayList<BusStop> closeBusStops = new ArrayList<>();\r\n                    for (int i = 0; i < busStops.size(); i++){\r\n                        BusStop busStop = busStops.get(i);\r\n                        if (busStop.Longitude < Longitude+Closeness && busStop.Longitude > Longitude-Closeness\r\n                                && busStop.Latitude < Latitude+Closeness && busStop.Latitude > Latitude-Closeness){\r\n                            closeBusStops.add(busStop);\r\n                            LatLng latlongmarker = new LatLng(busStop.Latitude, busStop.Longitude);\r\n                            map.addMarker(new MarkerOptions().position(latlongmarker).title(busStop.Description));\r\n                        }\r\n                    }\r\n                    ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);\r\n                    apiBusStopService.getBusService(closeBusStops,new ApiBusStopService.VolleyResponseListener2() {\r\n                        @Override\r\n                        public void onError(String message) {\r\n                            Toast.makeText(MainActivity.this,\"Cannot Get Bus Stops\",Toast.LENGTH_LONG).show();\r\n                        }\r\n                        @Override\r\n                        public void onResponse(ArrayList<BusStop> busStopsLoaded) {\r\n                            RecyclerView rv = findViewById(R.id.recyclerView);\r\n                            BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,MainActivity.this);\r\n                            LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);\r\n                            rv.setAdapter(adapter);\r\n                            rv.setLayoutManager(layout);\r\n                        }\r\n                    });\r\n                    try {\r\n                        List<Address> addressList = geocoder.getFromLocation(Latitude, Longitude, 1);\r\n                        String str = addressList.get(0).getLocality()+\", \";\r\n                        str += addressList.get(0).getCountryName();\r\n\r\n                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16.2f));\r\n                    } catch (IOException e){\r\n                        e.printStackTrace();\r\n                    }\r\n                }\r\n            });\r\n        }\r\n        else if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){\r\n            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60000, 10, new LocationListener() {\r\n                @Override\r\n                public void onLocationChanged(@NonNull Location location) {\r\n                    Double Latitude = location.getLatitude();\r\n                    Double Longitude = location.getLongitude();\r\n\r\n                    /* For testing purposes, Remove at the end */\r\n                    /*Latitude = 1.332346;\r\n                    Longitude = 103.777561;*/\r\n\r\n                    LatLng latLng = new LatLng(Latitude, Longitude);\r\n                    Geocoder geocoder = new Geocoder(getApplicationContext());\r\n\r\n                    /* +-0.00904 lat and long per km */\r\n                    Double Closeness = 0.00404;\r\n\r\n                    ArrayList<BusStop> closeBusStops = new ArrayList<>();\r\n                    for (int i = 0; i < busStops.size(); i++){\r\n                        BusStop busStop = busStops.get(i);\r\n                        if (busStop.Longitude < Longitude+Closeness && busStop.Longitude > Longitude-Closeness\r\n                                && busStop.Latitude < Latitude+Closeness && busStop.Latitude > Latitude-Closeness){\r\n                            closeBusStops.add(busStop);\r\n                            LatLng latlongmarker = new LatLng(busStop.Latitude, busStop.Longitude);\r\n                            map.addMarker(new MarkerOptions().position(latlongmarker).title(busStop.Description));\r\n                        }\r\n                    }\r\n\r\n                    ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);\r\n                    apiBusStopService.getBusService(closeBusStops,new ApiBusStopService.VolleyResponseListener2() {\r\n                        @Override\r\n                        public void onError(String message) {\r\n                            Toast.makeText(MainActivity.this,\"Cannot Get Bus Stops\",Toast.LENGTH_LONG).show();\r\n                        }\r\n                        @Override\r\n                        public void onResponse(ArrayList<BusStop> busStopsLoaded) {\r\n\r\n                            RecyclerView rv = findViewById(R.id.recyclerView);\r\n                            BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,MainActivity.this);\r\n                            LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);\r\n                            rv.setAdapter(adapter);\r\n                            rv.setLayoutManager(layout);\r\n\r\n                        }\r\n                    });\r\n\r\n                    try {\r\n                        List<Address> addressList = geocoder.getFromLocation(Latitude, Longitude, 1);\r\n                        String str = addressList.get(0).getLocality()+\", \";\r\n                        str += addressList.get(0).getCountryName();\r\n                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16.2f));\r\n                    } catch (IOException e){\r\n                        e.printStackTrace();\r\n                    }\r\n                }\r\n            });\r\n        }\r\n\r\n\r\n    }\r\n    public void moveMapsCamera(Double latitude, Double longitude){\r\n        LatLng latlongmove = new LatLng(latitude, longitude);\r\n        CameraPosition cameraPosition = new CameraPosition.Builder()\r\n                .target(latlongmove)\r\n                .zoom(17f)\r\n                .build();\r\n        CameraUpdate cu = CameraUpdateFactory.newCameraPosition(cameraPosition);\r\n        map.animateCamera(cu);\r\n\r\n    }\r\n    private void replaceFragment(Fragment fragment){\r\n        FragmentManager fragmentManager = getSupportFragmentManager();\r\n        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();\r\n        fragmentTransaction.replace(R.id.frame_layout,fragment);\r\n        fragmentTransaction.commit();\r\n    }\r\n\r\n    @SuppressLint(\"MissingPermission\")\r\n    @Override\r\n    public void onMapReady(@NonNull GoogleMap googleMap) {\r\n        map = googleMap;\r\n        map.setMyLocationEnabled(true);\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/sg/edu/np/mad/transportme/MainActivity.java b/app/src/main/java/sg/edu/np/mad/transportme/MainActivity.java
+--- a/app/src/main/java/sg/edu/np/mad/transportme/MainActivity.java	(revision c56362856844a30d0bee2510a943d646a2a204aa)
++++ b/app/src/main/java/sg/edu/np/mad/transportme/MainActivity.java	(date 1655567590058)
+@@ -148,6 +148,7 @@
+                         }
+                     });
+                     try {
++
+                         List<Address> addressList = geocoder.getFromLocation(Latitude, Longitude, 1);
+                         String str = addressList.get(0).getLocality()+", ";
+                         str += addressList.get(0).getCountryName();
+@@ -206,6 +207,7 @@
+                     });
+ 
+                     try {
++
+                         List<Address> addressList = geocoder.getFromLocation(Latitude, Longitude, 1);
+                         String str = addressList.get(0).getLocality()+", ";
+                         str += addressList.get(0).getCountryName();
+@@ -216,8 +218,6 @@
+                 }
+             });
+         }
+-
+-
+     }
+     public void moveMapsCamera(Double latitude, Double longitude){
+         LatLng latlongmove = new LatLng(latitude, longitude);
+@@ -241,5 +241,6 @@
+     public void onMapReady(@NonNull GoogleMap googleMap) {
+         map = googleMap;
+         map.setMyLocationEnabled(true);
++
+     }
+ }
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"DesignSurface\">\r\n    <option name=\"filePathToZoomLevelMap\">\r\n      <map>\r\n        <entry key=\"..\\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml\" value=\"0.14722222222222223\" />\r\n        <entry key=\"..\\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_login_page.xml\" value=\"0.358695652173913\" />\r\n        <entry key=\"..\\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_registration_page.xml\" value=\"0.358695652173913\" />\r\n        <entry key=\"..\\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_service_layout.xml\" value=\"0.18802083333333333\" />\r\n        <entry key=\"..\\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_stop_layout.xml\" value=\"0.18802083333333333\" />\r\n        <entry key=\"..\\:/Downloads/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_login_page.xml\" value=\"0.18802083333333333\" />\r\n        <entry key=\"..\\:/Downloads/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_profile.xml\" value=\"0.36666666666666664\" />\r\n        <entry key=\"..\\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/drawable/edittext_bg.xml\" value=\"0.2985\" />\r\n        <entry key=\"..\\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/drawable/ic_baseline_lock_24.xml\" value=\"0.32\" />\r\n        <entry key=\"..\\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/drawable/ic_baseline_person_24.xml\" value=\"0.32\" />\r\n        <entry key=\"..\\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml\" value=\"0.25\" />\r\n        <entry key=\"..\\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_login_page.xml\" value=\"0.2\" />\r\n        <entry key=\"..\\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_main.xml\" value=\"0.36666666666666664\" />\r\n        <entry key=\"..\\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_registration_page.xml\" value=\"0.25\" />\r\n        <entry key=\"..\\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_favourites.xml\" value=\"0.36666666666666664\" />\r\n        <entry key=\"..\\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_profile.xml\" value=\"0.33\" />\r\n        <entry key=\"..\\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_search.xml\" value=\"0.36666666666666664\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml\" value=\"0.15625\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_main.xml\" value=\"0.264\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_service_layout.xml\" value=\"0.2708333333333333\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD/TransportMe/app/src/main/res/layout/activity_main.xml\" value=\"0.23007246376811594\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG Github/app/src/main/res/layout/activity_main.xml\" value=\"0.17831813576494426\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG Github/app/src/main/res/layout/bus_service_layout.xml\" value=\"0.33\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG Github/app/src/main/res/layout/bus_stop_layout.xml\" value=\"0.33\" />\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"ExternalStorageConfigurationManager\" enabled=\"true\" />\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_11\" default=\"true\" project-jdk-name=\"Android Studio default JDK\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision c56362856844a30d0bee2510a943d646a2a204aa)
++++ b/.idea/misc.xml	(date 1655567610322)
+@@ -8,21 +8,17 @@
+         <entry key="..\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_registration_page.xml" value="0.358695652173913" />
+         <entry key="..\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_service_layout.xml" value="0.18802083333333333" />
+         <entry key="..\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_stop_layout.xml" value="0.18802083333333333" />
+-        <entry key="..\:/Downloads/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_login_page.xml" value="0.18802083333333333" />
+-        <entry key="..\:/Downloads/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_profile.xml" value="0.36666666666666664" />
+         <entry key="..\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/drawable/edittext_bg.xml" value="0.2985" />
+-        <entry key="..\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/drawable/ic_baseline_lock_24.xml" value="0.32" />
+         <entry key="..\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/drawable/ic_baseline_person_24.xml" value="0.32" />
+         <entry key="..\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml" value="0.25" />
+         <entry key="..\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_login_page.xml" value="0.2" />
+         <entry key="..\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
+         <entry key="..\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_registration_page.xml" value="0.25" />
+-        <entry key="..\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_favourites.xml" value="0.36666666666666664" />
+         <entry key="..\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_profile.xml" value="0.33" />
+-        <entry key="..\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_search.xml" value="0.36666666666666664" />
+         <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml" value="0.15625" />
+         <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_main.xml" value="0.264" />
+         <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_service_layout.xml" value="0.2708333333333333" />
++        <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_search.xml" value="0.264" />
+         <entry key="..\:/Users/cyrus/Desktop/MAD/TransportMe/app/src/main/res/layout/activity_main.xml" value="0.23007246376811594" />
+         <entry key="..\:/Users/voidi/Desktop/MAD/ASG Github/app/src/main/res/layout/activity_main.xml" value="0.17831813576494426" />
+         <entry key="..\:/Users/voidi/Desktop/MAD/ASG Github/app/src/main/res/layout/bus_service_layout.xml" value="0.33" />
+Index: app/src/main/java/sg/edu/np/mad/transportme/ApiBusStopService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package sg.edu.np.mad.transportme;\r\nimport android.content.Context;\r\nimport android.os.Build;\r\nimport android.util.Log;\r\n\r\nimport androidx.annotation.RequiresApi;\r\n\r\nimport com.android.volley.Request;\r\nimport com.android.volley.Response;\r\nimport com.android.volley.VolleyError;\r\nimport com.android.volley.toolbox.JsonObjectRequest;\r\n\r\nimport org.json.JSONArray;\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\nimport java.time.Duration;\r\nimport java.time.LocalDateTime;\r\nimport java.time.format.DateTimeFormatter;\r\nimport java.util.ArrayList;\r\nimport java.util.Arrays;\r\nimport java.util.List;\r\n\r\npublic class ApiBusStopService {\r\n\r\n    Context context;\r\n    public ApiBusStopService(Context c) {\r\n        this.context = c;\r\n    }\r\n\r\n    public interface VolleyResponseListener{\r\n        void onError(String message);\r\n        void onResponse(ArrayList<BusStop> busStops);\r\n    }\r\n\r\n    public interface VolleyResponseListener2{\r\n        void onError(String message);\r\n        void onResponse(ArrayList<BusStop> busStopsService);\r\n    }\r\n\r\n\r\n    public void getBusStop(VolleyResponseListener volleyResponseListener){\r\n\r\n        String busStopsUrl = \"https://mad-assignment-backend.herokuapp.com/BusStops\";\r\n        ArrayList<BusStop> busStops = new ArrayList<>();\r\n\r\n        JsonObjectRequest jsonObjectRequestBusStops = new JsonObjectRequest(Request.Method.GET, busStopsUrl, null,\r\n                new Response.Listener<JSONObject>() {\r\n                    @Override\r\n                    public void onResponse(JSONObject response) {\r\n                        try {\r\n                            JSONArray jsonArray = response.getJSONArray(\"Results\");\r\n                            Log.d(\"results\", String.valueOf(jsonArray.length()));\r\n                            for(int i = 0; i<jsonArray.length();i++) {\r\n                                JSONObject jsonBusStop = jsonArray.getJSONObject(i);\r\n                                String busStopCode = jsonBusStop.get(\"BusStopCode\").toString();\r\n                                String roadName = jsonBusStop.get(\"RoadName\").toString();\r\n                                String description = jsonBusStop.get(\"Description\").toString();\r\n                                Double latitude = Double.parseDouble(jsonBusStop.get(\"Latitude\").toString());\r\n                                Double longitude = Double.parseDouble(jsonBusStop.get(\"Longitude\").toString());\r\n                                busStops.add(new BusStop(busStopCode, roadName, description, latitude, longitude));\r\n                            }\r\n                            volleyResponseListener.onResponse(busStops);\r\n                        } catch (JSONException e) {\r\n                            e.printStackTrace();\r\n                            volleyResponseListener.onError(\"Cannot Get Bus Stops\");\r\n                        }\r\n                    }\r\n                }, new Response.ErrorListener() {\r\n            @Override\r\n            public void onErrorResponse(VolleyError error) {\r\n                Log.e(\"TAG\", error.getMessage(), error);\r\n            }\r\n        });\r\n        MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequestBusStops);\r\n    }\r\n\r\n    public void getBusService(ArrayList<BusStop> nearBusStops, VolleyResponseListener2 volleyResponseListener2){\r\n        ArrayList<BusStop> busStopsService = new ArrayList<>();\r\n        String busStopsUrl = \"https://mad-assignment-backend.herokuapp.com/BusCodes?codes=\";\r\n        for (int i = 0; i < nearBusStops.size();i++){\r\n            String code = nearBusStops.get(i).BusStopCode;\r\n            if (i !=0){\r\n                busStopsUrl = busStopsUrl+\",\" +code;\r\n            }\r\n            else {\r\n                busStopsUrl = busStopsUrl+code;\r\n            }\r\n        }\r\n\r\n        JsonObjectRequest jsonObjectRequestBusStop = new JsonObjectRequest(Request.Method.GET, busStopsUrl, null,\r\n                new Response.Listener<JSONObject>() {\r\n                    @RequiresApi(api = Build.VERSION_CODES.O)\r\n                    @Override\r\n                    public void onResponse(JSONObject response) {\r\n                        try {\r\n                            JSONArray jsonArrayBusStops = response.getJSONArray(\"Results\");\r\n                            List<String> nextBusString = Arrays.asList(\"NextBus\",\"NextBus2\",\"NextBus3\");\r\n                            ArrayList<BusStop> nearBusStopLoaded = new ArrayList<>();\r\n                            Log.d(\"before\", jsonArrayBusStops.toString());\r\n                            LocalDateTime current = LocalDateTime.now();\r\n\r\n                            DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(\"uuuu-MM-dd'T'HH:mm:ssXXXXX\");\r\n\r\n                            for (int i=0; i<jsonArrayBusStops.length(); i++){\r\n                                JSONObject jsonBusStop = (JSONObject) jsonArrayBusStops.get(i);\r\n                                BusStop nearBusStop = nearBusStops.get(i);\r\n                                ArrayList<BusService> busServices = new ArrayList<>();\r\n                                JSONArray jsonArrayBusServices = jsonBusStop.getJSONArray(\"Services\");\r\n                                for (int j=0;j<jsonArrayBusServices.length();j++){\r\n                                    JSONObject jsonBusService = jsonArrayBusServices.getJSONObject(j);\r\n                                    String serviceNumber = jsonBusService.getString(\"ServiceNo\");\r\n                                    ArrayList<NextBus> nextBuses = new ArrayList<>();\r\n\r\n                                    for (String nextbusstring: nextBusString){\r\n                                        JSONObject nextbus = jsonBusService.getJSONObject(nextbusstring);\r\n\r\n                                        String estArrival = nextbus.getString(\"EstimatedArrival\");\r\n                                        String arrivalMinutes = \"Null\";\r\n                                        if (!estArrival.equals(\"\")){\r\n                                            LocalDateTime parsed = LocalDateTime.parse(estArrival,DATE_TIME_FORMATTER);\r\n                                            Duration duration = Duration.between(current,parsed);\r\n                                            arrivalMinutes = String.valueOf(duration.toMinutes());\r\n                                        }\r\n\r\n                                        String Latitude =  nextbus.getString(\"Latitude\");\r\n                                        String Longitude = nextbus.getString(\"Longitude\");\r\n                                        String Load = nextbus.getString(\"Load\");\r\n                                        String Feature = nextbus.getString(\"Feature\");\r\n                                        String Type = nextbus.getString(\"Type\");\r\n                                        nextBuses.add(new NextBus(arrivalMinutes,Latitude,Longitude,Load,Feature,Type));\r\n                                    }\r\n\r\n                                    busServices.add(new BusService(serviceNumber,nextBuses));\r\n                                }\r\n                                nearBusStop.busServices = busServices;\r\n                                nearBusStopLoaded.add(nearBusStop);\r\n                            }\r\n                            volleyResponseListener2.onResponse(nearBusStopLoaded);\r\n\r\n                        } catch (JSONException e) {\r\n                            e.printStackTrace();\r\n                        }\r\n                    }\r\n                }, new Response.ErrorListener() {\r\n            @Override\r\n            public void onErrorResponse(VolleyError error) {\r\n                Log.e(\"TAG\", error.getMessage(), error);\r\n                volleyResponseListener2.onError(\"Cannot Get data\");\r\n            }\r\n        });\r\n        MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequestBusStop);\r\n\r\n        volleyResponseListener2.onResponse(busStopsService);\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/sg/edu/np/mad/transportme/ApiBusStopService.java b/app/src/main/java/sg/edu/np/mad/transportme/ApiBusStopService.java
+--- a/app/src/main/java/sg/edu/np/mad/transportme/ApiBusStopService.java	(revision c56362856844a30d0bee2510a943d646a2a204aa)
++++ b/app/src/main/java/sg/edu/np/mad/transportme/ApiBusStopService.java	(date 1655567610357)
+@@ -28,6 +28,7 @@
+         this.context = c;
+     }
+ 
++
+     public interface VolleyResponseListener{
+         void onError(String message);
+         void onResponse(ArrayList<BusStop> busStops);

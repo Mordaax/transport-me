@@ -74,7 +74,7 @@ public class LoadingScreen extends AppCompatActivity {
                     }
                 }
             }, 200);
-            Intent goToLoginPage = new Intent(LoadingScreen.this, LoginPage.class);
+            Intent goToLoginPage = new Intent(LoadingScreen.this, MainActivity.class);
             startActivity(goToLoginPage);
 
         }

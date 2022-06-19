@@ -23,6 +23,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -47,7 +48,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     GoogleMap map;
     LocationManager locationManager;
+    private static Geocoder geocoder;
 
+    public static Boolean favourite = false;
     private static final String[] LOCATION_PERMS={
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -70,11 +73,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 case R.id.home:
                     fragmentlayout.setVisibility(View.INVISIBLE);
                     mapandrv.setVisibility(View.VISIBLE);
+                    favourite = false;
                     break;
                 case R.id.favourites:
                     mapandrv.setVisibility(View.INVISIBLE);
                     fragmentlayout.setVisibility(View.VISIBLE);
                     replaceFragment(new FavouritesFragment());
+                    favourite = true;
                     break;
                 case R.id.search:
                     mapandrv.setVisibility(View.INVISIBLE);
@@ -89,6 +94,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
             return true;
         });
+        geocoder = new Geocoder(this);
 
         requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
 
@@ -148,6 +154,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                     });
                     try {
+
                         List<Address> addressList = geocoder.getFromLocation(Latitude, Longitude, 1);
                         String str = addressList.get(0).getLocality()+", ";
                         str += addressList.get(0).getCountryName();
@@ -206,6 +213,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     });
 
                     try {
+
                         List<Address> addressList = geocoder.getFromLocation(Latitude, Longitude, 1);
                         String str = addressList.get(0).getLocality()+", ";
                         str += addressList.get(0).getCountryName();
@@ -216,8 +224,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             });
         }
-
-
     }
     public void moveMapsCamera(Double latitude, Double longitude){
         LatLng latlongmove = new LatLng(latitude, longitude);
@@ -241,5 +247,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
         map.setMyLocationEnabled(true);
+        /*try{
+            List<Address> addresses = geocoder.getFromLocationName("Tampines Central 7", 1);
+            Address address = addresses.get(0);
+            Log.d("Plebs", address.toString());
+
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }*/
+
     }
 }
