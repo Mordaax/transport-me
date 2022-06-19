@@ -100,7 +100,7 @@ public class RegistrationPage extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void unused) {
                         Toast.makeText(RegistrationPage.this, "Registration successful!", Toast.LENGTH_LONG).show();
-                        startActivity(new Intent(RegistrationPage.this, MainActivity.class));
+                        startActivity(new Intent(RegistrationPage.this, LoginPage.class));
                         finish();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
