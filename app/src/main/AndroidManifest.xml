@@ -13,7 +13,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TransportMe">
+        android:theme="@style/Theme.TransportMe"
+        android:launchMode="singleTask">
         <activity
             android:name=".RegistrationPage"
             android:parentActivityName=".LoginPage"

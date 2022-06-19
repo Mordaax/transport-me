@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,14 +9,34 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:fontFamily="@font/inter_bold"
+            android:text="Bus Stop Search"
+            android:textSize="24sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <EditText
+            android:imeOptions="actionSearch"
+            android:id="@+id/editTextSearch"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:drawableRight="@drawable/ic_baseline_search_24"
-            android:hint="Search"
-            android:padding="20dp" />
+            android:hint="Bus Stop Code, Road Name, Building"
+            android:singleLine="true"
+            android:padding="20dp"
+            />
 
     </LinearLayout>
 
@@ -27,13 +48,14 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/searchrecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="1dp"
             android:layout_marginTop="2dp"
             android:layout_weight="1"
             android:clipToPadding="false">
 
         </androidx.recyclerview.widget.RecyclerView>
+
     </LinearLayout>
 
 
