@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -41,6 +42,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -48,7 +51,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     GoogleMap map;
     LocationManager locationManager;
-    private static Geocoder geocoder;
+
 
     public static Boolean favourite = false;
     private static final String[] LOCATION_PERMS={
@@ -64,6 +67,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.show();
+        progressDialog.setContentView(R.layout.progress_dialog);
+        progressDialog.getWindow().setBackgroundDrawableResource(
+                android.R.color.transparent
+        );
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(item ->{
@@ -94,7 +103,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
             return true;
         });
-        geocoder = new Geocoder(this);
+
 
         requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
 
@@ -127,12 +136,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     /*Latitude = 1.332346;
                     Longitude = 103.777561;*/
 
-                    Double Closeness = 0.00304;
+                    Double Closeness = 0.00404;
                     ArrayList<BusStop> closeBusStops = new ArrayList<>();
                     for (int i = 0; i < busStops.size(); i++){
                         BusStop busStop = busStops.get(i);
                         if (busStop.Longitude < Longitude+Closeness && busStop.Longitude > Longitude-Closeness
                                 && busStop.Latitude < Latitude+Closeness && busStop.Latitude > Latitude-Closeness){
+                            busStop.distanceToLocation = DistanceCalculator.distanceBetween(busStop.Latitude,busStop.Longitude,Latitude,Longitude);
+
                             closeBusStops.add(busStop);
                             LatLng latlongmarker = new LatLng(busStop.Latitude, busStop.Longitude);
                             map.addMarker(new MarkerOptions().position(latlongmarker).title(busStop.Description));
@@ -146,11 +157,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                         @Override
                         public void onResponse(ArrayList<BusStop> busStopsLoaded) {
+                            Collections.sort(closeBusStops);
+
                             RecyclerView rv = findViewById(R.id.recyclerView);
                             BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,MainActivity.this);
                             LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);
                             rv.setAdapter(adapter);
                             rv.setLayoutManager(layout);
+                            progressDialog.dismiss();
                         }
                     });
                     try {
@@ -181,7 +195,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     Geocoder geocoder = new Geocoder(getApplicationContext());
 
                     /* +-0.00904 lat and long per km */
-                    Double Closeness = 0.00404;
+                    Double Closeness = 0.00504;
 
                     ArrayList<BusStop> closeBusStops = new ArrayList<>();
                     for (int i = 0; i < busStops.size(); i++){
@@ -208,7 +222,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);
                             rv.setAdapter(adapter);
                             rv.setLayoutManager(layout);
-
+                            progressDialog.dismiss();
                         }
                     });
 
@@ -224,6 +238,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             });
         }
+
     }
     public void moveMapsCamera(Double latitude, Double longitude){
         LatLng latlongmove = new LatLng(latitude, longitude);
@@ -247,15 +262,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
         map.setMyLocationEnabled(true);
-        /*try{
-            List<Address> addresses = geocoder.getFromLocationName("Tampines Central 7", 1);
-            Address address = addresses.get(0);
-            Log.d("Plebs", address.toString());
-
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }*/
 
     }
 }
