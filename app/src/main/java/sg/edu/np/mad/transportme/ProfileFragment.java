@@ -1,6 +1,7 @@
 package sg.edu.np.mad.transportme;
 
 import static sg.edu.np.mad.transportme.LoginPage.globalEmail;
+import static sg.edu.np.mad.transportme.LoginPage.globalFavouriteBusStop;
 import static sg.edu.np.mad.transportme.LoginPage.globalName;
 
 import android.content.Intent;
@@ -80,7 +81,9 @@ public class ProfileFragment extends Fragment {
             public void onClick(View view)
             {
                 globalName = "";
+                globalEmail = "";
                 LoginPage.SignedIn = false;
+                globalFavouriteBusStop.clear();
                 startActivity(intent);
             }
         });

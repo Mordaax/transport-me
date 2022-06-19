@@ -77,30 +77,26 @@ public class FavouritesFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_favourites, container, false);
-        ApiBusStopService apiBusStopService = new ApiBusStopService(getContext());
-        apiBusStopService.getBusService(globalFavouriteBusStop,new ApiBusStopService.VolleyResponseListener2() {
-            @Override
-            public void onError(String message) {
-                Toast.makeText(getContext(),"Cannot Get Bus Stops",Toast.LENGTH_LONG).show();
-            }
-            @Override
-            public void onResponse(ArrayList<BusStop> busStopsLoaded) {
+        if(globalFavouriteBusStop.size() > 0)
+        {
+            ApiBusStopService apiBusStopService = new ApiBusStopService(getContext());
+            apiBusStopService.getBusService(globalFavouriteBusStop,new ApiBusStopService.VolleyResponseListener2() {
+                @Override
+                public void onError(String message) {
+                    Toast.makeText(getContext(),"Cannot Get Bus Stops",Toast.LENGTH_LONG).show();
+                }
+                @Override
+                public void onResponse(ArrayList<BusStop> busStopsLoaded) {
 
 
-                RecyclerView rv = rootView.findViewById(R.id.favouritesrecyclerView);
-                BusStopAdapter adapter = new BusStopAdapter(globalFavouriteBusStop,getContext());
-                LinearLayoutManager layout = new LinearLayoutManager(getContext());
-                rv.setAdapter(adapter);
-                rv.setLayoutManager(layout);
-            }
-        });
-
-        /*RecyclerView rv = rootView.findViewById(R.id.favouritesrecyclerView);
-        ArrayList<BusStop> busStops = LoadingScreen.globalBusStops;
-        BusStopAdapter adapter = new BusStopAdapter(busStops, rootView.getContext());
-        LinearLayoutManager layout = new LinearLayoutManager(rootView.getContext());
-        rv.setAdapter(adapter);
-        rv.setLayoutManager(layout);*/
+                    RecyclerView rv = rootView.findViewById(R.id.favouritesrecyclerView);
+                    BusStopAdapter adapter = new BusStopAdapter(globalFavouriteBusStop,getContext());
+                    LinearLayoutManager layout = new LinearLayoutManager(getContext());
+                    rv.setAdapter(adapter);
+                    rv.setLayoutManager(layout);
+                }
+            });
+        }
 
         return rootView;
     }
