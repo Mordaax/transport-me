@@ -70,7 +70,7 @@ public class LoadingScreen extends AppCompatActivity {
                         i+=5;
                         handler.postDelayed(this, 200);
                     } else {
-                        handler.removeCallbacks(this);
+                        handler.removeCallbacks(this);  
                     }
                 }
             }, 200);
