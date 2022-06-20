@@ -1,7 +1,9 @@
 package sg.edu.np.mad.transportme;
 
+import static sg.edu.np.mad.transportme.LoadingScreen.globalBusStops;
 import static sg.edu.np.mad.transportme.LoginPage.SignedIn;
 import static sg.edu.np.mad.transportme.LoginPage.globalEmail;
+import static sg.edu.np.mad.transportme.LoginPage.globalFavouriteBusStop;
 import static sg.edu.np.mad.transportme.LoginPage.globalName;
 
 import androidx.annotation.NonNull;
@@ -23,8 +25,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -107,7 +111,71 @@ public class RegistrationPage extends AppCompatActivity {
 
 // ...
                 mDatabase = FirebaseDatabase.getInstance().getReference();
-                mDatabase.child("User").child(name).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+
+                mDatabase.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (!SignedIn){
+                            if(String.valueOf(snapshot.child("name").getValue()).equals(name)){
+                                startActivity(new Intent(RegistrationPage.this, RegistrationPage.class));
+                                Toast.makeText(RegistrationPage.this, "Please Enter another Username", Toast.LENGTH_LONG).show();
+                                finish();
+                            }
+                            else if(String.valueOf(snapshot.child("email").getValue()).equals(email)){
+                                Toast.makeText(RegistrationPage.this, "Email already registered", Toast.LENGTH_LONG).show();
+                                startActivity(new Intent(RegistrationPage.this, RegistrationPage.class));
+                                finish();
+                            }
+                            else{
+                                dbUser.add(u).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Toast.makeText(RegistrationPage.this, "Registration successful!", Toast.LENGTH_LONG).show();
+                                        globalName = name;
+                                        globalEmail = email;
+                                        globalFavouriteBusStop = new ArrayList<BusStop>();
+                                        SharedPreferences.Editor editor = getSharedPreferences("LoginData", MODE_PRIVATE).edit();
+                                        editor.putString("name", globalName);
+                                        editor.putString("email", globalEmail);
+                                        editor.putString("login","True" );
+                                        editor.apply();
+                                        SignedIn = true;
+                                        startActivity(new Intent(RegistrationPage.this, MainActivity.class));
+                                        finish();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        editTextEmail.setEnabled(true);
+                                        editTextName.setEnabled(true);
+                                        editTextPassword.setEnabled(true);
+                                        progressBar.setVisibility(View.INVISIBLE);
+                                        Toast.makeText(RegistrationPage.this, "Registration failed! Try again!", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        }
+                        else{
+                            globalFavouriteBusStop.clear();
+                            /*DatabaseReference favouriteref = myRef.child(globalName).child("Favourited");*/
+                            for ( DataSnapshot favBS : snapshot.child("Favourited").getChildren()) {
+                                String busStopCode = favBS.getKey();
+                                for (int i = 0 ; i< globalBusStops.size(); i++){
+                                    if (busStopCode.equals(globalBusStops.get(i).BusStopCode)){
+                                        globalFavouriteBusStop.add(globalBusStops.get(i));
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+                /*mDatabase.child("User").child(name).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DataSnapshot> task) {
                         if (!task.isSuccessful()) {
@@ -131,7 +199,7 @@ public class RegistrationPage extends AppCompatActivity {
                                         Toast.makeText(RegistrationPage.this, "Registration successful!", Toast.LENGTH_LONG).show();
                                         globalName = name;
                                         globalEmail = email;
-                                        LoginPage.globalFavouriteBusStop = new ArrayList<BusStop>();
+                                        globalFavouriteBusStop = new ArrayList<BusStop>();
                                         SharedPreferences.Editor editor = getSharedPreferences("LoginData", MODE_PRIVATE).edit();
                                         editor.putString("name", globalName);
                                         editor.putString("email", globalEmail);
@@ -154,7 +222,7 @@ public class RegistrationPage extends AppCompatActivity {
                             }
                         }
                     }
-                });
+                });*/
 
             }
         });
