@@ -4,6 +4,8 @@ import static sg.edu.np.mad.transportme.LoginPage.globalName;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -14,6 +16,7 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -127,25 +130,41 @@ public class BusStopAdapter
         holder.Favourite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatabaseReference reference = db.getReference()
-                        .child("User")
-                        //.child(firebaseUser.getUid())
-                        .child(globalName)
-                        .child("Favourited")
-                        .child(content.BusStopCode);
-
-                if (holder.Favourite.getTag() == "Favourite")
+                if(isNetworkAvailable())
                 {
-                    holder.Favourite.setImageResource(R.drawable.filled_favourite);
-                    holder.Favourite.setTag("Favourited");
-                    reference.setValue(true);
+                    DatabaseReference reference = db.getReference()
+                            .child("User")
+                            //.child(firebaseUser.getUid())
+                            .child(globalName)
+                            .child("Favourited")
+                            .child(content.BusStopCode);
+
+                    if (holder.Favourite.getTag() == "Favourite")
+                    {
+                        holder.Favourite.setImageResource(R.drawable.filled_favourite);
+                        holder.Favourite.setTag("Favourited");
+                        reference.setValue(true);
+                    }
+                    else
+                    {
+                        holder.Favourite.setImageResource(R.drawable.favourite);
+                        holder.Favourite.setTag("Favourite");
+                        reference.setValue(null);
+                    }
                 }
                 else
                 {
-                    holder.Favourite.setImageResource(R.drawable.favourite);
-                    holder.Favourite.setTag("Favourite");
-                    reference.setValue(null);
-
+                    Toast.makeText(c, "Wifi is OFF, favourites may not update.", Toast.LENGTH_SHORT).show();
+                    if (holder.Favourite.getTag() == "Favourite")
+                    {
+                        holder.Favourite.setImageResource(R.drawable.filled_favourite);
+                        holder.Favourite.setTag("Favourited");
+                    }
+                    else
+                    {
+                        holder.Favourite.setImageResource(R.drawable.favourite);
+                        holder.Favourite.setTag("Favourite");
+                    }
                 }
             }
         });
@@ -195,5 +214,23 @@ public class BusStopAdapter
     @Override
     public int getItemCount() {
         return data.size();
+    }
+
+    public boolean isNetworkAvailable()
+    {
+        try{
+            ConnectivityManager manager = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = null;
+
+            if(manager != null){
+                networkInfo = manager.getActiveNetworkInfo();
+            }
+            return networkInfo != null && networkInfo.isConnected();
+        }
+        catch(NullPointerException e){
+            return false;
+        }
+
+
     }
 }
