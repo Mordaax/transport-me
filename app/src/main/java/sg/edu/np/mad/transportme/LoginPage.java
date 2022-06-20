@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -51,6 +52,41 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
         editTextPassword = findViewById(R.id.password);
 
         progressBar = findViewById(R.id.progressBar);
+        /* here*/
+        SharedPreferences prefs =  getSharedPreferences("LoginData", MODE_PRIVATE);
+        globalName = prefs.getString("name", "");
+        globalEmail = prefs.getString("email", "");
+        SignedIn = prefs.getString("login", "").equals("True");
+
+        if(SignedIn){
+
+            FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/");
+            DatabaseReference myRef = db.getReference("User");
+            myRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(SignedIn){
+                        globalFavouriteBusStop.clear();
+                        /*DatabaseReference favouriteref = myRef.child(globalName).child("Favourited");*/
+                        for (DataSnapshot favBS : snapshot.child(globalName).child("Favourited").getChildren()) {
+                            String busStopCode = favBS.getKey();
+                            for (int i = 0 ; i< globalBusStops.size(); i++){
+                                if (busStopCode.equals(globalBusStops.get(i).BusStopCode)){
+                                    globalFavouriteBusStop.add(globalBusStops.get(i));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+            startActivity(new Intent(LoginPage.this, MainActivity.class));
+        }
 
     }
 
@@ -96,10 +132,19 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                                 if (BCrypt.verifyer().verify(password.toCharArray(), user.child("password").getValue().toString()).verified){
                                     if(!SignedIn)
                                     {
+
                                         Toast.makeText(LoginPage.this, "Login Successful!", Toast.LENGTH_LONG).show();
                                         globalName = user.child("name").getValue().toString();
                                         globalEmail = user.child("email").getValue().toString();
                                         SignedIn = true;
+
+                                        /* here*/
+                                        SharedPreferences.Editor editor = getSharedPreferences("LoginData", MODE_PRIVATE).edit();
+                                        editor.putString("name", globalName);
+                                        editor.putString("email", globalEmail);
+                                        editor.putString("login","True" );
+                                        editor.apply();
+
                                         startActivity(new Intent(LoginPage.this, MainActivity.class));
                                     }
                                 }

@@ -1,9 +1,14 @@
 package sg.edu.np.mad.transportme;
 
+import static sg.edu.np.mad.transportme.LoginPage.SignedIn;
+import static sg.edu.np.mad.transportme.LoginPage.globalEmail;
+import static sg.edu.np.mad.transportme.LoginPage.globalName;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -20,6 +25,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 
@@ -122,7 +129,16 @@ public class RegistrationPage extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(Void unused) {
                                         Toast.makeText(RegistrationPage.this, "Registration successful!", Toast.LENGTH_LONG).show();
-                                        startActivity(new Intent(RegistrationPage.this, LoginPage.class));
+                                        globalName = name;
+                                        globalEmail = email;
+                                        LoginPage.globalFavouriteBusStop = new ArrayList<BusStop>();
+                                        SharedPreferences.Editor editor = getSharedPreferences("LoginData", MODE_PRIVATE).edit();
+                                        editor.putString("name", globalName);
+                                        editor.putString("email", globalEmail);
+                                        editor.putString("login","True" );
+                                        editor.apply();
+                                        SignedIn = false;
+                                        startActivity(new Intent(RegistrationPage.this, MainActivity.class));
                                         finish();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {

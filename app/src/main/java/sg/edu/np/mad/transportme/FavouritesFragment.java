@@ -76,6 +76,7 @@ public class FavouritesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        Log.d("Yes", globalFavouriteBusStop.toString());
         View rootView = inflater.inflate(R.layout.fragment_favourites, container, false);
         if(globalFavouriteBusStop.size() > 0)
         {
