@@ -3,4 +3,19 @@
     <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorAccent">@color/app_red</item>
     </style>
+
+
+
+    <!-- Base application theme. -->
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+
+        <item name="colorPrimary">@color/app_yellow</item>
+
+        <item name="colorPrimaryDark">@color/app_yellow</item>
+
+        <item name="colorAccent">@color/app_red</item>
+
+    </style>
+    <style name="AppTheme" parent="AppTheme.Base"></style>
+
 </resources>
