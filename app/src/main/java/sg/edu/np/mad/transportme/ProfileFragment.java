@@ -1,10 +1,12 @@
 package sg.edu.np.mad.transportme;
 
+import static android.content.Context.MODE_PRIVATE;
 import static sg.edu.np.mad.transportme.LoginPage.globalEmail;
 import static sg.edu.np.mad.transportme.LoginPage.globalFavouriteBusStop;
 import static sg.edu.np.mad.transportme.LoginPage.globalName;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -80,8 +82,14 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view)
             {
+                SharedPreferences.Editor editor = getActivity().getSharedPreferences("LoginData", MODE_PRIVATE).edit();
+                editor.putString("name", "");
+                editor.putString("email", "");
+                editor.putString("login","False" );
+                editor.apply();
                 globalName = "";
                 globalEmail = "";
+
                 LoginPage.SignedIn = false;
                 globalFavouriteBusStop.clear();
                 startActivity(intent);
