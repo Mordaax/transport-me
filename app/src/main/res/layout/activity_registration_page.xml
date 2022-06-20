@@ -65,7 +65,7 @@
                     android:inputType="textPersonName"
                     android:padding="16dp"
                     android:textColorHint="#E9B872"
-                    android:digits="abcdefghijklmnopqrstuvwxyz" />
+                    android:digits="AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz" />
 
                 <EditText
                     android:id="@+id/reg_Email"
