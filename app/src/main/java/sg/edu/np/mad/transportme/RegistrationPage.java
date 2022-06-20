@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -28,7 +29,7 @@ public class RegistrationPage extends AppCompatActivity {
     private EditText editTextName, editTextEmail, editTextPassword;
     private ProgressBar progressBar;
     private boolean register;
-
+    private DatabaseReference mDatabase;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,23 +97,49 @@ public class RegistrationPage extends AppCompatActivity {
 
                 String hashedpw = BCrypt.withDefaults().hashToString(12, password.toCharArray());
                 User u = new User(name, email, hashedpw, null);
-                dbUser.add(u).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+// ...
+                mDatabase = FirebaseDatabase.getInstance().getReference();
+                mDatabase.child("User").child(name).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                     @Override
-                    public void onSuccess(Void unused) {
-                        Toast.makeText(RegistrationPage.this, "Registration successful!", Toast.LENGTH_LONG).show();
-                        startActivity(new Intent(RegistrationPage.this, LoginPage.class));
-                        finish();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        editTextEmail.setEnabled(true);
-                        editTextName.setEnabled(true);
-                        editTextPassword.setEnabled(true);
-                        progressBar.setVisibility(View.INVISIBLE);
-                        Toast.makeText(RegistrationPage.this, "Registration failed! Try again!", Toast.LENGTH_LONG).show();
+                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                        if (!task.isSuccessful()) {
+                            Log.e("firebase", "Error getting data", task.getException());
+                        }
+                        else {
+                            if(String.valueOf(task.getResult().child("name").getValue()).equals(name)){
+                                startActivity(new Intent(RegistrationPage.this, RegistrationPage.class));
+                                Toast.makeText(RegistrationPage.this, "Please Enter another Username", Toast.LENGTH_LONG).show();
+                                finish();
+                            }
+                            else if(String.valueOf(task.getResult().child("email").getValue()).equals(email)){
+                                Toast.makeText(RegistrationPage.this, "Email already registered", Toast.LENGTH_LONG).show();
+                                startActivity(new Intent(RegistrationPage.this, RegistrationPage.class));
+                                finish();
+                            }
+                            else{
+                                dbUser.add(u).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Toast.makeText(RegistrationPage.this, "Registration successful!", Toast.LENGTH_LONG).show();
+                                        startActivity(new Intent(RegistrationPage.this, LoginPage.class));
+                                        finish();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        editTextEmail.setEnabled(true);
+                                        editTextName.setEnabled(true);
+                                        editTextPassword.setEnabled(true);
+                                        progressBar.setVisibility(View.INVISIBLE);
+                                        Toast.makeText(RegistrationPage.this, "Registration failed! Try again!", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        }
                     }
                 });
+
             }
         });
         Intent myIntent = new Intent(this, LoginPage.class);
