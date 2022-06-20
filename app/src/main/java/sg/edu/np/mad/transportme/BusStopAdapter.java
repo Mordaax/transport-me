@@ -173,7 +173,6 @@ public class BusStopAdapter
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Log.w("null anot? ","" + snapshot.getValue());
                 if (snapshot.getValue() != null)
                 {
                     favouritedView.setImageResource(R.drawable.filled_favourite);

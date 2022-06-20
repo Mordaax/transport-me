@@ -121,6 +121,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:visibility="gone"
+        android:indeterminateTint="@color/app_red"
         tools:ignore="MissingConstraints"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
