@@ -182,33 +182,40 @@ public class BusStopAdapter
     private void isFavourited(String busStopCode, ImageView favouritedView)
     {
         //FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference reference = db.getReference()
-                .child("User")
-                //.child(firebaseUser.getUid())
-                .child(globalName)
-                .child("Favourited")
-                .child(busStopCode);
+        if (isNetworkAvailable())
+        {
+            DatabaseReference reference = db.getReference()
+                    .child("User")
+                    //.child(firebaseUser.getUid())
+                    .child(globalName)
+                    .child("Favourited")
+                    .child(busStopCode);
 
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.getValue() != null)
-                {
-                    favouritedView.setImageResource(R.drawable.filled_favourite);
-                    favouritedView.setTag("Favourited");
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.getValue() != null)
+                    {
+                        favouritedView.setImageResource(R.drawable.filled_favourite);
+                        favouritedView.setTag("Favourited");
+                    }
+                    else
+                    {
+                        favouritedView.setImageResource(R.drawable.favourite);
+                        favouritedView.setTag("Favourite");
+                    }
                 }
-                else
-                {
-                    favouritedView.setImageResource(R.drawable.favourite);
-                    favouritedView.setTag("Favourite");
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+            });
+        }
+        else
+        {
+            Toast.makeText(c, "Wifi is OFF, favourites may not be up to date.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
