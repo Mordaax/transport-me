@@ -85,7 +85,8 @@
                     android:backgroundTint="#A63D40"
                     android:fontFamily="@font/inter_bold"
                     android:padding="16dp"
-                    android:text="Login" />
+                    android:text="Login"
+                    android:textColor="#FFFFFF" />
 
                 <Button
                     android:id="@+id/gotoregisterpage"
