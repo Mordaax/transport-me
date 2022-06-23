@@ -12,6 +12,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,13 +80,15 @@ public class ProfileFragment extends Fragment {
 
         SeekBar closenessSeekBar = rootView.findViewById(R.id.seekBar);
         TextView closenessTextView = rootView.findViewById(R.id.closeness);
-        closenessTextView.setText("Bus Stop Closeness ("+ String.valueOf(globalCloseness*1000) +" Meters)");
+        closenessTextView.setText("Bus Stop Closeness ("+ String.valueOf((int) (globalCloseness*1000)) +" Meters)");
         closenessSeekBar.setProgress((int) (globalCloseness*10));
         closenessSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 closenessTextView.setText("Bus Stop Closeness ("+ String.valueOf(i*100) +" Meters)");
-                globalCloseness = Double.valueOf(i/10);
+                Double doublei = Double.valueOf(i);
+                globalCloseness = doublei/10;
+                Log.d("global", String.valueOf(globalCloseness));
             }
 
             @Override
