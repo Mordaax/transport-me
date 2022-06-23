@@ -195,22 +195,19 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onLocationChanged(@NonNull Location location) {
                         Double Latitude = location.getLatitude();
                         Double Longitude = location.getLongitude();
-
-                        /* For testing purposes, Remove at the end */
-                    /*Latitude = 1.332346;
-                    Longitude = 103.777561;*/
+                        
 
                         LatLng latLng = new LatLng(Latitude, Longitude);
                         Geocoder geocoder = new Geocoder(getApplicationContext());
 
-                        /* +-0.00904 lat and long per km */
-                        Double Closeness = 0.00504;
+
 
                         ArrayList<BusStop> closeBusStops = new ArrayList<>();
                         for (int i = 0; i < busStops.size(); i++){
                             BusStop busStop = busStops.get(i);
-                            if (busStop.Longitude < Longitude+Closeness && busStop.Longitude > Longitude-Closeness
-                                    && busStop.Latitude < Latitude+Closeness && busStop.Latitude > Latitude-Closeness){
+                            busStop.distanceToLocation = DistanceCalculator.distanceBetween(busStop.Latitude,busStop.Longitude,Latitude,Longitude);
+
+                            if (busStop.distanceToLocation <= globalCloseness){
                                 closeBusStops.add(busStop);
                                 LatLng latlongmarker = new LatLng(busStop.Latitude, busStop.Longitude);
                                 map.addMarker(new MarkerOptions().position(latlongmarker).title(busStop.Description));
