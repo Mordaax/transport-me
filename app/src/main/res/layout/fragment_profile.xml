@@ -53,6 +53,21 @@
             android:orientation="vertical"
             android:padding="20dp">
 
+            <TextView
+                android:id="@+id/closeness"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Bus Stop Closeness (300 Meters)"
+                android:textSize="20sp" />
+
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:max="10"
+                android:progress="3" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -100,24 +115,39 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Password"/>
+                android:hint="Password">
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/editProfile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dp"
+                android:backgroundTint="#BA4C4F"
+                android:fontFamily="@font/inter_bold"
+                android:padding="16dp"
+                android:text="Edit Profile"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFFFFF" />
 
             <Button
                 android:id="@+id/signoutbutton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="40dp"
+                android:layout_marginBottom="30dp"
                 android:backgroundTint="#A63D40"
                 android:fontFamily="@font/inter_bold"
                 android:padding="16dp"
                 android:text="sign out"
                 android:textColor="#FFFFFF"
                 android:textColorHint="#FFFFFF" />
+
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="196dp"
+            android:layout_height="172dp"
             android:background="#E9B872"
             android:orientation="vertical">
 

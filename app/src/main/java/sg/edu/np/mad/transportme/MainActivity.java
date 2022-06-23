@@ -14,10 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -44,7 +41,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,7 +49,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     GoogleMap map;
     LocationManager locationManager;
-
+    public static Double globalCloseness = 0.3;
 
     public static Boolean favourite = false;
     private static final String[] LOCATION_PERMS={
@@ -97,11 +93,17 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     fragmentlayout.setVisibility(View.VISIBLE);
                     replaceFragment(new SearchFragment());
                     break;
+                case R.id.mrtmap:
+                    mapandrv.setVisibility(View.INVISIBLE);
+                    fragmentlayout.setVisibility(View.VISIBLE);
+                    replaceFragment(new MrtMapFragment());
+                    break;
                 case R.id.profile:
                     mapandrv.setVisibility(View.INVISIBLE);
                     fragmentlayout.setVisibility(View.VISIBLE);
                     replaceFragment(new ProfileFragment());
                     break;
+
             }
             return true;
         });
@@ -109,7 +111,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mrtmap);
         mapFragment.getMapAsync(this);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -142,14 +144,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     /*Latitude = 1.332346;
                     Longitude = 103.777561;*/
 
-                        Double Closeness = 0.00404;
                         ArrayList<BusStop> closeBusStops = new ArrayList<>();
                         for (int i = 0; i < busStops.size(); i++){
                             BusStop busStop = busStops.get(i);
-                            if (busStop.Longitude < Longitude+Closeness && busStop.Longitude > Longitude-Closeness
-                                    && busStop.Latitude < Latitude+Closeness && busStop.Latitude > Latitude-Closeness){
-                                busStop.distanceToLocation = DistanceCalculator.distanceBetween(busStop.Latitude,busStop.Longitude,Latitude,Longitude);
+                            busStop.distanceToLocation = DistanceCalculator.distanceBetween(busStop.Latitude,busStop.Longitude,Latitude,Longitude);
 
+                            if (busStop.distanceToLocation <= globalCloseness){
                                 closeBusStops.add(busStop);
                                 LatLng latlongmarker = new LatLng(busStop.Latitude, busStop.Longitude);
                                 map.addMarker(new MarkerOptions().position(latlongmarker).title(busStop.Description));
