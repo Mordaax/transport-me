@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static sg.edu.np.mad.transportme.LoginPage.globalEmail;
 import static sg.edu.np.mad.transportme.LoginPage.globalFavouriteBusStop;
 import static sg.edu.np.mad.transportme.LoginPage.globalName;
+import static sg.edu.np.mad.transportme.MainActivity.globalCloseness;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -73,6 +76,28 @@ public class ProfileFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         TextInputEditText username = rootView.findViewById(R.id.profileuserName);
         TextInputEditText email = rootView.findViewById(R.id.profileuserEmail);
+
+        SeekBar closenessSeekBar = rootView.findViewById(R.id.seekBar);
+        TextView closenessTextView = rootView.findViewById(R.id.closeness);
+        closenessTextView.setText("Bus Stop Closeness ("+ String.valueOf(globalCloseness*1000) +" Meters)");
+        closenessSeekBar.setProgress((int) (globalCloseness*10));
+        closenessSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                closenessTextView.setText("Bus Stop Closeness ("+ String.valueOf(i*100) +" Meters)");
+                globalCloseness = Double.valueOf(i/10);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         username.setText(globalName);
         email.setText(globalEmail);
