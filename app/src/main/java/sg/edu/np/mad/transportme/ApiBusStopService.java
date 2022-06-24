@@ -80,7 +80,7 @@ public class ApiBusStopService {
         ArrayList<BusStop> busStopsService = new ArrayList<>();
         String busStopsUrl = "https://mad-assignment-backend.herokuapp.com/BusCodes?codes=";
         for (int i = 0; i < nearBusStops.size();i++){
-            String code = nearBusStops.get(i).BusStopCode;
+            String code = nearBusStops.get(i).getBusStopCode();
             if (i !=0){
                 busStopsUrl = busStopsUrl+"," +code;
             }
@@ -134,7 +134,7 @@ public class ApiBusStopService {
 
                                     busServices.add(new BusService(serviceNumber,nextBuses));
                                 }
-                                nearBusStop.busServices = busServices;
+                                nearBusStop.setBusServices(busServices);
                                 nearBusStopLoaded.add(nearBusStop);
                             }
                             volleyResponseListener2.onResponse(nearBusStopLoaded);

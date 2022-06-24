@@ -66,7 +66,7 @@ public class BusStopAdapter
 
         if (c.getClass().getSimpleName().equals("FavouritesFragment"))
         {
-            String busStopCode = content.BusStopCode;
+            String busStopCode = content.getBusStopCode();
             //FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             DatabaseReference reference = db.getReference()
                     .child("User")
@@ -98,7 +98,7 @@ public class BusStopAdapter
             public void onClick(View view) {
                 if (c.getClass().getSimpleName().equals("MainActivity"))
                 {
-                    ((MainActivity)c).moveMapsCamera(content.Latitude,content.Longitude);
+                    ((MainActivity)c).moveMapsCamera(content.getLatitude(), content.getLongitude());
                 }
 
                 if (holder.itemView.findViewById(R.id.recyclerView2).getVisibility() == View.VISIBLE){
@@ -122,11 +122,11 @@ public class BusStopAdapter
             }
         });
 
-        holder.Description.setText(content.Description);
-        holder.BusStopCode.setText(content.BusStopCode);
-        holder.RoadName.setText(content.RoadName);
+        holder.Description.setText(content.getDescription());
+        holder.BusStopCode.setText(content.getBusStopCode());
+        holder.RoadName.setText(content.getRoadName());
 
-        isFavourited(content.BusStopCode, holder.Favourite);
+        isFavourited(content.getBusStopCode(), holder.Favourite);
         holder.Favourite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -137,7 +137,7 @@ public class BusStopAdapter
                             //.child(firebaseUser.getUid())
                             .child(globalName)
                             .child("Favourited")
-                            .child(content.BusStopCode);
+                            .child(content.getBusStopCode());
 
                     if (holder.Favourite.getTag() == "Favourite")
                     {
@@ -170,7 +170,7 @@ public class BusStopAdapter
         });
 
         /*RecyclerView rv = c.findViewById(R.id.recyclerView2);*/
-        BusServiceAdapter adapterMember = new BusServiceAdapter(content.busServices);
+        BusServiceAdapter adapterMember = new BusServiceAdapter(content.getBusServices());
         LinearLayoutManager layout = new LinearLayoutManager(c);
         /*rv.setAdapter(adapter);
         rv.setLayoutManager(layout);*/

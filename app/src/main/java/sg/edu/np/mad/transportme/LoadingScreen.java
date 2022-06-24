@@ -19,6 +19,7 @@ public class LoadingScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_screen);
 
+
         ProgressBar progressBar = findViewById(R.id.progress_bar);
         TextView progressText = findViewById(R.id.progress_text);
 

@@ -4,8 +4,40 @@ import java.util.ArrayList;
 
 public class User {
 
-    public String name,email, password;
-    public ArrayList<BusStop> savedBusStops = new ArrayList<>();
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public ArrayList<BusStop> getSavedBusStops() {
+        return savedBusStops;
+    }
+
+    public void setSavedBusStops(ArrayList<BusStop> savedBusStops) {
+        this.savedBusStops = savedBusStops;
+    }
+
+    private String name,email, password;
+    private ArrayList<BusStop> savedBusStops = new ArrayList<>();
 
     public User(){}
 
