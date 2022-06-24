@@ -10,18 +10,17 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:launchMode="singleTask"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TransportMe"
-        android:launchMode="singleTask">
+        android:theme="@style/Theme.TransportMe">
         <activity
             android:name=".RegistrationPage"
-            android:parentActivityName=".LoginPage"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".LoginPage" />
         <activity
             android:name=".LoginPage"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".LoadingScreen"
             android:exported="true">
@@ -38,9 +37,7 @@
 
         <activity
             android:name=".MainActivity"
-            android:exported="false">
-
-        </activity>
+            android:exported="false"></activity>
     </application>
 
 </manifest>
