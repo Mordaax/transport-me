@@ -72,7 +72,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                         for (DataSnapshot favBS : snapshot.child(globalName).child("Favourited").getChildren()) {
                             String busStopCode = favBS.getKey();
                             for (int i = 0 ; i< globalBusStops.size(); i++){
-                                if (busStopCode.equals(globalBusStops.get(i).BusStopCode)){
+                                if (busStopCode.equals(globalBusStops.get(i).getBusStopCode())){
                                     globalFavouriteBusStop.add(globalBusStops.get(i));
                                 }
                             }
@@ -159,7 +159,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                             for (DataSnapshot favBS : snapshot.child(globalName).child("Favourited").getChildren()) {
                                 String busStopCode = favBS.getKey();
                                 for (int i = 0 ; i< globalBusStops.size(); i++){
-                                    if (busStopCode.equals(globalBusStops.get(i).BusStopCode)){
+                                    if (busStopCode.equals(globalBusStops.get(i).getBusStopCode())){
                                         globalFavouriteBusStop.add(globalBusStops.get(i));
                                     }
                                 }

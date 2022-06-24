@@ -47,11 +47,11 @@ public class BusStopDBHandler extends SQLiteOpenHelper {
     public void addBusStops(ArrayList<BusStop> busStops){
         SQLiteDatabase db = this.getWritableDatabase();
         for (BusStop busStop : busStops){
-            String busStopCode = busStop.BusStopCode;
-            String roadName = busStop.RoadName;
-            String description = busStop.Description;
-            Double latitude = busStop.Latitude;
-            Double longitude = busStop.Longitude;
+            String busStopCode = busStop.getBusStopCode();
+            String roadName = busStop.getRoadName();
+            String description = busStop.getDescription();
+            Double latitude = busStop.getLatitude();
+            Double longitude = busStop.getLongitude();
             String Create_Bus_Stops = "CREATE TABLE busStops(BusStopCode INTEGER PRIMARY KEY, RoadName TEXT, Description TEXT, Latitude DOUBLE,Longitude DOUBLE)";
             String query = "INSERT INTO busStops(BusStopCode, RoadName,Description,Latitude,Longitude) VALUES (\""+busStopCode+"\""+","+"\""+roadName+"\""+","+"\""+description+"\""+","+latitude+","+longitude+")";
             String query2= "INSERT INTO busStops (BusStopCode=\""+busStopCode+"\""+","+"RoadName=\""+roadName+"\""+","+"Description=\""+description+"\""+","+"Latitude=\""+latitude+"\""+","+"Longitude=\""+longitude+"\""+")";

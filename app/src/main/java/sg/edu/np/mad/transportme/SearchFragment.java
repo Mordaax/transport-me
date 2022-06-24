@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -104,6 +105,66 @@ public class SearchFragment extends Fragment {
         GoogleMap map = ((SupportMapFragment) getFragmentManager()
                 .findFragmentById(R.id.map)).getMapAsync();*/
 
+        searchBar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_LEFT = 0;
+                final int DRAWABLE_TOP = 1;
+                final int DRAWABLE_RIGHT = 2;
+                final int DRAWABLE_BOTTOM = 3;
+
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if(event.getRawX() >= (searchBar.getRight() - searchBar.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        // your action here
+                        String searchText = String.valueOf(searchBar.getText());
+                        searchText = searchText.substring(0, 1).toUpperCase() + searchText.substring(1);
+
+                        ArrayList<BusStop> searchBusStops = new ArrayList<>();
+                        for (int i = 0; i<globalBusStops.size();i++) {
+                            if (globalBusStops.get(i).getDescription().contains(searchText) || globalBusStops.get(i).getRoadName().equalsIgnoreCase(searchText)){
+                                searchBusStops.add(globalBusStops.get(i));
+                            }
+                        }
+
+
+                        for (int i = 0; i<globalBusStops.size();i++){
+                            if (globalBusStops.get(i).getBusStopCode().equals(searchText)) {
+                                searchBusStops.add(globalBusStops.get(i));
+                            }
+                        }
+
+                        /*MainActivity main = (MainActivity) getActivity();*/
+                        if(searchBusStops.size() > 90){
+                            Toast.makeText(getContext(), "Please be more specific", Toast.LENGTH_SHORT).show();
+                        }
+                        else if (searchBusStops.size()>0){
+                            ApiBusStopService apiBusStopService = new ApiBusStopService(getActivity());
+                            apiBusStopService.getBusService(searchBusStops,new ApiBusStopService.VolleyResponseListener2() {
+                                @Override
+                                public void onError(String message) {
+                                    Log.d("Yes","api fail");
+                                }
+                                @Override
+                                public void onResponse(ArrayList<BusStop> busStopsLoaded) {
+
+                                    RecyclerView rv = view.findViewById(R.id.searchrecyclerView);
+                                    BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,getActivity());
+                                    LinearLayoutManager layout = new LinearLayoutManager(getActivity());
+                                    rv.setAdapter(adapter);
+                                    rv.setLayoutManager(layout);
+                                }
+                            });
+                        }
+
+                        else{
+                            Toast.makeText(getContext(), "No Matching Bus Stops", Toast.LENGTH_SHORT).show();
+                        }
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
         searchBar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -111,30 +172,27 @@ public class SearchFragment extends Fragment {
                     String searchText = String.valueOf(searchBar.getText());
                     searchText = searchText.substring(0, 1).toUpperCase() + searchText.substring(1);
 
-                    ArrayList<BusStop> closeBusStops = new ArrayList<>();
+                    ArrayList<BusStop> searchBusStops = new ArrayList<>();
                     for (int i = 0; i<globalBusStops.size();i++) {
-                        if (globalBusStops.get(i).Description.contains(searchText) || globalBusStops.get(i).RoadName.equalsIgnoreCase(searchText)){
-                            closeBusStops.add(globalBusStops.get(i));
+                        if (globalBusStops.get(i).getDescription().contains(searchText) || globalBusStops.get(i).getRoadName().equalsIgnoreCase(searchText)){
+                            searchBusStops.add(globalBusStops.get(i));
                         }
                     }
 
 
                     for (int i = 0; i<globalBusStops.size();i++){
-                        if (globalBusStops.get(i).BusStopCode.equals(searchText)) {
-                            closeBusStops.add(globalBusStops.get(i));
+                        if (globalBusStops.get(i).getBusStopCode().equals(searchText)) {
+                            searchBusStops.add(globalBusStops.get(i));
                         }
                     }
 
-
-
-                    Log.d("yes", String.valueOf(closeBusStops.size()));
                     /*MainActivity main = (MainActivity) getActivity();*/
-                    if(closeBusStops.size() > 90){
+                    if(searchBusStops.size() > 90){
                         Toast.makeText(getContext(), "Please be more specific", Toast.LENGTH_SHORT).show();
                     }
-                    else if (closeBusStops.size()>0){
+                    else if (searchBusStops.size()>0){
                         ApiBusStopService apiBusStopService = new ApiBusStopService(getActivity());
-                        apiBusStopService.getBusService(closeBusStops,new ApiBusStopService.VolleyResponseListener2() {
+                        apiBusStopService.getBusService(searchBusStops,new ApiBusStopService.VolleyResponseListener2() {
                             @Override
                             public void onError(String message) {
                                 Log.d("Yes","api fail");

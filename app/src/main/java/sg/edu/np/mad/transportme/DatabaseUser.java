@@ -13,6 +13,6 @@ public class DatabaseUser {
     }
     public Task<Void> add(User u)
     {
-        return dr.child(u.name).setValue(u);
+        return dr.child(u.getName()).setValue(u);
     }
 }

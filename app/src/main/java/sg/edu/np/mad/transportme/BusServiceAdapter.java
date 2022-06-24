@@ -45,17 +45,17 @@ public class BusServiceAdapter
             }
         });
 
-        holder.ServiceNumber.setText(content.ServiceNumber);
+        holder.ServiceNumber.setText(content.getServiceNumber());
         ArrayList<TextView> nextBusList= new ArrayList<TextView>(Arrays.asList(holder.NextBus1, holder.NextBus2, holder.NextBus3));
         ArrayList<TextView> nextBusTypeList = new ArrayList<TextView>(Arrays.asList(holder.NextBus1Type, holder.NextBus2Type, holder.NextBus3Type));
         ArrayList<ImageView> nextBusFeatureList = new ArrayList<>(Arrays.asList(holder.NextBus1Feature, holder.NextBus2Feature, holder.NextBus3Feature));
         for (int i = 0; i < nextBusList.size(); i++)
         {
-            NextBus nb = content.NextBuses.get(i);
+            NextBus nb = content.getNextBuses().get(i);
             TextView busTV = nextBusList.get(i);
             TextView busTypeTV = nextBusTypeList.get(i);
             ImageView busFeatureIV = nextBusFeatureList.get(i);
-            if (nb.EstimatedArrival == "Null")
+            if (nb.getEstimatedArrival() == "Null")
             {
                 busTV.setTextColor(Color.parseColor("#000000"));
                 busTV.setText("一");
@@ -63,29 +63,29 @@ public class BusServiceAdapter
                 busFeatureIV.setVisibility(View.GONE);
                 continue;
             }
-            else if (Integer.parseInt(nb.EstimatedArrival) == 0)
+            else if (Integer.parseInt(nb.getEstimatedArrival()) == 0)
             {
                 busTV.setText("Arr");
             }
-            else if (Integer.parseInt(nb.EstimatedArrival) < 0)
+            else if (Integer.parseInt(nb.getEstimatedArrival()) < 0)
             {
                 busTV.setText("Left");
             }
             else
             {
-                nextBusList.get(i).setText(nb.EstimatedArrival);
+                nextBusList.get(i).setText(nb.getEstimatedArrival());
             }
 
-            if (nb.Feature.equals("none"))
+            if (nb.getFeature().equals("none"))
             {
                 busFeatureIV.setVisibility(View.GONE);
             }
 
-            if (nb.Load.equals("SEA"))
+            if (nb.getLoad().equals("SEA"))
             {
                 busTV.setTextColor(Color.parseColor("#90a959"));
             }
-            else if (nb.Load.equals("SDA"))
+            else if (nb.getLoad().equals("SDA"))
             {
                 busTV.setTextColor(Color.parseColor("#e9b872"));
                 busFeatureIV.setImageResource(R.drawable.wheelchair_yellow);
@@ -96,11 +96,11 @@ public class BusServiceAdapter
                 busFeatureIV.setImageResource(R.drawable.wheelchair_red);
             }
 
-            if (nb.Type.equals("SD"))
+            if (nb.getType().equals("SD"))
             {
                 busTypeTV.setText("Single");
             }
-            else if (nb.Type.equals("DD"))
+            else if (nb.getType().equals("DD"))
             {
                 busTypeTV.setText("Double");
             }
