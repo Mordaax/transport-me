@@ -4,8 +4,11 @@ import static android.content.Context.MODE_PRIVATE;
 import static sg.edu.np.mad.transportme.LoginPage.globalEmail;
 import static sg.edu.np.mad.transportme.LoginPage.globalFavouriteBusStop;
 import static sg.edu.np.mad.transportme.LoginPage.globalName;
-import static sg.edu.np.mad.transportme.MainActivity.globalCloseness;
+import static sg.edu.np.mad.transportme.LoginPage.globalCloseness;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -30,6 +33,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import android.content.SharedPreferences;
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ProfileFragment#newInstance} factory method to
@@ -90,13 +94,18 @@ public class ProfileFragment extends Fragment {
         TextInputEditText password = rootView.findViewById(R.id.profileuserPassword);
         SeekBar closenessSeekBar = rootView.findViewById(R.id.seekBar);
         TextView closenessTextView = rootView.findViewById(R.id.closeness);
-        closenessTextView.setText("Bus Stop Closeness ("+ String.valueOf(globalCloseness*1000) +" Meters)");
+        closenessTextView.setText("Bus Stop Radius ("+ String.valueOf((int) (globalCloseness*1000)) +" Meters)");
         closenessSeekBar.setProgress((int) (globalCloseness*10));
         closenessSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                closenessTextView.setText("Bus Stop Closeness ("+ String.valueOf(i*100) +" Meters)");
-                globalCloseness = Double.valueOf(i/10);
+                closenessTextView.setText("Bus Stop Radius ("+ String.valueOf(i*100) +" Meters)");
+                Double doublei = Double.valueOf(i);
+                globalCloseness = doublei/10;
+                SharedPreferences.Editor editor = getActivity().getSharedPreferences("LoginData", MODE_PRIVATE).edit();
+                editor.putString("closeness", String.valueOf(globalCloseness));
+                editor.commit();
+
             }
 
             @Override
@@ -113,8 +122,22 @@ public class ProfileFragment extends Fragment {
         username.setText(globalName);
         email.setText(globalEmail);
         password.setText("CHANGE PASSWORD");
+        password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (b){
+                    password.setText("");
+                }
+                else /*if(b == false && password.getEditableText().equals(""))*/{
+                    if(!(password.getEditableText().length() > 0)){
+                        password.setText("CHANGE PASSWORD");
+                    }
+                }
+            }
+        });
         Intent intent = new Intent(getActivity(), LoginPage.class);
         Button signoutButton = rootView.findViewById(R.id.signoutbutton);
+
         signoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
@@ -136,8 +159,7 @@ public class ProfileFragment extends Fragment {
         editProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean emailChanged = false;
-                boolean passwordChanged = false;
+
                 String uEmail = email.getEditableText().toString();
                 String uPassw = password.getEditableText().toString();
                 if (!Patterns.EMAIL_ADDRESS.matcher(uEmail).matches()){
@@ -145,33 +167,66 @@ public class ProfileFragment extends Fragment {
                     email.requestFocus();
                     return;
                 }
-                reference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (!uEmail.equals(globalEmail)){
-                            //emailChanged = true;
-                            reference.child(globalName).child("email").setValue(uEmail); //sso thing makes email address put the old one
-                        }
-                        if (!BCrypt.verifyer().verify(uPassw.toCharArray(), snapshot.child(globalName).child("password").getValue().toString()).verified){
-                            //passwordChanged = true;
-                            reference.child(globalName).child("password").setValue(BCrypt.withDefaults().hashToString(12, uPassw.toCharArray()));
-                            Log.d("pui",password.getEditableText().toString());
-                        }
-                        /*if (emailChanged || passwordChanged){
-                            Toast.makeText(ProfileFragment.this, "Your Profile has been Updated", Toast.LENGTH_LONG).show();
-                            }
-                        else{
-                            Toast.makeText(ProfileFragment.this, "Nothing has been changed, cannot be updated", Toast.LENGTH_LONG).show();
-                            }*/
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
 
+                AlertDialog.Builder confirmDataChange = new AlertDialog.Builder(getActivity());
+                confirmDataChange.setTitle("Confirm edit profile?");
+                confirmDataChange.setMessage("Your data will be changed");
+                confirmDataChange.setCancelable(true);
+                confirmDataChange.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        email.setText(globalEmail);
+                        password.setText("");
+                        return;
                     }
                 });
+                confirmDataChange.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                if (!uEmail.equals(globalEmail)){
+                                    //emailChanged = true;
+                                    reference.child(globalName).child("email").setValue(uEmail); //sso thing makes email address put the old one
+                                    SharedPreferences.Editor editor = getActivity().getSharedPreferences("LoginData", MODE_PRIVATE).edit();
+                                    globalEmail = uEmail;
+                                    editor.putString("email", uEmail);
+                                    editor.commit();
+
+                                    Toast.makeText(getContext(), "Email Changed", Toast.LENGTH_SHORT).show();
+                                }
+                                if (!BCrypt.verifyer().verify(uPassw.toCharArray(), snapshot.child(globalName).child("password").getValue().toString()).verified){
+                                    //passwordChanged = true;
+                                    Log.i("puii", String.valueOf(password.getText()));
+                                    if (String.valueOf(password.getText()).equals("CHANGE PASSWORD")){
+                                        return;
+                                    }
+                                    else{
+                                        reference.child(globalName).child("password").setValue(BCrypt.withDefaults().hashToString(12, uPassw.toCharArray()));
+                                        Toast.makeText(getContext(), "Password Changed", Toast.LENGTH_SHORT).show();
+                                        Log.d("pui",password.getEditableText().toString());
+                                    }
+                                    /*if (!password.getEditableText().equals("CHANGE PASSWORD")){
+
+                                    }
+*/
+                                }
 
 
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
+                });
+                AlertDialog alert = confirmDataChange.create();
+                alert.show();
 
             }
         });

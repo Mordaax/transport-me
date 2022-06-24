@@ -2,6 +2,8 @@ package sg.edu.np.mad.transportme;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 
+import static sg.edu.np.mad.transportme.LoginPage.globalCloseness;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
@@ -49,7 +51,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     GoogleMap map;
     LocationManager locationManager;
-    public static Double globalCloseness = 0.3;
+
 
     public static Boolean favourite = false;
     private static final String[] LOCATION_PERMS={
@@ -195,7 +197,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onLocationChanged(@NonNull Location location) {
                         Double Latitude = location.getLatitude();
                         Double Longitude = location.getLongitude();
-                        
+
 
                         LatLng latLng = new LatLng(Latitude, Longitude);
                         Geocoder geocoder = new Geocoder(getApplicationContext());
