@@ -1,8 +1,11 @@
 package sg.edu.np.mad.transportme;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ProgressBar;
@@ -14,11 +17,19 @@ import java.util.ArrayList;
 public class LoadingScreen extends AppCompatActivity {
     public static ArrayList<BusStop> globalBusStops = new ArrayList<>();
     int i = 0;
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_screen);
 
+        final String[] LOCATION_PERMS={
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+        };
+
+        final int LOCATION_REQUEST=1337;
+        requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
 
         ProgressBar progressBar = findViewById(R.id.progress_bar);
         TextView progressText = findViewById(R.id.progress_text);
