@@ -57,7 +57,7 @@
                 android:id="@+id/closeness"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Bus Stop Closeness (300 Meters)"
+                android:text="Bus Stop Radius (300 Meters)"
                 android:textSize="20sp" />
 
             <SeekBar
@@ -118,13 +118,12 @@
                     android:id="@+id/profileuserPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
                     android:layout_marginBottom="30dp"
                     android:background="@color/white"
                     android:drawableLeft="@drawable/ic_baseline_lock_24"
                     android:drawablePadding="15dp"
                     android:fontFamily="@font/inter_bold"
-                    android:text="CHANGE PASSWORD" />
+                    android:singleLine="true" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

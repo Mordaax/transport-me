@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -30,7 +31,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
     public static String globalEmail = "";
     public static Boolean SignedIn = false;
     public static ArrayList<BusStop> globalFavouriteBusStop = new ArrayList<>();
-
+    public static Double globalCloseness;
     //private TextView register;
     private EditText editTextEmail, editTextPassword;
     private Button signIn, register;
@@ -57,7 +58,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
         globalName = prefs.getString("name", "");
         globalEmail = prefs.getString("email", "");
         SignedIn = prefs.getString("login", "").equals("True");
-
+        globalCloseness = Double.valueOf(prefs.getString("closeness","0.3"));
         if(SignedIn){
 
             FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/");
