@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:fontFamily="@font/inter_bold"
-            android:text="Favourited Bus Stops"
+            android:text="Favourite Bus Stops"
             android:textSize="24sp" />
 
         <androidx.recyclerview.widget.RecyclerView
