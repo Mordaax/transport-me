@@ -6,9 +6,15 @@
     tools:context=".MrtMapFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ImageView
+        android:id="@+id/mrtMapImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_margin="0dp"
+        android:contentDescription="mrt map"
+        android:src="@drawable/mrt_map">
+
+    </ImageView>
+
 
 </FrameLayout>
