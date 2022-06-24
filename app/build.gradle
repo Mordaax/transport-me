@@ -49,6 +49,7 @@ dependencies {
 
     implementation 'it.sephiroth.android.library.imagezoom:imagezoom:2.3.0'
     implementation 'io.github.imablanco:zoomy:1.0.0'
+    implementation 'com.jsibbold:zoomage:1.3.1'
 
     implementation group: 'at.favre.lib', name: 'bcrypt', version: '0.9.0'
 

@@ -68,14 +68,15 @@ public class MrtMapFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_mrt_map, container, false);
         ImageView imageView = (ImageView) view.findViewById(R.id.mrtMapImage);
 
-
+        //TouchImageView touchImageView = (TouchImageView) imageView;
+        /**
         Zoomy.Builder builder = new Zoomy.Builder(getActivity())
                 .target(imageView)
                 .animateZooming(false)
                 .enableImmersiveMode(false);
 
         builder.register();
-
+        **/
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_mrt_map, container, false);
     }
