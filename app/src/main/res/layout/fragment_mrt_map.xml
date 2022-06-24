@@ -7,6 +7,15 @@
     tools:context=".MrtMapFragment">
 
     <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:fontFamily="@font/inter_bold"
+        android:text="MRT Map"
+        android:textSize="24sp" />
+
     <com.jsibbold.zoomage.ZoomageView
         android:id="@+id/mrtMapImage"
         android:layout_width="match_parent"
