@@ -8,11 +8,11 @@ public class DatabaseUser {
     private DatabaseReference dr;
     public DatabaseUser()
     {
-        FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/");
-        dr = db.getReference(User.class.getSimpleName());
+        FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/"); //Initialise Database
+        dr = db.getReference(User.class.getSimpleName()); //Get reference to User
     }
     public Task<Void> add(User u)
     {
         return dr.child(u.getName()).setValue(u);
-    }
+    } //Adding User to the database
 }
