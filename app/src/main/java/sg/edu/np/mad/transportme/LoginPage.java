@@ -179,58 +179,13 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
 
                     }
                 });
-
                 break;
+
             case R.id.gotoregisterpage:
                 startActivity(new Intent(this, RegistrationPage.class));
                 break;
         }
+
     }
 
-    //private void userLogin() {
-
-        /**mAuth.signInWithEmailAndPassword(email,password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-            @Override
-            public void onSuccess(AuthResult authResult) {
-                startActivity(new Intent(LoginPage.this, MainActivity.class));
-                finish();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                //Toast.makeText(LoginPage.this, "Error"+ authResult.getException().getMessage(), Toast.LENGTH_LONG).show();
-                Toast.makeText(LoginPage.this, "Invalid Credentials, please try again", Toast.LENGTH_LONG).show();
-                editTextEmail.setEnabled(true);
-                editTextPassword.setEnabled(true);
-                progressBar.setVisibility(View.INVISIBLE);
-            }
-        });**/
-
-        /**mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()){
-                    //redirect to user profile (get main page from github)
-                    startActivity(new Intent(LoginPage.this, MainActivity.class));
-
-                }
-                else{
-                    Toast.makeText(LoginPage.this, "Invalid Credentials, please try again", Toast.LENGTH_LONG).show();
-                    editTextEmail.setEnabled(true);
-                    editTextPassword.setEnabled(true);
-                    progressBar.setVisibility(View.INVISIBLE);
-                }
-                progressBar.setVisibility(View.GONE);
-            }
-        });
-    }**/
-/**
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-    }**/
-    //}
 }

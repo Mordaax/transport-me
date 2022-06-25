@@ -57,12 +57,6 @@ public class RegistrationPage extends AppCompatActivity {
 
         DatabaseUser dbUser = new DatabaseUser();
 
-
-        /**if (mAuth.getCurrentUser() != null){
-            startActivity(new Intent(RegistrationPage.this, MainActivity.class));
-            finish();
-        }**/
-
         Intent regIntent = new Intent(RegistrationPage.this, LoginPage.class);
         registerUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,55 +169,6 @@ public class RegistrationPage extends AppCompatActivity {
                     }
                 });
 
-                /*mDatabase.child("User").child(name).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DataSnapshot> task) {
-                        if (!task.isSuccessful()) {
-                            Log.e("firebase", "Error getting data", task.getException());
-                        }
-                        else {
-                            if(String.valueOf(task.getResult().child("name").getValue()).equals(name)){
-                                startActivity(new Intent(RegistrationPage.this, RegistrationPage.class));
-                                Toast.makeText(RegistrationPage.this, "Please Enter another Username", Toast.LENGTH_LONG).show();
-                                finish();
-                            }
-                            else if(String.valueOf(task.getResult().child("email").getValue()).equals(email)){
-                                Toast.makeText(RegistrationPage.this, "Email already registered", Toast.LENGTH_LONG).show();
-                                startActivity(new Intent(RegistrationPage.this, RegistrationPage.class));
-                                finish();
-                            }
-                            else{
-                                dbUser.add(u).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void unused) {
-                                        Toast.makeText(RegistrationPage.this, "Registration successful!", Toast.LENGTH_LONG).show();
-                                        globalName = name;
-                                        globalEmail = email;
-                                        globalFavouriteBusStop = new ArrayList<BusStop>();
-                                        SharedPreferences.Editor editor = getSharedPreferences("LoginData", MODE_PRIVATE).edit();
-                                        editor.putString("name", globalName);
-                                        editor.putString("email", globalEmail);
-                                        editor.putString("login","True" );
-                                        editor.apply();
-                                        SignedIn = false;
-                                        startActivity(new Intent(RegistrationPage.this, MainActivity.class));
-                                        finish();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        editTextEmail.setEnabled(true);
-                                        editTextName.setEnabled(true);
-                                        editTextPassword.setEnabled(true);
-                                        progressBar.setVisibility(View.INVISIBLE);
-                                        Toast.makeText(RegistrationPage.this, "Registration failed! Try again!", Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                            }
-                        }
-                    }
-                });*/
-
             }
         });
         Intent myIntent = new Intent(this, LoginPage.class);
@@ -234,73 +179,6 @@ public class RegistrationPage extends AppCompatActivity {
             }
         });
 
-
     }
 
-    /**private void registerUser() {
-
-
-        mAuth.createUserWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-            @Override
-            public void onSuccess(AuthResult authResult) {
-                Log.d("Key", "Success");
-
-                startActivity(new Intent(RegistrationPage.this, MainActivity.class));
-                finish();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d("Key", "Oh no");
-                editTextEmail.setEnabled(true);
-                editTextName.setEnabled(true);
-                editTextPassword.setEnabled(true);
-                progressBar.setVisibility(View.INVISIBLE);
-                Toast.makeText(RegistrationPage.this, "Registration failed! Try again!", Toast.LENGTH_LONG).show();
-            }
-        });
-       mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(RegistrationPage.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            //storing user information (need to add bus stops list)
-                            User user = new User(name, email, null);
-
-
-                            FirebaseDatabase database = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/");
-                            DatabaseReference ref = database.getReference("users");
-                            ref.setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(RegistrationPage.this, "User has been registered Successfully", Toast.LENGTH_LONG).show();
-                                        register = true;
-                                        //redirect to login layout
-                                        //Intent intent = new Intent(RegistrationPage.this, MainActivity.class);
-
-                                    } else {
-                                        Toast.makeText(RegistrationPage.this, "Registration failed! Try again!", Toast.LENGTH_LONG).show();
-                                        register = false;
-                                        editTextEmail.setEnabled(true);
-                                        editTextName.setEnabled(true);
-                                        editTextPassword.setEnabled(true);
-                                    }
-                                    progressBar.setVisibility(View.INVISIBLE);
-
-                                }
-                            });
-                        } else {
-                            Toast.makeText(RegistrationPage.this, "Registration failed! Try again!", Toast.LENGTH_LONG).show();
-                            register = false;
-                            editTextEmail.setEnabled(true);
-                            editTextName.setEnabled(true);
-                            editTextPassword.setEnabled(true);
-                        }
-                            progressBar.setVisibility(View.INVISIBLE);
-                        }
-                        ;
-
-                    });
-                }**/
-    }
+}
