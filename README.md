@@ -8,7 +8,7 @@ AY22 P03 Group L
 | Cyrus Tan Rui Xuan   | S10219142C  |
 | Dalbert Chea Zhi Jun | S10222553  |
 | Koo Wen Qi           | S10222922  |
-| Kyler Lee            | S10222789  |
+| Kyler Lee            | S10222789H  |
 | Tristan Tan Jun Xian | S10223003  |
 
 ## App Description
@@ -33,5 +33,7 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 ### Koo Wen Qi
 
 ### Kyler Lee
+1. Loading Screen and Login UI
+2. Profiles page and UI
 
 ### Tristan Tan Jun Xian
