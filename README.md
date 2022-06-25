@@ -33,7 +33,8 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 ### Koo Wen Qi
 
 ### Kyler Lee
-1. Loading Screen and Login UI
-2. Profiles page and UI
+1. Creation of Logo
+2. Loading Screen and Login UI
+3. Profiles Page and UI
 
 ### Tristan Tan Jun Xian
