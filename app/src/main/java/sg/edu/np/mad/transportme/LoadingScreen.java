@@ -15,6 +15,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class LoadingScreen extends AppCompatActivity {
+
+    //Global bus stop list, holds data for all bus stops
     public static ArrayList<BusStop> globalBusStops = new ArrayList<>();
     int i = 0;
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -29,16 +31,19 @@ public class LoadingScreen extends AppCompatActivity {
         };
 
         final int LOCATION_REQUEST=1337;
-        requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
+        requestPermissions(LOCATION_PERMS, LOCATION_REQUEST); //Request permissions from user
 
-        ProgressBar progressBar = findViewById(R.id.progress_bar);
+        ProgressBar progressBar = findViewById(R.id.progress_bar); //Progress Bar for loading screen to downlaod all bus stops
         TextView progressText = findViewById(R.id.progress_text);
 
+        // Initialize local SQL database to hold all bus stop data (Bus Stop code, Lat Long, Description, Roadname)
         BusStopDBHandler busStopDBHandler = new BusStopDBHandler(LoadingScreen.this,null,null,1);
-        globalBusStops = busStopDBHandler.getBusStops();
+        globalBusStops = busStopDBHandler.getBusStops(); //Grab existing bus stop data
+
+        //Check if its the first time the app runs, if it is it will download the bus stops
         if(globalBusStops.size() == 0){
-            ApiBusStopService apiBusStopService = new ApiBusStopService(LoadingScreen.this);
-            apiBusStopService.getBusStop(new ApiBusStopService.VolleyResponseListener() {
+            ApiBusStopService apiBusStopService = new ApiBusStopService(LoadingScreen.this); //Initialize API
+            apiBusStopService.getBusStop(new ApiBusStopService.VolleyResponseListener() { //Call API asynchronously
                 @Override
                 public void onError(String message) {
                     Toast.makeText(LoadingScreen.this,"Cannot Get Bus Stops",Toast.LENGTH_LONG).show();
@@ -47,13 +52,13 @@ public class LoadingScreen extends AppCompatActivity {
                 public void onResponse(ArrayList<BusStop> busStops) {
                     busStopDBHandler.addBusStops(busStops);
                     progressBar.setProgress(100);
-                    globalBusStops = busStops;
-                    Intent goToLoginPage = new Intent(LoadingScreen.this, LoginPage.class);
+                    globalBusStops = busStops; // Load called bus stop data to globalBusStop to be access by all classes
+                    Intent goToLoginPage = new Intent(LoadingScreen.this, LoginPage.class); //Go to login page
                     startActivity(goToLoginPage);
                 }
             });
             progressText.setText("Downloading Bus Stops, Only Happens Once");
-            final Handler handler = new Handler();
+            final Handler handler = new Handler();  //Handles the progress bar, progress bar is based on time
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -69,7 +74,7 @@ public class LoadingScreen extends AppCompatActivity {
                 }
             }, 200);
         }
-        else{
+        else{ // Progress bar for when database is already downloaded, just need to grab data from local SQL database
             progressText.setText("Loading Bus Stops");
             final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {

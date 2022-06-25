@@ -104,7 +104,7 @@ public class SearchFragment extends Fragment {
         Double longitude;
         GoogleMap map = ((SupportMapFragment) getFragmentManager()
                 .findFragmentById(R.id.map)).getMapAsync();*/
-
+        // On touch listener for icon at the side of the textview
         searchBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -114,30 +114,29 @@ public class SearchFragment extends Fragment {
                 final int DRAWABLE_BOTTOM = 3;
 
                 if(event.getAction() == MotionEvent.ACTION_UP) {
-                    if(event.getRawX() >= (searchBar.getRight() - searchBar.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                        // your action here
+                    if(event.getRawX() >= (searchBar.getRight() - searchBar.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) { //If search icon is clicked, run code bellow
                         String searchText = String.valueOf(searchBar.getText());
                         searchText = searchText.substring(0, 1).toUpperCase() + searchText.substring(1);
 
                         ArrayList<BusStop> searchBusStops = new ArrayList<>();
-                        for (int i = 0; i<globalBusStops.size();i++) {
+                        for (int i = 0; i<globalBusStops.size();i++) { //Compare search term with all description and Roadname in globalBusStop
                             if (globalBusStops.get(i).getDescription().contains(searchText) || globalBusStops.get(i).getRoadName().equalsIgnoreCase(searchText)){
                                 searchBusStops.add(globalBusStops.get(i));
                             }
                         }
 
 
-                        for (int i = 0; i<globalBusStops.size();i++){
+                        for (int i = 0; i<globalBusStops.size();i++){ // Find all bus stop with Similar bus stop code as search term
                             if (globalBusStops.get(i).getBusStopCode().equals(searchText)) {
                                 searchBusStops.add(globalBusStops.get(i));
                             }
                         }
 
                         /*MainActivity main = (MainActivity) getActivity();*/
-                        if(searchBusStops.size() > 90){
+                        if(searchBusStops.size() > 90){ // Check if search term is too General like (Punggol), API call can only handle about 90 bus stops at a time
                             Toast.makeText(getContext(), "Please be more specific", Toast.LENGTH_SHORT).show();
                         }
-                        else if (searchBusStops.size()>0){
+                        else if (searchBusStops.size()>0){ //Call api to get bus stop timing for bus services
                             ApiBusStopService apiBusStopService = new ApiBusStopService(getActivity());
                             apiBusStopService.getBusService(searchBusStops,new ApiBusStopService.VolleyResponseListener2() {
                                 @Override
@@ -147,7 +146,7 @@ public class SearchFragment extends Fragment {
                                 @Override
                                 public void onResponse(ArrayList<BusStop> busStopsLoaded) {
 
-                                    RecyclerView rv = view.findViewById(R.id.searchrecyclerView);
+                                    RecyclerView rv = view.findViewById(R.id.searchrecyclerView); //Load bus stops into RecyclerView in fragment
                                     BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,getActivity());
                                     LinearLayoutManager layout = new LinearLayoutManager(getActivity());
                                     rv.setAdapter(adapter);
@@ -165,6 +164,8 @@ public class SearchFragment extends Fragment {
                 return false;
             }
         });
+
+        // On click listner for keyboard search button
         searchBar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -173,21 +174,21 @@ public class SearchFragment extends Fragment {
                     searchText = searchText.substring(0, 1).toUpperCase() + searchText.substring(1);
 
                     ArrayList<BusStop> searchBusStops = new ArrayList<>();
-                    for (int i = 0; i<globalBusStops.size();i++) {
+                    for (int i = 0; i<globalBusStops.size();i++) {  //Compare search term with all description and Roadname in globalBusStop
                         if (globalBusStops.get(i).getDescription().contains(searchText) || globalBusStops.get(i).getRoadName().equalsIgnoreCase(searchText)){
                             searchBusStops.add(globalBusStops.get(i));
                         }
                     }
 
 
-                    for (int i = 0; i<globalBusStops.size();i++){
+                    for (int i = 0; i<globalBusStops.size();i++){ // Find all bus stop with Similar bus stop code as search term
                         if (globalBusStops.get(i).getBusStopCode().equals(searchText)) {
                             searchBusStops.add(globalBusStops.get(i));
                         }
                     }
 
                     /*MainActivity main = (MainActivity) getActivity();*/
-                    if(searchBusStops.size() > 90){
+                    if(searchBusStops.size() > 90){ // Check if search term is too General like (Punggol), API call can only handle about 90 bus stops at a time
                         Toast.makeText(getContext(), "Please be more specific", Toast.LENGTH_SHORT).show();
                     }
                     else if (searchBusStops.size()>0){
@@ -200,7 +201,7 @@ public class SearchFragment extends Fragment {
                             @Override
                             public void onResponse(ArrayList<BusStop> busStopsLoaded) {
 
-                                RecyclerView rv = view.findViewById(R.id.searchrecyclerView);
+                                RecyclerView rv = view.findViewById(R.id.searchrecyclerView); //Load searched bus stops into recycler view
                                 BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,getActivity());
                                 LinearLayoutManager layout = new LinearLayoutManager(getActivity());
                                 rv.setAdapter(adapter);

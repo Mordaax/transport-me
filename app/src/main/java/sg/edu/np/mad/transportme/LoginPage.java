@@ -59,7 +59,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
         globalEmail = prefs.getString("email", "");
         SignedIn = prefs.getString("login", "").equals("True");
         globalCloseness = Double.valueOf(prefs.getString("closeness","0.3"));
-        if(SignedIn){
+        if(SignedIn){ // If User is signedIn, phone connects to Firebase and gets favourite bus stops
 
             FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/");
             DatabaseReference myRef = db.getReference("User");
@@ -73,7 +73,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                             String busStopCode = favBS.getKey();
                             for (int i = 0 ; i< globalBusStops.size(); i++){
                                 if (busStopCode.equals(globalBusStops.get(i).getBusStopCode())){
-                                    globalFavouriteBusStop.add(globalBusStops.get(i));
+                                    globalFavouriteBusStop.add(globalBusStops.get(i)); //Update globalFavoruiteBusStop with favourited bus Stops
                                 }
                             }
                         }
@@ -94,7 +94,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.loginbutton:
+            case R.id.loginbutton: //If login button is clicked
                 String email = editTextEmail.getText().toString();
                 String password = editTextPassword.getText().toString();
 
@@ -103,18 +103,18 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                     editTextEmail.requestFocus();
                     return;
                 }
-                if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+                if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){ //Check for email pattern
                     editTextEmail.setError("Please enter a valid email");
                     editTextEmail.requestFocus();
                     return;
                 }
 
-                if(password.isEmpty()){
+                if(password.isEmpty()){ //Check if password is empty
                     editTextPassword.setError("Password is empty");
                     editTextPassword.requestFocus();
                     return;
                 }
-                if(password.length() < 6){
+                if(password.length() < 6){ //Check if password meets the requirement
                     editTextPassword.setError("Min password length is 6 characters");
                     editTextPassword.requestFocus();
                     return;
@@ -187,5 +187,5 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
         }
 
     }
-
+    //Firebase authentication code, Not Used
 }
