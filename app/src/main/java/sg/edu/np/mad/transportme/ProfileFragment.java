@@ -94,6 +94,7 @@ public class ProfileFragment extends Fragment {
         TextInputEditText password = rootView.findViewById(R.id.profileuserPassword);
         SeekBar closenessSeekBar = rootView.findViewById(R.id.seekBar);
         TextView closenessTextView = rootView.findViewById(R.id.closeness);
+        //allowing user to change the distance radius of bus stops around the user
         closenessTextView.setText("Bus Stop Radius ("+ String.valueOf((int) (globalCloseness*1000)) +" Meters)");
         closenessSeekBar.setProgress((int) (globalCloseness*10));
         closenessSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -118,10 +119,11 @@ public class ProfileFragment extends Fragment {
 
             }
         });
-
+        //filling up profile details
         username.setText(globalName);
         email.setText(globalEmail);
         password.setText("CHANGE PASSWORD");
+        //makes it such that when user clicks on edit textbox, textbox is not automatically filled with "CHANGE PASSWORD"
         password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
@@ -142,6 +144,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view)
             {
+                //signing user out and removing it from sharedpreferences
                 SharedPreferences.Editor editor = getActivity().getSharedPreferences("LoginData", MODE_PRIVATE).edit();
                 editor.putString("name", "");
                 editor.putString("email", "");
@@ -152,7 +155,7 @@ public class ProfileFragment extends Fragment {
 
                 LoginPage.SignedIn = false;
                 globalFavouriteBusStop.clear();
-                startActivity(intent);
+                startActivity(intent); //user gets directed to login page after signing out
             }
         });
         Button editProfile = rootView.findViewById(R.id.editProfile);
@@ -162,7 +165,7 @@ public class ProfileFragment extends Fragment {
 
                 String uEmail = email.getEditableText().toString();
                 String uPassw = password.getEditableText().toString();
-                if (!Patterns.EMAIL_ADDRESS.matcher(uEmail).matches()){
+                if (!Patterns.EMAIL_ADDRESS.matcher(uEmail).matches()){ //checking for valid email address input
                     email.setError("Invalid Email Address");
                     email.requestFocus();
                     return;
@@ -176,6 +179,7 @@ public class ProfileFragment extends Fragment {
                 confirmDataChange.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        //reset information filled in edit textbox if user cancels profile edit
                         email.setText(globalEmail);
                         password.setText("");
                         return;
@@ -187,10 +191,10 @@ public class ProfileFragment extends Fragment {
                         reference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+                                //checks to see if user changed their email
                                 if (!uEmail.equals(globalEmail)){
-                                    //emailChanged = true;
-                                    reference.child(globalName).child("email").setValue(uEmail); //sso thing makes email address put the old one
+                                    reference.child(globalName).child("email").setValue(uEmail);
+                                    //saving changes in sharedpreferences so that changes are reflected when the user stays logged in
                                     SharedPreferences.Editor editor = getActivity().getSharedPreferences("LoginData", MODE_PRIVATE).edit();
                                     globalEmail = uEmail;
                                     editor.putString("email", uEmail);
@@ -198,24 +202,16 @@ public class ProfileFragment extends Fragment {
 
                                     Toast.makeText(getContext(), "Email Changed", Toast.LENGTH_SHORT).show();
                                 }
+                                //checks to see if user changed their hashed password
                                 if (!BCrypt.verifyer().verify(uPassw.toCharArray(), snapshot.child(globalName).child("password").getValue().toString()).verified){
-                                    //passwordChanged = true;
-                                    Log.i("puii", String.valueOf(password.getText()));
-                                    if (String.valueOf(password.getText()).equals("CHANGE PASSWORD")){
+                                    if (String.valueOf(password.getText()).equals("CHANGE PASSWORD")){ //prevents user from accidentally making placeholder their password
                                         return;
                                     }
                                     else{
-                                        reference.child(globalName).child("password").setValue(BCrypt.withDefaults().hashToString(12, uPassw.toCharArray()));
-                                        Toast.makeText(getContext(), "Password Changed", Toast.LENGTH_SHORT).show();
-                                        Log.d("pui",password.getEditableText().toString());
+                                        reference.child(globalName).child("password").setValue(BCrypt.withDefaults().hashToString(12, uPassw.toCharArray())); //changes password tied to user in database
+                                        Toast.makeText(getContext(), "Password Changed", Toast.LENGTH_SHORT).show(); //lets user know change has been made
                                     }
-                                    /*if (!password.getEditableText().equals("CHANGE PASSWORD")){
-
-                                    }
-*/
                                 }
-
-
                             }
 
                             @Override
