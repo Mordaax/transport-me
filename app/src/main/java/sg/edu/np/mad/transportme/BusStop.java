@@ -9,7 +9,7 @@ public class BusStop implements Comparable<BusStop> {
     private Double Latitude;
     private Double Longitude;
     private Boolean Favourited;
-    private ArrayList<BusService> busServices;
+    private ArrayList<BusService> busServices; //Bus Stop holds the bus services
     private Double distanceToLocation;
 
     public String getBusStopCode() {
@@ -83,7 +83,7 @@ public class BusStop implements Comparable<BusStop> {
         this.Latitude = Latitude;
         this.Longitude = Longitude;
     }
-    public int compareTo(BusStop bs){
+    public int compareTo(BusStop bs){ //Comparable interface for nearest bus stop feature
         if(distanceToLocation == bs.distanceToLocation){
             return 0;
         }

@@ -1,0 +1,542 @@
+Index: app/src/main/java/sg/edu/np/mad/transportme/SearchFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package sg.edu.np.mad.transportme;\r\n\r\nimport static sg.edu.np.mad.transportme.LoadingScreen.globalBusStops;\r\n\r\nimport android.app.Activity;\r\nimport android.app.AlertDialog;\r\nimport android.content.Intent;\r\nimport android.location.Address;\r\nimport android.location.Geocoder;\r\nimport android.os.Bundle;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport android.util.Log;\r\nimport android.view.KeyEvent;\r\nimport android.view.LayoutInflater;\r\nimport android.view.MotionEvent;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.view.inputmethod.EditorInfo;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.FrameLayout;\r\nimport android.widget.LinearLayout;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.google.android.gms.maps.CameraUpdateFactory;\r\nimport com.google.android.gms.maps.GoogleMap;\r\nimport com.google.android.gms.maps.SupportMapFragment;\r\nimport com.google.android.gms.maps.model.LatLng;\r\nimport com.google.android.gms.maps.model.MarkerOptions;\r\n\r\nimport java.io.IOException;\r\nimport java.sql.Array;\r\nimport java.util.ArrayList;\r\nimport java.util.Arrays;\r\nimport java.util.List;\r\n\r\n/**\r\n * A simple {@link Fragment} subclass.\r\n * Use the {@link SearchFragment#newInstance} factory method to\r\n * create an instance of this fragment.\r\n */\r\npublic class SearchFragment extends Fragment {\r\n\r\n    // TODO: Rename parameter arguments, choose names that match\r\n    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER\r\n    private static final String ARG_PARAM1 = \"param1\";\r\n    private static final String ARG_PARAM2 = \"param2\";\r\n\r\n    // TODO: Rename and change types of parameters\r\n    private String mParam1;\r\n    private String mParam2;\r\n    Geocoder geocoder2;\r\n    public SearchFragment() {\r\n\r\n        // Required empty public constructor\r\n    }\r\n\r\n    /**\r\n     * Use this factory method to create a new instance of\r\n     * this fragment using the provided parameters.\r\n     *\r\n     * @param param1 Parameter 1.\r\n     * @param param2 Parameter 2.\r\n     * @return A new instance of fragment SearchFragment.\r\n     */\r\n    // TODO: Rename and change types and number of parameters\r\n    public static SearchFragment newInstance(String param1, String param2) {\r\n        SearchFragment fragment = new SearchFragment();\r\n        Bundle args = new Bundle();\r\n        args.putString(ARG_PARAM1, param1);\r\n        args.putString(ARG_PARAM2, param2);\r\n        fragment.setArguments(args);\r\n        return fragment;\r\n    }\r\n\r\n    @Override\r\n    public void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        if (getArguments() != null) {\r\n            mParam1 = getArguments().getString(ARG_PARAM1);\r\n            mParam2 = getArguments().getString(ARG_PARAM2);\r\n        }\r\n\r\n\r\n\r\n        /**/\r\n\r\n    }\r\n\r\n    @Override\r\n    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        // Inflate the layout for this fragment\r\n        View view = inflater.inflate(R.layout.fragment_search, container, false);\r\n        EditText searchBar = (EditText) view.findViewById(R.id.editTextSearch);\r\n        /*Button GoToMap = view.findViewById(R.id.buttonFind);*/\r\n       /* Double latitude;\r\n        Double longitude;\r\n        GoogleMap map = ((SupportMapFragment) getFragmentManager()\r\n                .findFragmentById(R.id.map)).getMapAsync();*/\r\n\r\n        searchBar.setOnTouchListener(new View.OnTouchListener() {\r\n            @Override\r\n            public boolean onTouch(View v, MotionEvent event) {\r\n                final int DRAWABLE_LEFT = 0;\r\n                final int DRAWABLE_TOP = 1;\r\n                final int DRAWABLE_RIGHT = 2;\r\n                final int DRAWABLE_BOTTOM = 3;\r\n\r\n                if(event.getAction() == MotionEvent.ACTION_UP) {\r\n                    if(event.getRawX() >= (searchBar.getRight() - searchBar.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {\r\n                        // your action here\r\n                        String searchText = String.valueOf(searchBar.getText());\r\n                        searchText = searchText.substring(0, 1).toUpperCase() + searchText.substring(1);\r\n\r\n                        ArrayList<BusStop> searchBusStops = new ArrayList<>();\r\n                        for (int i = 0; i<globalBusStops.size();i++) {\r\n                            if (globalBusStops.get(i).getDescription().contains(searchText) || globalBusStops.get(i).getRoadName().equalsIgnoreCase(searchText)){\r\n                                searchBusStops.add(globalBusStops.get(i));\r\n                            }\r\n                        }\r\n\r\n\r\n                        for (int i = 0; i<globalBusStops.size();i++){\r\n                            if (globalBusStops.get(i).getBusStopCode().equals(searchText)) {\r\n                                searchBusStops.add(globalBusStops.get(i));\r\n                            }\r\n                        }\r\n\r\n                        /*MainActivity main = (MainActivity) getActivity();*/\r\n                        if(searchBusStops.size() > 90){\r\n                            Toast.makeText(getContext(), \"Please be more specific\", Toast.LENGTH_SHORT).show();\r\n                        }\r\n                        else if (searchBusStops.size()>0){\r\n                            ApiBusStopService apiBusStopService = new ApiBusStopService(getActivity());\r\n                            apiBusStopService.getBusService(searchBusStops,new ApiBusStopService.VolleyResponseListener2() {\r\n                                @Override\r\n                                public void onError(String message) {\r\n                                    Log.d(\"Yes\",\"api fail\");\r\n                                }\r\n                                @Override\r\n                                public void onResponse(ArrayList<BusStop> busStopsLoaded) {\r\n\r\n                                    RecyclerView rv = view.findViewById(R.id.searchrecyclerView);\r\n                                    BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,getActivity());\r\n                                    LinearLayoutManager layout = new LinearLayoutManager(getActivity());\r\n                                    rv.setAdapter(adapter);\r\n                                    rv.setLayoutManager(layout);\r\n                                }\r\n                            });\r\n                        }\r\n\r\n                        else{\r\n                            Toast.makeText(getContext(), \"No Matching Bus Stops\", Toast.LENGTH_SHORT).show();\r\n                        }\r\n                        return true;\r\n                    }\r\n                }\r\n                return false;\r\n            }\r\n        });\r\n        searchBar.setOnEditorActionListener(new TextView.OnEditorActionListener() {\r\n            @Override\r\n            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {\r\n                if (actionId == EditorInfo.IME_ACTION_SEARCH) {\r\n                    String searchText = String.valueOf(searchBar.getText());\r\n                    searchText = searchText.substring(0, 1).toUpperCase() + searchText.substring(1);\r\n\r\n                    ArrayList<BusStop> searchBusStops = new ArrayList<>();\r\n                    for (int i = 0; i<globalBusStops.size();i++) {\r\n                        if (globalBusStops.get(i).getDescription().contains(searchText) || globalBusStops.get(i).getRoadName().equalsIgnoreCase(searchText)){\r\n                            searchBusStops.add(globalBusStops.get(i));\r\n                        }\r\n                    }\r\n\r\n\r\n                    for (int i = 0; i<globalBusStops.size();i++){\r\n                        if (globalBusStops.get(i).getBusStopCode().equals(searchText)) {\r\n                            searchBusStops.add(globalBusStops.get(i));\r\n                        }\r\n                    }\r\n\r\n                    /*MainActivity main = (MainActivity) getActivity();*/\r\n                    if(searchBusStops.size() > 90){\r\n                        Toast.makeText(getContext(), \"Please be more specific\", Toast.LENGTH_SHORT).show();\r\n                    }\r\n                    else if (searchBusStops.size()>0){\r\n                        ApiBusStopService apiBusStopService = new ApiBusStopService(getActivity());\r\n                        apiBusStopService.getBusService(searchBusStops,new ApiBusStopService.VolleyResponseListener2() {\r\n                            @Override\r\n                            public void onError(String message) {\r\n                                Log.d(\"Yes\",\"api fail\");\r\n                            }\r\n                            @Override\r\n                            public void onResponse(ArrayList<BusStop> busStopsLoaded) {\r\n\r\n                                RecyclerView rv = view.findViewById(R.id.searchrecyclerView);\r\n                                BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,getActivity());\r\n                                LinearLayoutManager layout = new LinearLayoutManager(getActivity());\r\n                                rv.setAdapter(adapter);\r\n                                rv.setLayoutManager(layout);\r\n                            }\r\n                        });\r\n                    }\r\n\r\n                    else{\r\n                        Toast.makeText(getContext(), \"No Matching Bus Stops\", Toast.LENGTH_SHORT).show();\r\n                    }\r\n\r\n\r\n                    /*GoToMap.setOnClickListener(new View.OnClickListener() {\r\n                        @Override\r\n                        public void onClick(View view) {\r\n                            LinearLayout mapandrv = view.findViewById(R.id.MapAndRV);\r\n                            FrameLayout fragmentlayout = view.findViewById(R.id.frame_layout);\r\n                            *//*MainActivity main = *//*\r\n                            *//*MainActivity main = (MainActivity) getActivity();*//*\r\n                            *//*MainActivity main = (MainActivity) getParentFragment().getActivity();*//*\r\n\r\n                            fragmentlayout.setVisibility(View.INVISIBLE);\r\n                            mapandrv.setVisibility(View.VISIBLE);\r\n                            ((MainActivity)inflater.getContext()).moveMapsCamera(closeBusStops.get(0).Latitude,closeBusStops.get(0).Longitude);\r\n\r\n*//*\r\n                            main.moveMapsCamera(closeBusStops.get(0).Latitude,closeBusStops.get(0).Longitude);\r\n*//*\r\n\r\n\r\n                        }\r\n                    });*/\r\n                    return true;\r\n                }\r\n                return false;\r\n            }\r\n        });\r\n\r\n\r\n        return view;\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/sg/edu/np/mad/transportme/SearchFragment.java b/app/src/main/java/sg/edu/np/mad/transportme/SearchFragment.java
+--- a/app/src/main/java/sg/edu/np/mad/transportme/SearchFragment.java	(revision 8ad29e978aa8d7465746dfbc7d6fc5642c1f4618)
++++ b/app/src/main/java/sg/edu/np/mad/transportme/SearchFragment.java	(date 1656173203291)
+@@ -104,7 +104,7 @@
+         Double longitude;
+         GoogleMap map = ((SupportMapFragment) getFragmentManager()
+                 .findFragmentById(R.id.map)).getMapAsync();*/
+-
++        // On touch listener for icon at the side of the textview
+         searchBar.setOnTouchListener(new View.OnTouchListener() {
+             @Override
+             public boolean onTouch(View v, MotionEvent event) {
+@@ -114,30 +114,29 @@
+                 final int DRAWABLE_BOTTOM = 3;
+ 
+                 if(event.getAction() == MotionEvent.ACTION_UP) {
+-                    if(event.getRawX() >= (searchBar.getRight() - searchBar.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+-                        // your action here
++                    if(event.getRawX() >= (searchBar.getRight() - searchBar.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) { //If search icon is clicked, run code bellow
+                         String searchText = String.valueOf(searchBar.getText());
+                         searchText = searchText.substring(0, 1).toUpperCase() + searchText.substring(1);
+ 
+                         ArrayList<BusStop> searchBusStops = new ArrayList<>();
+-                        for (int i = 0; i<globalBusStops.size();i++) {
++                        for (int i = 0; i<globalBusStops.size();i++) { //Compare search term with all description and Roadname in globalBusStop
+                             if (globalBusStops.get(i).getDescription().contains(searchText) || globalBusStops.get(i).getRoadName().equalsIgnoreCase(searchText)){
+                                 searchBusStops.add(globalBusStops.get(i));
+                             }
+                         }
+ 
+ 
+-                        for (int i = 0; i<globalBusStops.size();i++){
++                        for (int i = 0; i<globalBusStops.size();i++){ // Find all bus stop with Similar bus stop code as search term
+                             if (globalBusStops.get(i).getBusStopCode().equals(searchText)) {
+                                 searchBusStops.add(globalBusStops.get(i));
+                             }
+                         }
+ 
+                         /*MainActivity main = (MainActivity) getActivity();*/
+-                        if(searchBusStops.size() > 90){
++                        if(searchBusStops.size() > 90){ // Check if search term is too General like (Punggol), API call can only handle about 90 bus stops at a time
+                             Toast.makeText(getContext(), "Please be more specific", Toast.LENGTH_SHORT).show();
+                         }
+-                        else if (searchBusStops.size()>0){
++                        else if (searchBusStops.size()>0){ //Call api to get bus stop timing for bus services
+                             ApiBusStopService apiBusStopService = new ApiBusStopService(getActivity());
+                             apiBusStopService.getBusService(searchBusStops,new ApiBusStopService.VolleyResponseListener2() {
+                                 @Override
+@@ -147,7 +146,7 @@
+                                 @Override
+                                 public void onResponse(ArrayList<BusStop> busStopsLoaded) {
+ 
+-                                    RecyclerView rv = view.findViewById(R.id.searchrecyclerView);
++                                    RecyclerView rv = view.findViewById(R.id.searchrecyclerView); //Load bus stops into RecyclerView in fragment
+                                     BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,getActivity());
+                                     LinearLayoutManager layout = new LinearLayoutManager(getActivity());
+                                     rv.setAdapter(adapter);
+@@ -165,6 +164,8 @@
+                 return false;
+             }
+         });
++
++        // On click listner for keyboard search button
+         searchBar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+             @Override
+             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+@@ -173,21 +174,21 @@
+                     searchText = searchText.substring(0, 1).toUpperCase() + searchText.substring(1);
+ 
+                     ArrayList<BusStop> searchBusStops = new ArrayList<>();
+-                    for (int i = 0; i<globalBusStops.size();i++) {
++                    for (int i = 0; i<globalBusStops.size();i++) {  //Compare search term with all description and Roadname in globalBusStop
+                         if (globalBusStops.get(i).getDescription().contains(searchText) || globalBusStops.get(i).getRoadName().equalsIgnoreCase(searchText)){
+                             searchBusStops.add(globalBusStops.get(i));
+                         }
+                     }
+ 
+ 
+-                    for (int i = 0; i<globalBusStops.size();i++){
++                    for (int i = 0; i<globalBusStops.size();i++){ // Find all bus stop with Similar bus stop code as search term
+                         if (globalBusStops.get(i).getBusStopCode().equals(searchText)) {
+                             searchBusStops.add(globalBusStops.get(i));
+                         }
+                     }
+ 
+                     /*MainActivity main = (MainActivity) getActivity();*/
+-                    if(searchBusStops.size() > 90){
++                    if(searchBusStops.size() > 90){ // Check if search term is too General like (Punggol), API call can only handle about 90 bus stops at a time
+                         Toast.makeText(getContext(), "Please be more specific", Toast.LENGTH_SHORT).show();
+                     }
+                     else if (searchBusStops.size()>0){
+@@ -200,7 +201,7 @@
+                             @Override
+                             public void onResponse(ArrayList<BusStop> busStopsLoaded) {
+ 
+-                                RecyclerView rv = view.findViewById(R.id.searchrecyclerView);
++                                RecyclerView rv = view.findViewById(R.id.searchrecyclerView); //Load searched bus stops into recycler view
+                                 BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,getActivity());
+                                 LinearLayoutManager layout = new LinearLayoutManager(getActivity());
+                                 rv.setAdapter(adapter);
+Index: app/src/main/java/sg/edu/np/mad/transportme/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package sg.edu.np.mad.transportme;\r\n\r\nimport static android.Manifest.permission.ACCESS_COARSE_LOCATION;\r\n\r\nimport static sg.edu.np.mad.transportme.LoginPage.globalCloseness;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.RequiresApi;\r\nimport androidx.core.app.ActivityCompat;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.fragment.app.FragmentActivity;\r\nimport androidx.fragment.app.FragmentManager;\r\nimport androidx.fragment.app.FragmentTransaction;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport android.Manifest;\r\nimport android.annotation.SuppressLint;\r\nimport android.app.ProgressDialog;\r\nimport android.content.pm.PackageManager;\r\nimport android.location.Address;\r\nimport android.location.Geocoder;\r\nimport android.location.Location;\r\nimport android.location.LocationListener;\r\nimport android.location.LocationManager;\r\nimport android.os.Build;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.View;\r\nimport android.widget.FrameLayout;\r\nimport android.widget.LinearLayout;\r\nimport android.widget.Toast;\r\n\r\nimport com.google.android.gms.maps.CameraUpdate;\r\nimport com.google.android.gms.maps.CameraUpdateFactory;\r\nimport com.google.android.gms.maps.GoogleMap;\r\nimport com.google.android.gms.maps.OnMapReadyCallback;\r\nimport com.google.android.gms.maps.SupportMapFragment;\r\nimport com.google.android.gms.maps.model.CameraPosition;\r\nimport com.google.android.gms.maps.model.LatLng;\r\nimport com.google.android.gms.maps.model.MarkerOptions;\r\nimport com.google.android.material.bottomnavigation.BottomNavigationView;\r\n\r\nimport java.io.IOException;\r\nimport java.util.ArrayList;\r\nimport java.util.Collections;\r\nimport java.util.List;\r\n\r\n\r\npublic class MainActivity extends FragmentActivity implements OnMapReadyCallback  {\r\n\r\n    GoogleMap map;\r\n    LocationManager locationManager;\r\n\r\n\r\n    public static Boolean favourite = false;\r\n    private static final String[] LOCATION_PERMS={\r\n            Manifest.permission.ACCESS_COARSE_LOCATION,\r\n            Manifest.permission.ACCESS_FINE_LOCATION\r\n    };\r\n\r\n    private static final int LOCATION_REQUEST=1337;\r\n\r\n    @RequiresApi(api = Build.VERSION_CODES.M)\r\n    @SuppressLint(\"MissingPermission\")\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_main);\r\n        ProgressDialog progressDialog = new ProgressDialog(MainActivity.this,R.style.MyAlertDialogStyle);\r\n        progressDialog.show();\r\n        progressDialog.setContentView(R.layout.progress_dialog);\r\n        progressDialog.getWindow().setBackgroundDrawableResource(\r\n                android.R.color.transparent\r\n        );\r\n\r\n        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);\r\n        bottomNavigationView.setOnItemSelectedListener(item ->{\r\n            LinearLayout mapandrv = findViewById(R.id.MapAndRV);\r\n            FrameLayout fragmentlayout = findViewById(R.id.frame_layout);\r\n            switch(item.getItemId()){\r\n                case R.id.home:\r\n                    fragmentlayout.setVisibility(View.INVISIBLE);\r\n                    mapandrv.setVisibility(View.VISIBLE);\r\n                    favourite = false;\r\n                    break;\r\n                case R.id.favourites:\r\n                    mapandrv.setVisibility(View.INVISIBLE);\r\n                    fragmentlayout.setVisibility(View.VISIBLE);\r\n                    replaceFragment(new FavouritesFragment());\r\n                    favourite = true;\r\n                    break;\r\n                case R.id.search:\r\n                    mapandrv.setVisibility(View.INVISIBLE);\r\n                    fragmentlayout.setVisibility(View.VISIBLE);\r\n                    replaceFragment(new SearchFragment());\r\n                    break;\r\n                case R.id.mrtmap:\r\n                    mapandrv.setVisibility(View.INVISIBLE);\r\n                    fragmentlayout.setVisibility(View.VISIBLE);\r\n                    replaceFragment(new MrtMapFragment());\r\n                    break;\r\n                case R.id.profile:\r\n                    mapandrv.setVisibility(View.INVISIBLE);\r\n                    fragmentlayout.setVisibility(View.VISIBLE);\r\n                    replaceFragment(new ProfileFragment());\r\n                    break;\r\n\r\n            }\r\n            return true;\r\n        });\r\n\r\n\r\n\r\n\r\n        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mrtmap);\r\n        mapFragment.getMapAsync(this);\r\n        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);\r\n\r\n        ArrayList<BusStop> busStops = LoadingScreen.globalBusStops;\r\n\r\n        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {\r\n            // TODO: Consider calling\r\n            //    ActivityCompat#requestPermissions\r\n            // here to request the missing permissions, and then overriding\r\n            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,\r\n            //                                          int[] grantResults)\r\n            // to handle the case where the user grants the permission. See the documentation\r\n            // for ActivityCompat#requestPermissions for more details.\r\n            Toast.makeText(MainActivity.this,\"Check Location and Connection Settings\",Toast.LENGTH_LONG).show();\r\n\r\n            return;\r\n        }\r\n        else{\r\n            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {\r\n                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 10, new LocationListener() {\r\n                    @Override\r\n                    public void onLocationChanged(@NonNull Location location) {\r\n                        Double Latitude = location.getLatitude();\r\n                        Double Longitude = location.getLongitude();\r\n                        LatLng latLng = new LatLng(Latitude, Longitude);\r\n                        Geocoder geocoder = new Geocoder(getApplicationContext());\r\n\r\n                        /* For testing purposes, Remove at the end */\r\n                    /*Latitude = 1.332346;\r\n                    Longitude = 103.777561;*/\r\n\r\n                        ArrayList<BusStop> closeBusStops = new ArrayList<>();\r\n                        for (int i = 0; i < busStops.size(); i++){\r\n                            BusStop busStop = busStops.get(i);\r\n                            busStop.setDistanceToLocation(DistanceCalculator.distanceBetween(busStop.getLatitude(), busStop.getLongitude(), Latitude, Longitude));\r\n\r\n                            if (busStop.getDistanceToLocation() <= globalCloseness){\r\n                                closeBusStops.add(busStop);\r\n                                LatLng latlongmarker = new LatLng(busStop.getLatitude(), busStop.getLongitude());\r\n                                map.addMarker(new MarkerOptions().position(latlongmarker).title(busStop.getDescription()));\r\n                            }\r\n                        }\r\n                        if(closeBusStops.size() > 0){\r\n                            ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);\r\n                            apiBusStopService.getBusService(closeBusStops,new ApiBusStopService.VolleyResponseListener2() {\r\n                                @Override\r\n                                public void onError(String message) {\r\n                                    Toast.makeText(MainActivity.this,\"Cannot Get Bus Stops, Check Location and Connection\",Toast.LENGTH_LONG).show();\r\n                                }\r\n                                @Override\r\n                                public void onResponse(ArrayList<BusStop> busStopsLoaded) {\r\n                                    Collections.sort(closeBusStops);\r\n\r\n                                    RecyclerView rv = findViewById(R.id.recyclerView);\r\n                                    BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,MainActivity.this);\r\n                                    LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);\r\n                                    rv.setAdapter(adapter);\r\n                                    rv.setLayoutManager(layout);\r\n                                    progressDialog.dismiss();\r\n                                }\r\n                            });\r\n                        }\r\n\r\n                        try {\r\n\r\n                            List<Address> addressList = geocoder.getFromLocation(Latitude, Longitude, 1);\r\n                            String str = addressList.get(0).getLocality()+\", \";\r\n                            str += addressList.get(0).getCountryName();\r\n\r\n                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16.2f));\r\n                        } catch (IOException e){\r\n                            e.printStackTrace();\r\n                        }\r\n                    }\r\n                });\r\n            }\r\n            else if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){\r\n                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60000, 10, new LocationListener() {\r\n                    @Override\r\n                    public void onLocationChanged(@NonNull Location location) {\r\n                        Double Latitude = location.getLatitude();\r\n                        Double Longitude = location.getLongitude();\r\n\r\n\r\n                        LatLng latLng = new LatLng(Latitude, Longitude);\r\n                        Geocoder geocoder = new Geocoder(getApplicationContext());\r\n\r\n\r\n\r\n                        ArrayList<BusStop> closeBusStops = new ArrayList<>();\r\n                        for (int i = 0; i < busStops.size(); i++){\r\n                            BusStop busStop = busStops.get(i);\r\n                            busStop.setDistanceToLocation(DistanceCalculator.distanceBetween(busStop.getLatitude(), busStop.getLongitude(), Latitude, Longitude));\r\n\r\n                            if (busStop.getDistanceToLocation() <= globalCloseness){\r\n                                closeBusStops.add(busStop);\r\n                                LatLng latlongmarker = new LatLng(busStop.getLatitude(), busStop.getLongitude());\r\n                                map.addMarker(new MarkerOptions().position(latlongmarker).title(busStop.getDescription()));\r\n                            }\r\n                        }\r\n                        if(closeBusStops.size() > 0){\r\n                            ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);\r\n                            apiBusStopService.getBusService(closeBusStops,new ApiBusStopService.VolleyResponseListener2() {\r\n                                @Override\r\n                                public void onError(String message) {\r\n                                    Toast.makeText(MainActivity.this,\"Cannot Get Bus Stops, Check Location and Connection\",Toast.LENGTH_LONG).show();\r\n                                }\r\n                                @Override\r\n                                public void onResponse(ArrayList<BusStop> busStopsLoaded) {\r\n\r\n                                    RecyclerView rv = findViewById(R.id.recyclerView);\r\n                                    BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,MainActivity.this);\r\n                                    LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);\r\n                                    rv.setAdapter(adapter);\r\n                                    rv.setLayoutManager(layout);\r\n                                    progressDialog.dismiss();\r\n                                }\r\n                            });\r\n                        }\r\n\r\n\r\n                        try {\r\n\r\n                            List<Address> addressList = geocoder.getFromLocation(Latitude, Longitude, 1);\r\n                            String str = addressList.get(0).getLocality()+\", \";\r\n                            str += addressList.get(0).getCountryName();\r\n                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16.2f));\r\n                        } catch (IOException e){\r\n                            e.printStackTrace();\r\n                        }\r\n                    }\r\n                });\r\n            }\r\n\r\n        }\r\n\r\n\r\n\r\n    }\r\n    public void moveMapsCamera(Double latitude, Double longitude){\r\n        LatLng latlongmove = new LatLng(latitude, longitude);\r\n        CameraPosition cameraPosition = new CameraPosition.Builder()\r\n                .target(latlongmove)\r\n                .zoom(17f)\r\n                .build();\r\n        CameraUpdate cu = CameraUpdateFactory.newCameraPosition(cameraPosition);\r\n        map.animateCamera(cu);\r\n\r\n    }\r\n    private void replaceFragment(Fragment fragment){\r\n        FragmentManager fragmentManager = getSupportFragmentManager();\r\n        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();\r\n        fragmentTransaction.replace(R.id.frame_layout,fragment);\r\n        fragmentTransaction.commit();\r\n    }\r\n\r\n    @SuppressLint(\"MissingPermission\")\r\n    @Override\r\n    public void onMapReady(@NonNull GoogleMap googleMap) {\r\n        map = googleMap;\r\n        map.setMyLocationEnabled(true);\r\n\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/sg/edu/np/mad/transportme/MainActivity.java b/app/src/main/java/sg/edu/np/mad/transportme/MainActivity.java
+--- a/app/src/main/java/sg/edu/np/mad/transportme/MainActivity.java	(revision 8ad29e978aa8d7465746dfbc7d6fc5642c1f4618)
++++ b/app/src/main/java/sg/edu/np/mad/transportme/MainActivity.java	(date 1656171850231)
+@@ -141,10 +141,6 @@
+                         LatLng latLng = new LatLng(Latitude, Longitude);
+                         Geocoder geocoder = new Geocoder(getApplicationContext());
+ 
+-                        /* For testing purposes, Remove at the end */
+-                    /*Latitude = 1.332346;
+-                    Longitude = 103.777561;*/
+-
+                         ArrayList<BusStop> closeBusStops = new ArrayList<>();
+                         for (int i = 0; i < busStops.size(); i++){
+                             BusStop busStop = busStops.get(i);
+Index: app/src/main/java/sg/edu/np/mad/transportme/BusStop.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package sg.edu.np.mad.transportme;\r\n\r\nimport java.util.ArrayList;\r\n\r\npublic class BusStop implements Comparable<BusStop> {\r\n    private String BusStopCode;\r\n    private String RoadName;\r\n    private String Description;\r\n    private Double Latitude;\r\n    private Double Longitude;\r\n    private Boolean Favourited;\r\n    private ArrayList<BusService> busServices;\r\n    private Double distanceToLocation;\r\n\r\n    public String getBusStopCode() {\r\n        return BusStopCode;\r\n    }\r\n\r\n    public void setBusStopCode(String busStopCode) {\r\n        BusStopCode = busStopCode;\r\n    }\r\n\r\n    public String getRoadName() {\r\n        return RoadName;\r\n    }\r\n\r\n    public void setRoadName(String roadName) {\r\n        RoadName = roadName;\r\n    }\r\n\r\n    public String getDescription() {\r\n        return Description;\r\n    }\r\n\r\n    public void setDescription(String description) {\r\n        Description = description;\r\n    }\r\n\r\n    public Double getLatitude() {\r\n        return Latitude;\r\n    }\r\n\r\n    public void setLatitude(Double latitude) {\r\n        Latitude = latitude;\r\n    }\r\n\r\n    public Double getLongitude() {\r\n        return Longitude;\r\n    }\r\n\r\n    public void setLongitude(Double longitude) {\r\n        Longitude = longitude;\r\n    }\r\n\r\n    public Boolean getFavourited() {\r\n        return Favourited;\r\n    }\r\n\r\n    public void setFavourited(Boolean favourited) {\r\n        Favourited = favourited;\r\n    }\r\n\r\n    public ArrayList<BusService> getBusServices() {\r\n        return busServices;\r\n    }\r\n\r\n    public void setBusServices(ArrayList<BusService> busServices) {\r\n        this.busServices = busServices;\r\n    }\r\n\r\n    public Double getDistanceToLocation() {\r\n        return distanceToLocation;\r\n    }\r\n\r\n    public void setDistanceToLocation(Double distanceToLocation) {\r\n        this.distanceToLocation = distanceToLocation;\r\n    }\r\n\r\n    public BusStop(String BusStopCode, String RoadName, String Description, Double Latitude, Double Longitude){\r\n        this.BusStopCode = BusStopCode;\r\n        this.RoadName = RoadName;\r\n        this.Description = Description;\r\n        this.Latitude = Latitude;\r\n        this.Longitude = Longitude;\r\n    }\r\n    public int compareTo(BusStop bs){\r\n        if(distanceToLocation == bs.distanceToLocation){\r\n            return 0;\r\n        }\r\n        else if (distanceToLocation > bs.distanceToLocation){\r\n            return 1;\r\n        }\r\n        else{\r\n            return -1;\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/sg/edu/np/mad/transportme/BusStop.java b/app/src/main/java/sg/edu/np/mad/transportme/BusStop.java
+--- a/app/src/main/java/sg/edu/np/mad/transportme/BusStop.java	(revision 8ad29e978aa8d7465746dfbc7d6fc5642c1f4618)
++++ b/app/src/main/java/sg/edu/np/mad/transportme/BusStop.java	(date 1656171850211)
+@@ -9,7 +9,7 @@
+     private Double Latitude;
+     private Double Longitude;
+     private Boolean Favourited;
+-    private ArrayList<BusService> busServices;
++    private ArrayList<BusService> busServices; //Bus Stop holds the bus services
+     private Double distanceToLocation;
+ 
+     public String getBusStopCode() {
+@@ -83,7 +83,7 @@
+         this.Latitude = Latitude;
+         this.Longitude = Longitude;
+     }
+-    public int compareTo(BusStop bs){
++    public int compareTo(BusStop bs){ //Comparable interface for nearest bus stop feature
+         if(distanceToLocation == bs.distanceToLocation){
+             return 0;
+         }
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"DesignSurface\">\r\n    <option name=\"filePathToZoomLevelMap\">\r\n      <map>\r\n        <entry key=\"..\\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml\" value=\"0.14722222222222223\" />\r\n        <entry key=\"..\\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_login_page.xml\" value=\"0.358695652173913\" />\r\n        <entry key=\"..\\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_registration_page.xml\" value=\"0.358695652173913\" />\r\n        <entry key=\"..\\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_test.xml\" value=\"0.18802083333333333\" />\r\n        <entry key=\"..\\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_service_layout.xml\" value=\"0.18802083333333333\" />\r\n        <entry key=\"..\\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_stop_layout.xml\" value=\"0.18802083333333333\" />\r\n        <entry key=\"..\\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_favourites.xml\" value=\"0.18802083333333333\" />\r\n        <entry key=\"..\\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_mrt_map.xml\" value=\"0.358695652173913\" />\r\n        <entry key=\"..\\:/#Poly/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_profile.xml\" value=\"0.18802083333333333\" />\r\n        <entry key=\"..\\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/drawable/edittext_bg.xml\" value=\"0.2985\" />\r\n        <entry key=\"..\\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/drawable/ic_baseline_person_24.xml\" value=\"0.32\" />\r\n        <entry key=\"..\\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml\" value=\"0.25\" />\r\n        <entry key=\"..\\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_login_page.xml\" value=\"0.2\" />\r\n        <entry key=\"..\\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_main.xml\" value=\"0.36666666666666664\" />\r\n        <entry key=\"..\\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_registration_page.xml\" value=\"0.25\" />\r\n        <entry key=\"..\\:/SEM 3 SCHOOL/MAD/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_profile.xml\" value=\"0.1\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/drawable/bg_round.xml\" value=\"0.2345\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/drawable/favourite.xml\" value=\"0.1625\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml\" value=\"0.15625\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_main.xml\" value=\"0.264\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/bus_service_layout.xml\" value=\"0.2708333333333333\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_favourites.xml\" value=\"0.264\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_profile.xml\" value=\"0.18568840579710144\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_search.xml\" value=\"0.264\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/progress_dialog.xml\" value=\"0.19701086956521738\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/MAD/TransportMe/app/src/main/res/layout/activity_main.xml\" value=\"0.23007246376811594\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/submit/MAD-Assignment-TransportMe/app/src/main/res/drawable-v24/ic_launcher_foreground.xml\" value=\"0.1\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/submit/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_favourites.xml\" value=\"0.36666666666666664\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/submit/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_mrt_map.xml\" value=\"0.36666666666666664\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/submit/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_profile.xml\" value=\"0.36666666666666664\" />\r\n        <entry key=\"..\\:/Users/cyrus/Desktop/submit/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_search.xml\" value=\"0.36666666666666664\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG GitHub AGAIN/app/src/main/res/layout/activity_login_page.xml\" value=\"0.36666666666666664\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG GitHub AGAIN/app/src/main/res/layout/activity_main.xml\" value=\"0.36666666666666664\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG Github/app/src/main/res/layout/activity_main.xml\" value=\"0.17831813576494426\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG Github/app/src/main/res/layout/bus_service_layout.xml\" value=\"0.33\" />\r\n        <entry key=\"..\\:/Users/voidi/Desktop/MAD/ASG Github/app/src/main/res/layout/bus_stop_layout.xml\" value=\"0.33\" />\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"ExternalStorageConfigurationManager\" enabled=\"true\" />\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_11\" default=\"true\" project-jdk-name=\"Android Studio default JDK\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 8ad29e978aa8d7465746dfbc7d6fc5642c1f4618)
++++ b/.idea/misc.xml	(date 1656174369023)
+@@ -30,6 +30,8 @@
+         <entry key="..\:/Users/cyrus/Desktop/MAD-Assignment-TransportMe/app/src/main/res/layout/progress_dialog.xml" value="0.19701086956521738" />
+         <entry key="..\:/Users/cyrus/Desktop/MAD/TransportMe/app/src/main/res/layout/activity_main.xml" value="0.23007246376811594" />
+         <entry key="..\:/Users/cyrus/Desktop/submit/MAD-Assignment-TransportMe/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1" />
++        <entry key="..\:/Users/cyrus/Desktop/submit/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_loading_screen.xml" value="0.2859375" />
++        <entry key="..\:/Users/cyrus/Desktop/submit/MAD-Assignment-TransportMe/app/src/main/res/layout/activity_login_page.xml" value="0.2859375" />
+         <entry key="..\:/Users/cyrus/Desktop/submit/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_favourites.xml" value="0.36666666666666664" />
+         <entry key="..\:/Users/cyrus/Desktop/submit/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_mrt_map.xml" value="0.36666666666666664" />
+         <entry key="..\:/Users/cyrus/Desktop/submit/MAD-Assignment-TransportMe/app/src/main/res/layout/fragment_profile.xml" value="0.36666666666666664" />
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\r\n    id 'com.android.application'\r\n    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'\r\n    id 'com.google.gms.google-services'\r\n}\r\n\r\nandroid {\r\n    compileSdk 32\r\n\r\n    defaultConfig {\r\n        applicationId \"sg.edu.np.mad.transportme\"\r\n        minSdk 21\r\n        targetSdk 32\r\n        versionCode 1\r\n        versionName \"1.0\"\r\n\r\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\r\n        vectorDrawables.useSupportLibrary = true\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n\r\n    compileOptions {\r\n        sourceCompatibility JavaVersion.VERSION_1_8\r\n        targetCompatibility JavaVersion.VERSION_1_8\r\n    }\r\n}\r\n\r\ndependencies {\r\n\r\n    implementation 'androidx.appcompat:appcompat:1.4.2'\r\n    implementation 'com.google.android.material:material:1.6.1'\r\n    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'\r\n    implementation 'com.google.android.gms:play-services-maps:18.0.2'\r\n\r\n    implementation 'com.android.volley:volley:1.2.1'\r\n    implementation 'androidx.legacy:legacy-support-v4:1.0.0'\r\n    implementation 'com.google.firebase:firebase-bom:30.1.0'\r\n    implementation 'com.google.gms:google-services:4.3.10'\r\n    implementation 'com.google.firebase:firebase-database:20.0.5'\r\n    testImplementation 'junit:junit:4.13.2'\r\n    androidTestImplementation 'androidx.test.ext:junit:1.1.3'\r\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'\r\n\r\n    implementation 'it.sephiroth.android.library.imagezoom:imagezoom:2.3.0'\r\n    implementation 'io.github.imablanco:zoomy:1.0.0'\r\n    implementation 'com.jsibbold:zoomage:1.3.1'\r\n\r\n    implementation group: 'at.favre.lib', name: 'bcrypt', version: '0.9.0'\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle b/app/build.gradle
+--- a/app/build.gradle	(revision 8ad29e978aa8d7465746dfbc7d6fc5642c1f4618)
++++ b/app/build.gradle	(date 1656171850255)
+@@ -11,8 +11,8 @@
+         applicationId "sg.edu.np.mad.transportme"
+         minSdk 21
+         targetSdk 32
+-        versionCode 1
+-        versionName "1.0"
++        versionCode 5
++        versionName '5.0'
+ 
+         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+         vectorDrawables.useSupportLibrary = true
+Index: app/src/main/java/sg/edu/np/mad/transportme/ApiBusStopService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package sg.edu.np.mad.transportme;\r\nimport android.content.Context;\r\nimport android.os.Build;\r\nimport android.util.Log;\r\n\r\nimport androidx.annotation.RequiresApi;\r\n\r\nimport com.android.volley.Request;\r\nimport com.android.volley.Response;\r\nimport com.android.volley.VolleyError;\r\nimport com.android.volley.toolbox.JsonObjectRequest;\r\n\r\nimport org.json.JSONArray;\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\nimport java.time.Duration;\r\nimport java.time.LocalDateTime;\r\nimport java.time.format.DateTimeFormatter;\r\nimport java.util.ArrayList;\r\nimport java.util.Arrays;\r\nimport java.util.List;\r\n\r\npublic class ApiBusStopService {\r\n\r\n    Context context;\r\n    public ApiBusStopService(Context c) {\r\n        this.context = c;\r\n    }\r\n\r\n\r\n    public interface VolleyResponseListener{\r\n        void onError(String message);\r\n        void onResponse(ArrayList<BusStop> busStops);\r\n    }\r\n\r\n    public interface VolleyResponseListener2{\r\n        void onError(String message);\r\n        void onResponse(ArrayList<BusStop> busStopsService);\r\n    }\r\n\r\n\r\n    public void getBusStop(VolleyResponseListener volleyResponseListener){\r\n\r\n        String busStopsUrl = \"https://mad-assignment-backend.herokuapp.com/BusStops\";\r\n        ArrayList<BusStop> busStops = new ArrayList<>();\r\n\r\n        JsonObjectRequest jsonObjectRequestBusStops = new JsonObjectRequest(Request.Method.GET, busStopsUrl, null,\r\n                new Response.Listener<JSONObject>() {\r\n                    @Override\r\n                    public void onResponse(JSONObject response) {\r\n                        try {\r\n                            JSONArray jsonArray = response.getJSONArray(\"Results\");\r\n                            Log.d(\"results\", String.valueOf(jsonArray.length()));\r\n                            for(int i = 0; i<jsonArray.length();i++) {\r\n                                JSONObject jsonBusStop = jsonArray.getJSONObject(i);\r\n                                String busStopCode = jsonBusStop.get(\"BusStopCode\").toString();\r\n                                String roadName = jsonBusStop.get(\"RoadName\").toString();\r\n                                String description = jsonBusStop.get(\"Description\").toString();\r\n                                Double latitude = Double.parseDouble(jsonBusStop.get(\"Latitude\").toString());\r\n                                Double longitude = Double.parseDouble(jsonBusStop.get(\"Longitude\").toString());\r\n                                busStops.add(new BusStop(busStopCode, roadName, description, latitude, longitude));\r\n                            }\r\n                            volleyResponseListener.onResponse(busStops);\r\n                        } catch (JSONException e) {\r\n                            e.printStackTrace();\r\n                            volleyResponseListener.onError(\"Cannot Get Bus Stops\");\r\n                        }\r\n                    }\r\n                }, new Response.ErrorListener() {\r\n            @Override\r\n            public void onErrorResponse(VolleyError error) {\r\n                Log.e(\"TAG\", error.getMessage(), error);\r\n            }\r\n        });\r\n        MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequestBusStops);\r\n    }\r\n\r\n    public void getBusService(ArrayList<BusStop> nearBusStops, VolleyResponseListener2 volleyResponseListener2){\r\n        ArrayList<BusStop> busStopsService = new ArrayList<>();\r\n        String busStopsUrl = \"https://mad-assignment-backend.herokuapp.com/BusCodes?codes=\";\r\n        for (int i = 0; i < nearBusStops.size();i++){\r\n            String code = nearBusStops.get(i).getBusStopCode();\r\n            if (i !=0){\r\n                busStopsUrl = busStopsUrl+\",\" +code;\r\n            }\r\n            else {\r\n                busStopsUrl = busStopsUrl+code;\r\n            }\r\n        }\r\n\r\n        JsonObjectRequest jsonObjectRequestBusStop = new JsonObjectRequest(Request.Method.GET, busStopsUrl, null,\r\n                new Response.Listener<JSONObject>() {\r\n                    @RequiresApi(api = Build.VERSION_CODES.O)\r\n                    @Override\r\n                    public void onResponse(JSONObject response) {\r\n                        try {\r\n                            JSONArray jsonArrayBusStops = response.getJSONArray(\"Results\");\r\n                            List<String> nextBusString = Arrays.asList(\"NextBus\",\"NextBus2\",\"NextBus3\");\r\n                            ArrayList<BusStop> nearBusStopLoaded = new ArrayList<>();\r\n                            Log.d(\"before\", jsonArrayBusStops.toString());\r\n                            LocalDateTime current = LocalDateTime.now();\r\n\r\n                            DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(\"uuuu-MM-dd'T'HH:mm:ssXXXXX\");\r\n\r\n                            for (int i=0; i<jsonArrayBusStops.length(); i++){\r\n                                JSONObject jsonBusStop = (JSONObject) jsonArrayBusStops.get(i);\r\n                                BusStop nearBusStop = nearBusStops.get(i);\r\n                                ArrayList<BusService> busServices = new ArrayList<>();\r\n                                JSONArray jsonArrayBusServices = jsonBusStop.getJSONArray(\"Services\");\r\n                                for (int j=0;j<jsonArrayBusServices.length();j++){\r\n                                    JSONObject jsonBusService = jsonArrayBusServices.getJSONObject(j);\r\n                                    String serviceNumber = jsonBusService.getString(\"ServiceNo\");\r\n                                    ArrayList<NextBus> nextBuses = new ArrayList<>();\r\n\r\n                                    for (String nextbusstring: nextBusString){\r\n                                        JSONObject nextbus = jsonBusService.getJSONObject(nextbusstring);\r\n\r\n                                        String estArrival = nextbus.getString(\"EstimatedArrival\");\r\n                                        String arrivalMinutes = \"Null\";\r\n                                        if (!estArrival.equals(\"\")){\r\n                                            LocalDateTime parsed = LocalDateTime.parse(estArrival,DATE_TIME_FORMATTER);\r\n                                            Duration duration = Duration.between(current,parsed);\r\n                                            arrivalMinutes = String.valueOf(duration.toMinutes());\r\n                                        }\r\n\r\n                                        String Latitude =  nextbus.getString(\"Latitude\");\r\n                                        String Longitude = nextbus.getString(\"Longitude\");\r\n                                        String Load = nextbus.getString(\"Load\");\r\n                                        String Feature = nextbus.getString(\"Feature\");\r\n                                        String Type = nextbus.getString(\"Type\");\r\n                                        nextBuses.add(new NextBus(arrivalMinutes,Latitude,Longitude,Load,Feature,Type));\r\n                                    }\r\n\r\n                                    busServices.add(new BusService(serviceNumber,nextBuses));\r\n                                }\r\n                                nearBusStop.setBusServices(busServices);\r\n                                nearBusStopLoaded.add(nearBusStop);\r\n                            }\r\n                            volleyResponseListener2.onResponse(nearBusStopLoaded);\r\n\r\n                        } catch (JSONException e) {\r\n                            e.printStackTrace();\r\n                        }\r\n                    }\r\n                }, new Response.ErrorListener() {\r\n            @Override\r\n            public void onErrorResponse(VolleyError error) {\r\n                Log.e(\"TAG\", error.getMessage(), error);\r\n                volleyResponseListener2.onError(\"Cannot Get data\");\r\n            }\r\n        });\r\n        MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequestBusStop);\r\n\r\n        volleyResponseListener2.onResponse(busStopsService);\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/sg/edu/np/mad/transportme/ApiBusStopService.java b/app/src/main/java/sg/edu/np/mad/transportme/ApiBusStopService.java
+--- a/app/src/main/java/sg/edu/np/mad/transportme/ApiBusStopService.java	(revision 8ad29e978aa8d7465746dfbc7d6fc5642c1f4618)
++++ b/app/src/main/java/sg/edu/np/mad/transportme/ApiBusStopService.java	(date 1656171850225)
+@@ -26,14 +26,14 @@
+     Context context;
+     public ApiBusStopService(Context c) {
+         this.context = c;
+-    }
++    } //Constructor, passes in context
+ 
+-
++    // Interface for API service that gets the bus stops
+     public interface VolleyResponseListener{
+         void onError(String message);
+         void onResponse(ArrayList<BusStop> busStops);
+     }
+-
++    // Interface for API service that get the bus services timings for each bus stop
+     public interface VolleyResponseListener2{
+         void onError(String message);
+         void onResponse(ArrayList<BusStop> busStopsService);
+@@ -42,9 +42,9 @@
+ 
+     public void getBusStop(VolleyResponseListener volleyResponseListener){
+ 
+-        String busStopsUrl = "https://mad-assignment-backend.herokuapp.com/BusStops";
++        String busStopsUrl = "https://mad-assignment-backend.herokuapp.com/BusStops"; //Call all bus stops from heroku backend
+         ArrayList<BusStop> busStops = new ArrayList<>();
+-
++        // Calls API using JsonObjectRequest
+         JsonObjectRequest jsonObjectRequestBusStops = new JsonObjectRequest(Request.Method.GET, busStopsUrl, null,
+                 new Response.Listener<JSONObject>() {
+                     @Override
+@@ -52,7 +52,7 @@
+                         try {
+                             JSONArray jsonArray = response.getJSONArray("Results");
+                             Log.d("results", String.valueOf(jsonArray.length()));
+-                            for(int i = 0; i<jsonArray.length();i++) {
++                            for(int i = 0; i<jsonArray.length();i++) { //Convert JsonArray object to objects
+                                 JSONObject jsonBusStop = jsonArray.getJSONObject(i);
+                                 String busStopCode = jsonBusStop.get("BusStopCode").toString();
+                                 String roadName = jsonBusStop.get("RoadName").toString();
+@@ -61,7 +61,7 @@
+                                 Double longitude = Double.parseDouble(jsonBusStop.get("Longitude").toString());
+                                 busStops.add(new BusStop(busStopCode, roadName, description, latitude, longitude));
+                             }
+-                            volleyResponseListener.onResponse(busStops);
++                            volleyResponseListener.onResponse(busStops); //Triggers on response callback in MainActivity, returns the busStops
+                         } catch (JSONException e) {
+                             e.printStackTrace();
+                             volleyResponseListener.onError("Cannot Get Bus Stops");
+@@ -76,13 +76,14 @@
+         MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequestBusStops);
+     }
+ 
++    //Another API to call the Bus Services(Bus Timings) for each bus stop
+     public void getBusService(ArrayList<BusStop> nearBusStops, VolleyResponseListener2 volleyResponseListener2){
+         ArrayList<BusStop> busStopsService = new ArrayList<>();
+         String busStopsUrl = "https://mad-assignment-backend.herokuapp.com/BusCodes?codes=";
+         for (int i = 0; i < nearBusStops.size();i++){
+             String code = nearBusStops.get(i).getBusStopCode();
+             if (i !=0){
+-                busStopsUrl = busStopsUrl+"," +code;
++                busStopsUrl = busStopsUrl+"," +code; //Formats url of bus stop codes for API
+             }
+             else {
+                 busStopsUrl = busStopsUrl+code;
+@@ -95,14 +96,14 @@
+                     @Override
+                     public void onResponse(JSONObject response) {
+                         try {
++                            //Load api Data into objects
+                             JSONArray jsonArrayBusStops = response.getJSONArray("Results");
+                             List<String> nextBusString = Arrays.asList("NextBus","NextBus2","NextBus3");
+                             ArrayList<BusStop> nearBusStopLoaded = new ArrayList<>();
+-                            Log.d("before", jsonArrayBusStops.toString());
+-                            LocalDateTime current = LocalDateTime.now();
++                            LocalDateTime current = LocalDateTime.now(); //Get Current time to compare with estimated arrival time
+ 
+                             DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ssXXXXX");
+-
++                            //Load API data into objects
+                             for (int i=0; i<jsonArrayBusStops.length(); i++){
+                                 JSONObject jsonBusStop = (JSONObject) jsonArrayBusStops.get(i);
+                                 BusStop nearBusStop = nearBusStops.get(i);
+@@ -115,10 +116,10 @@
+ 
+                                     for (String nextbusstring: nextBusString){
+                                         JSONObject nextbus = jsonBusService.getJSONObject(nextbusstring);
+-
++                                        // Load next bus data to object
+                                         String estArrival = nextbus.getString("EstimatedArrival");
+                                         String arrivalMinutes = "Null";
+-                                        if (!estArrival.equals("")){
++                                        if (!estArrival.equals("")){  //Get difference between time for Arrival Time
+                                             LocalDateTime parsed = LocalDateTime.parse(estArrival,DATE_TIME_FORMATTER);
+                                             Duration duration = Duration.between(current,parsed);
+                                             arrivalMinutes = String.valueOf(duration.toMinutes());
+@@ -137,7 +138,7 @@
+                                 nearBusStop.setBusServices(busServices);
+                                 nearBusStopLoaded.add(nearBusStop);
+                             }
+-                            volleyResponseListener2.onResponse(nearBusStopLoaded);
++                            volleyResponseListener2.onResponse(nearBusStopLoaded); //Call the onResponse callback in MainActivity
+ 
+                         } catch (JSONException e) {
+                             e.printStackTrace();
+@@ -147,10 +148,10 @@
+             @Override
+             public void onErrorResponse(VolleyError error) {
+                 Log.e("TAG", error.getMessage(), error);
+-                volleyResponseListener2.onError("Cannot Get data");
++                volleyResponseListener2.onError("Cannot Get data"); //Call onError Callback in main Activity
+             }
+         });
+-        MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequestBusStop);
++        MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequestBusStop); //Add to request queue
+ 
+         volleyResponseListener2.onResponse(busStopsService);
+     }
+Index: app/src/main/java/sg/edu/np/mad/transportme/DistanceCalculator.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package sg.edu.np.mad.transportme;\r\n\r\npublic class DistanceCalculator {\r\n    public static double distanceBetween(double lat1, double lon1, double lat2, double lon2) {\r\n        double theta = lon1 - lon2;\r\n        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));\r\n        dist = Math.acos(dist);\r\n        dist = rad2deg(dist);\r\n        dist = dist * 60 * 1.1515;\r\n        return (dist * 1.609344);\r\n    }\r\n    private static double rad2deg(double rad) {\r\n        return (rad * 180.0 / Math.PI);\r\n    }\r\n    private static double deg2rad(double deg) {\r\n        return (deg * Math.PI / 180.0);\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/sg/edu/np/mad/transportme/DistanceCalculator.java b/app/src/main/java/sg/edu/np/mad/transportme/DistanceCalculator.java
+--- a/app/src/main/java/sg/edu/np/mad/transportme/DistanceCalculator.java	(revision 8ad29e978aa8d7465746dfbc7d6fc5642c1f4618)
++++ b/app/src/main/java/sg/edu/np/mad/transportme/DistanceCalculator.java	(date 1656172487828)
+@@ -1,13 +1,13 @@
+ package sg.edu.np.mad.transportme;
+ 
+-public class DistanceCalculator {
++public class DistanceCalculator { //Distance calculator for latitude and longitude for neaby bus stops and user current location
+     public static double distanceBetween(double lat1, double lon1, double lat2, double lon2) {
+         double theta = lon1 - lon2;
+         double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+         dist = Math.acos(dist);
+         dist = rad2deg(dist);
+         dist = dist * 60 * 1.1515;
+-        return (dist * 1.609344);
++        return (dist * 1.609344); //returns distance in meters
+     }
+     private static double rad2deg(double rad) {
+         return (rad * 180.0 / Math.PI);
+Index: app/src/main/java/sg/edu/np/mad/transportme/BusStopDBHandler.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package sg.edu.np.mad.transportme;\r\nimport android.content.Context;\r\nimport android.database.Cursor;\r\nimport android.database.sqlite.SQLiteDatabase;\r\nimport android.database.sqlite.SQLiteOpenHelper;\r\n\r\nimport java.util.ArrayList;\r\n\r\npublic class BusStopDBHandler extends SQLiteOpenHelper {\r\n\r\n    public BusStopDBHandler(Context c, String name, SQLiteDatabase.CursorFactory factory, int version){\r\n        super(c,\"BusStops.db\", factory, 1);\r\n    }\r\n\r\n    @Override\r\n    public void onCreate(SQLiteDatabase db)\r\n    {\r\n        String Create_Bus_Stops = \"CREATE TABLE busStops(BusStopCode INTEGER PRIMARY KEY, RoadName TEXT, Description TEXT, Latitude DOUBLE,Longitude DOUBLE)\";\r\n        db.execSQL(Create_Bus_Stops);\r\n    }\r\n\r\n    @Override\r\n    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)\r\n    {\r\n        db.execSQL(\"DROP TABLE IF EXISTS busStops\");\r\n        onCreate(db);\r\n    }\r\n\r\n    public ArrayList<BusStop> getBusStops(){\r\n        ArrayList<BusStop> busStops = new ArrayList<BusStop>();\r\n        String query = \"SELECT * FROM busStops\";\r\n        SQLiteDatabase db = this.getWritableDatabase();\r\n        Cursor cursor = db.rawQuery(query, null);\r\n\r\n        while(cursor.moveToNext()){\r\n            String busStopCode = cursor.getString(0);\r\n            String roadName = cursor.getString(1);\r\n            String description = cursor.getString(2);\r\n            Double latitude = cursor.getDouble(3);\r\n            Double longitude = cursor.getDouble(4);\r\n            busStops.add(new BusStop(busStopCode,roadName,description,latitude,longitude));\r\n        }\r\n        db.close();\r\n        return busStops;\r\n    }\r\n\r\n    public void addBusStops(ArrayList<BusStop> busStops){\r\n        SQLiteDatabase db = this.getWritableDatabase();\r\n        for (BusStop busStop : busStops){\r\n            String busStopCode = busStop.getBusStopCode();\r\n            String roadName = busStop.getRoadName();\r\n            String description = busStop.getDescription();\r\n            Double latitude = busStop.getLatitude();\r\n            Double longitude = busStop.getLongitude();\r\n            String Create_Bus_Stops = \"CREATE TABLE busStops(BusStopCode INTEGER PRIMARY KEY, RoadName TEXT, Description TEXT, Latitude DOUBLE,Longitude DOUBLE)\";\r\n            String query = \"INSERT INTO busStops(BusStopCode, RoadName,Description,Latitude,Longitude) VALUES (\\\"\"+busStopCode+\"\\\"\"+\",\"+\"\\\"\"+roadName+\"\\\"\"+\",\"+\"\\\"\"+description+\"\\\"\"+\",\"+latitude+\",\"+longitude+\")\";\r\n            String query2= \"INSERT INTO busStops (BusStopCode=\\\"\"+busStopCode+\"\\\"\"+\",\"+\"RoadName=\\\"\"+roadName+\"\\\"\"+\",\"+\"Description=\\\"\"+description+\"\\\"\"+\",\"+\"Latitude=\\\"\"+latitude+\"\\\"\"+\",\"+\"Longitude=\\\"\"+longitude+\"\\\"\"+\")\";\r\n\r\n            db.execSQL(query);\r\n        }\r\n        db.close();\r\n\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/sg/edu/np/mad/transportme/BusStopDBHandler.java b/app/src/main/java/sg/edu/np/mad/transportme/BusStopDBHandler.java
+--- a/app/src/main/java/sg/edu/np/mad/transportme/BusStopDBHandler.java	(revision 8ad29e978aa8d7465746dfbc7d6fc5642c1f4618)
++++ b/app/src/main/java/sg/edu/np/mad/transportme/BusStopDBHandler.java	(date 1656172890618)
+@@ -14,7 +14,7 @@
+ 
+     @Override
+     public void onCreate(SQLiteDatabase db)
+-    {
++    {   //Create new database for bus stops
+         String Create_Bus_Stops = "CREATE TABLE busStops(BusStopCode INTEGER PRIMARY KEY, RoadName TEXT, Description TEXT, Latitude DOUBLE,Longitude DOUBLE)";
+         db.execSQL(Create_Bus_Stops);
+     }
+@@ -22,11 +22,11 @@
+     @Override
+     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
+     {
+-        db.execSQL("DROP TABLE IF EXISTS busStops");
++        db.execSQL("DROP TABLE IF EXISTS busStops"); //Drop table, can help with refreshing bus stop data
+         onCreate(db);
+     }
+ 
+-    public ArrayList<BusStop> getBusStops(){
++    public ArrayList<BusStop> getBusStops(){ //Returns a list of busStops loaded from the database, uses cursor
+         ArrayList<BusStop> busStops = new ArrayList<BusStop>();
+         String query = "SELECT * FROM busStops";
+         SQLiteDatabase db = this.getWritableDatabase();
+@@ -44,7 +44,7 @@
+         return busStops;
+     }
+ 
+-    public void addBusStops(ArrayList<BusStop> busStops){
++    public void addBusStops(ArrayList<BusStop> busStops){ //Add bus stops into database
+         SQLiteDatabase db = this.getWritableDatabase();
+         for (BusStop busStop : busStops){
+             String busStopCode = busStop.getBusStopCode();
+@@ -52,9 +52,13 @@
+             String description = busStop.getDescription();
+             Double latitude = busStop.getLatitude();
+             Double longitude = busStop.getLongitude();
++/*
+             String Create_Bus_Stops = "CREATE TABLE busStops(BusStopCode INTEGER PRIMARY KEY, RoadName TEXT, Description TEXT, Latitude DOUBLE,Longitude DOUBLE)";
++*/
+             String query = "INSERT INTO busStops(BusStopCode, RoadName,Description,Latitude,Longitude) VALUES (\""+busStopCode+"\""+","+"\""+roadName+"\""+","+"\""+description+"\""+","+latitude+","+longitude+")";
++/*
+             String query2= "INSERT INTO busStops (BusStopCode=\""+busStopCode+"\""+","+"RoadName=\""+roadName+"\""+","+"Description=\""+description+"\""+","+"Latitude=\""+latitude+"\""+","+"Longitude=\""+longitude+"\""+")";
++*/
+ 
+             db.execSQL(query);
+         }
+Index: app/src/main/java/sg/edu/np/mad/transportme/LoadingScreen.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package sg.edu.np.mad.transportme;\r\n\r\nimport androidx.annotation.RequiresApi;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.Manifest;\r\nimport android.content.Intent;\r\nimport android.os.Build;\r\nimport android.os.Bundle;\r\nimport android.os.Handler;\r\nimport android.widget.ProgressBar;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport java.util.ArrayList;\r\n\r\npublic class LoadingScreen extends AppCompatActivity {\r\n    public static ArrayList<BusStop> globalBusStops = new ArrayList<>();\r\n    int i = 0;\r\n    @RequiresApi(api = Build.VERSION_CODES.M)\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_loading_screen);\r\n\r\n        final String[] LOCATION_PERMS={\r\n                Manifest.permission.ACCESS_COARSE_LOCATION,\r\n                Manifest.permission.ACCESS_FINE_LOCATION\r\n        };\r\n\r\n        final int LOCATION_REQUEST=1337;\r\n        requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);\r\n\r\n        ProgressBar progressBar = findViewById(R.id.progress_bar);\r\n        TextView progressText = findViewById(R.id.progress_text);\r\n\r\n        BusStopDBHandler busStopDBHandler = new BusStopDBHandler(LoadingScreen.this,null,null,1);\r\n        globalBusStops = busStopDBHandler.getBusStops();\r\n        if(globalBusStops.size() == 0){\r\n            ApiBusStopService apiBusStopService = new ApiBusStopService(LoadingScreen.this);\r\n            apiBusStopService.getBusStop(new ApiBusStopService.VolleyResponseListener() {\r\n                @Override\r\n                public void onError(String message) {\r\n                    Toast.makeText(LoadingScreen.this,\"Cannot Get Bus Stops\",Toast.LENGTH_LONG).show();\r\n                }\r\n                @Override\r\n                public void onResponse(ArrayList<BusStop> busStops) {\r\n                    busStopDBHandler.addBusStops(busStops);\r\n                    progressBar.setProgress(100);\r\n                    globalBusStops = busStops;\r\n                    Intent goToLoginPage = new Intent(LoadingScreen.this, LoginPage.class);\r\n                    startActivity(goToLoginPage);\r\n                }\r\n            });\r\n            progressText.setText(\"Downloading Bus Stops, Only Happens Once\");\r\n            final Handler handler = new Handler();\r\n            handler.postDelayed(new Runnable() {\r\n                @Override\r\n                public void run() {\r\n                    // set the limitations for the numeric\r\n                    // text under the progress bar\r\n                    if (i <= 85) {\r\n                        progressBar.setProgress(i);\r\n                        i+=1;\r\n                        handler.postDelayed(this, 200);\r\n                    } else {\r\n                        handler.removeCallbacks(this);\r\n                    }\r\n                }\r\n            }, 200);\r\n        }\r\n        else{\r\n            progressText.setText(\"Loading Bus Stops\");\r\n            final Handler handler = new Handler();\r\n            handler.postDelayed(new Runnable() {\r\n                @Override\r\n                public void run() {\r\n                    // set the limitations for the numeric\r\n                    // text under the progress bar\r\n                    if (i <= 85) {\r\n                        progressBar.setProgress(i);\r\n                        i+=5;\r\n                        handler.postDelayed(this, 200);\r\n                    } else {\r\n                        handler.removeCallbacks(this);  \r\n                    }\r\n                }\r\n            }, 200);\r\n            Intent goToLoginPage = new Intent(LoadingScreen.this, LoginPage.class);\r\n            startActivity(goToLoginPage);\r\n\r\n        }\r\n\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/sg/edu/np/mad/transportme/LoadingScreen.java b/app/src/main/java/sg/edu/np/mad/transportme/LoadingScreen.java
+--- a/app/src/main/java/sg/edu/np/mad/transportme/LoadingScreen.java	(revision 8ad29e978aa8d7465746dfbc7d6fc5642c1f4618)
++++ b/app/src/main/java/sg/edu/np/mad/transportme/LoadingScreen.java	(date 1656171850238)
+@@ -15,6 +15,8 @@
+ import java.util.ArrayList;
+ 
+ public class LoadingScreen extends AppCompatActivity {
++
++    //Global bus stop list, holds data for all bus stops
+     public static ArrayList<BusStop> globalBusStops = new ArrayList<>();
+     int i = 0;
+     @RequiresApi(api = Build.VERSION_CODES.M)
+@@ -29,16 +31,19 @@
+         };
+ 
+         final int LOCATION_REQUEST=1337;
+-        requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
++        requestPermissions(LOCATION_PERMS, LOCATION_REQUEST); //Request permissions from user
+ 
+-        ProgressBar progressBar = findViewById(R.id.progress_bar);
++        ProgressBar progressBar = findViewById(R.id.progress_bar); //Progress Bar for loading screen to downlaod all bus stops
+         TextView progressText = findViewById(R.id.progress_text);
+ 
++        // Initialize local SQL database to hold all bus stop data (Bus Stop code, Lat Long, Description, Roadname)
+         BusStopDBHandler busStopDBHandler = new BusStopDBHandler(LoadingScreen.this,null,null,1);
+-        globalBusStops = busStopDBHandler.getBusStops();
++        globalBusStops = busStopDBHandler.getBusStops(); //Grab existing bus stop data
++
++        //Check if its the first time the app runs, if it is it will download the bus stops
+         if(globalBusStops.size() == 0){
+-            ApiBusStopService apiBusStopService = new ApiBusStopService(LoadingScreen.this);
+-            apiBusStopService.getBusStop(new ApiBusStopService.VolleyResponseListener() {
++            ApiBusStopService apiBusStopService = new ApiBusStopService(LoadingScreen.this); //Initialize API
++            apiBusStopService.getBusStop(new ApiBusStopService.VolleyResponseListener() { //Call API asynchronously
+                 @Override
+                 public void onError(String message) {
+                     Toast.makeText(LoadingScreen.this,"Cannot Get Bus Stops",Toast.LENGTH_LONG).show();
+@@ -47,13 +52,13 @@
+                 public void onResponse(ArrayList<BusStop> busStops) {
+                     busStopDBHandler.addBusStops(busStops);
+                     progressBar.setProgress(100);
+-                    globalBusStops = busStops;
+-                    Intent goToLoginPage = new Intent(LoadingScreen.this, LoginPage.class);
++                    globalBusStops = busStops; // Load called bus stop data to globalBusStop to be access by all classes
++                    Intent goToLoginPage = new Intent(LoadingScreen.this, LoginPage.class); //Go to login page
+                     startActivity(goToLoginPage);
+                 }
+             });
+             progressText.setText("Downloading Bus Stops, Only Happens Once");
+-            final Handler handler = new Handler();
++            final Handler handler = new Handler();  //Handles the progress bar, progress bar is based on time
+             handler.postDelayed(new Runnable() {
+                 @Override
+                 public void run() {
+@@ -69,7 +74,7 @@
+                 }
+             }, 200);
+         }
+-        else{
++        else{ // Progress bar for when database is already downloaded, just need to grab data from local SQL database
+             progressText.setText("Loading Bus Stops");
+             final Handler handler = new Handler();
+             handler.postDelayed(new Runnable() {
+Index: app/src/main/java/sg/edu/np/mad/transportme/LoginPage.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package sg.edu.np.mad.transportme;\r\n\r\nimport static sg.edu.np.mad.transportme.LoadingScreen.globalBusStops;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.content.Intent;\r\nimport android.content.SharedPreferences;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.util.Patterns;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.ProgressBar;\r\nimport android.widget.Toast;\r\n\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.util.ArrayList;\r\n\r\nimport at.favre.lib.crypto.bcrypt.BCrypt;\r\n\r\npublic class LoginPage extends AppCompatActivity implements View.OnClickListener{\r\n    public static String globalName = \"\";\r\n    public static String globalEmail = \"\";\r\n    public static Boolean SignedIn = false;\r\n    public static ArrayList<BusStop> globalFavouriteBusStop = new ArrayList<>();\r\n    public static Double globalCloseness;\r\n    //private TextView register;\r\n    private EditText editTextEmail, editTextPassword;\r\n    private Button signIn, register;\r\n    private ProgressBar progressBar;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_login_page);\r\n        /*Remove this lol */\r\n        //startActivity(new Intent(LoginPage.this, MainActivity.class));\r\n        signIn = findViewById(R.id.loginbutton);\r\n        signIn.setOnClickListener(this);\r\n\r\n        register = findViewById(R.id.gotoregisterpage);\r\n        register.setOnClickListener(this);\r\n\r\n        editTextEmail = findViewById(R.id.emailAddress);\r\n        editTextPassword = findViewById(R.id.password);\r\n\r\n        progressBar = findViewById(R.id.progressBar);\r\n        /* here*/\r\n        SharedPreferences prefs =  getSharedPreferences(\"LoginData\", MODE_PRIVATE);\r\n        globalName = prefs.getString(\"name\", \"\");\r\n        globalEmail = prefs.getString(\"email\", \"\");\r\n        SignedIn = prefs.getString(\"login\", \"\").equals(\"True\");\r\n        globalCloseness = Double.valueOf(prefs.getString(\"closeness\",\"0.3\"));\r\n        if(SignedIn){\r\n\r\n            FirebaseDatabase db = FirebaseDatabase.getInstance(\"https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/\");\r\n            DatabaseReference myRef = db.getReference(\"User\");\r\n            myRef.addValueEventListener(new ValueEventListener() {\r\n                @Override\r\n                public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                    if(SignedIn){\r\n                        globalFavouriteBusStop.clear();\r\n                        /*DatabaseReference favouriteref = myRef.child(globalName).child(\"Favourited\");*/\r\n                        for (DataSnapshot favBS : snapshot.child(globalName).child(\"Favourited\").getChildren()) {\r\n                            String busStopCode = favBS.getKey();\r\n                            for (int i = 0 ; i< globalBusStops.size(); i++){\r\n                                if (busStopCode.equals(globalBusStops.get(i).getBusStopCode())){\r\n                                    globalFavouriteBusStop.add(globalBusStops.get(i));\r\n                                }\r\n                            }\r\n                        }\r\n                    }\r\n                }\r\n\r\n                @Override\r\n                public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                }\r\n            });\r\n\r\n            startActivity(new Intent(LoginPage.this, MainActivity.class));\r\n        }\r\n\r\n    }\r\n\r\n    @Override\r\n    public void onClick(View v) {\r\n        switch (v.getId()){\r\n            case R.id.loginbutton:\r\n                String email = editTextEmail.getText().toString();\r\n                String password = editTextPassword.getText().toString();\r\n\r\n                if(email.isEmpty()){\r\n                    editTextEmail.setError(\"Email is required\");\r\n                    editTextEmail.requestFocus();\r\n                    return;\r\n                }\r\n                if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){\r\n                    editTextEmail.setError(\"Please enter a valid email\");\r\n                    editTextEmail.requestFocus();\r\n                    return;\r\n                }\r\n\r\n                if(password.isEmpty()){\r\n                    editTextPassword.setError(\"Password is empty\");\r\n                    editTextPassword.requestFocus();\r\n                    return;\r\n                }\r\n                if(password.length() < 6){\r\n                    editTextPassword.setError(\"Min password length is 6 characters\");\r\n                    editTextPassword.requestFocus();\r\n                    return;\r\n                }\r\n\r\n                editTextEmail.setEnabled(false);\r\n                editTextPassword.setEnabled(false);\r\n                progressBar.setVisibility(View.VISIBLE);\r\n                FirebaseDatabase db = FirebaseDatabase.getInstance(\"https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/\");\r\n                DatabaseReference myRef = db.getReference(\"User\");\r\n                myRef.addValueEventListener(new ValueEventListener() {\r\n                    @Override\r\n                    public void onDataChange(@NonNull DataSnapshot snapshot) {\r\n                        for(DataSnapshot user : snapshot.getChildren()) {\r\n                            if (user.child(\"email\").getValue().toString().equals(email)) {\r\n                                if (BCrypt.verifyer().verify(password.toCharArray(), user.child(\"password\").getValue().toString()).verified){\r\n                                    if(!SignedIn)\r\n                                    {\r\n\r\n                                        Toast.makeText(LoginPage.this, \"Login Successful!\", Toast.LENGTH_LONG).show();\r\n                                        globalName = user.child(\"name\").getValue().toString();\r\n                                        globalEmail = user.child(\"email\").getValue().toString();\r\n                                        SignedIn = true;\r\n\r\n                                        /* here*/\r\n                                        SharedPreferences.Editor editor = getSharedPreferences(\"LoginData\", MODE_PRIVATE).edit();\r\n                                        editor.putString(\"name\", globalName);\r\n                                        editor.putString(\"email\", globalEmail);\r\n                                        editor.putString(\"login\",\"True\" );\r\n                                        editor.apply();\r\n\r\n                                        startActivity(new Intent(LoginPage.this, MainActivity.class));\r\n                                    }\r\n                                }\r\n                            }\r\n\r\n                        }\r\n\r\n                        if(SignedIn){\r\n                            globalFavouriteBusStop.clear();\r\n                            /*DatabaseReference favouriteref = myRef.child(globalName).child(\"Favourited\");*/\r\n                            for (DataSnapshot favBS : snapshot.child(globalName).child(\"Favourited\").getChildren()) {\r\n                                String busStopCode = favBS.getKey();\r\n                                for (int i = 0 ; i< globalBusStops.size(); i++){\r\n                                    if (busStopCode.equals(globalBusStops.get(i).getBusStopCode())){\r\n                                        globalFavouriteBusStop.add(globalBusStops.get(i));\r\n                                    }\r\n                                }\r\n                            }\r\n                        }\r\n\r\n                        if (!SignedIn){\r\n                            Toast.makeText(LoginPage.this, \"Invalid Credentials, please try again\", Toast.LENGTH_LONG).show();\r\n                            editTextEmail.setEnabled(true);\r\n                            editTextPassword.setEnabled(true);\r\n                            progressBar.setVisibility(View.INVISIBLE);\r\n                        }\r\n                    }\r\n\r\n                    @Override\r\n                    public void onCancelled(@NonNull DatabaseError error) {\r\n\r\n                    }\r\n                });\r\n                break;\r\n\r\n            case R.id.gotoregisterpage:\r\n                startActivity(new Intent(this, RegistrationPage.class));\r\n                break;\r\n        }\r\n\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/sg/edu/np/mad/transportme/LoginPage.java b/app/src/main/java/sg/edu/np/mad/transportme/LoginPage.java
+--- a/app/src/main/java/sg/edu/np/mad/transportme/LoginPage.java	(revision 8ad29e978aa8d7465746dfbc7d6fc5642c1f4618)
++++ b/app/src/main/java/sg/edu/np/mad/transportme/LoginPage.java	(date 1656171850249)
+@@ -59,7 +59,7 @@
+         globalEmail = prefs.getString("email", "");
+         SignedIn = prefs.getString("login", "").equals("True");
+         globalCloseness = Double.valueOf(prefs.getString("closeness","0.3"));
+-        if(SignedIn){
++        if(SignedIn){ // If User is signedIn, phone connects to Firebase and gets favourite bus stops
+ 
+             FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/");
+             DatabaseReference myRef = db.getReference("User");
+@@ -73,7 +73,7 @@
+                             String busStopCode = favBS.getKey();
+                             for (int i = 0 ; i< globalBusStops.size(); i++){
+                                 if (busStopCode.equals(globalBusStops.get(i).getBusStopCode())){
+-                                    globalFavouriteBusStop.add(globalBusStops.get(i));
++                                    globalFavouriteBusStop.add(globalBusStops.get(i)); //Update globalFavoruiteBusStop with favourited bus Stops
+                                 }
+                             }
+                         }
+@@ -94,7 +94,7 @@
+     @Override
+     public void onClick(View v) {
+         switch (v.getId()){
+-            case R.id.loginbutton:
++            case R.id.loginbutton: //If login button is clicked
+                 String email = editTextEmail.getText().toString();
+                 String password = editTextPassword.getText().toString();
+ 
+@@ -103,18 +103,18 @@
+                     editTextEmail.requestFocus();
+                     return;
+                 }
+-                if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
++                if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){ //Check for email pattern
+                     editTextEmail.setError("Please enter a valid email");
+                     editTextEmail.requestFocus();
+                     return;
+                 }
+ 
+-                if(password.isEmpty()){
++                if(password.isEmpty()){ //Check if password is empty
+                     editTextPassword.setError("Password is empty");
+                     editTextPassword.requestFocus();
+                     return;
+                 }
+-                if(password.length() < 6){
++                if(password.length() < 6){ //Check if password meets the requirement
+                     editTextPassword.setError("Min password length is 6 characters");
+                     editTextPassword.requestFocus();
+                     return;
+@@ -187,5 +187,5 @@
+         }
+ 
+     }
+-
++    //Firebase authentication code, Not Used
+ }
+\ No newline at end of file

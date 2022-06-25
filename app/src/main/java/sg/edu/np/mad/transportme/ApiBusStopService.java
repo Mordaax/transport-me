@@ -26,14 +26,14 @@ public class ApiBusStopService {
     Context context;
     public ApiBusStopService(Context c) {
         this.context = c;
-    }
+    } //Constructor, passes in context
 
-
+    // Interface for API service that gets the bus stops
     public interface VolleyResponseListener{
         void onError(String message);
         void onResponse(ArrayList<BusStop> busStops);
     }
-
+    // Interface for API service that get the bus services timings for each bus stop
     public interface VolleyResponseListener2{
         void onError(String message);
         void onResponse(ArrayList<BusStop> busStopsService);
@@ -42,9 +42,9 @@ public class ApiBusStopService {
 
     public void getBusStop(VolleyResponseListener volleyResponseListener){
 
-        String busStopsUrl = "https://mad-assignment-backend.herokuapp.com/BusStops";
+        String busStopsUrl = "https://mad-assignment-backend.herokuapp.com/BusStops"; //Call all bus stops from heroku backend
         ArrayList<BusStop> busStops = new ArrayList<>();
-
+        // Calls API using JsonObjectRequest
         JsonObjectRequest jsonObjectRequestBusStops = new JsonObjectRequest(Request.Method.GET, busStopsUrl, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -52,7 +52,7 @@ public class ApiBusStopService {
                         try {
                             JSONArray jsonArray = response.getJSONArray("Results");
                             Log.d("results", String.valueOf(jsonArray.length()));
-                            for(int i = 0; i<jsonArray.length();i++) {
+                            for(int i = 0; i<jsonArray.length();i++) { //Convert JsonArray object to objects
                                 JSONObject jsonBusStop = jsonArray.getJSONObject(i);
                                 String busStopCode = jsonBusStop.get("BusStopCode").toString();
                                 String roadName = jsonBusStop.get("RoadName").toString();
@@ -61,7 +61,7 @@ public class ApiBusStopService {
                                 Double longitude = Double.parseDouble(jsonBusStop.get("Longitude").toString());
                                 busStops.add(new BusStop(busStopCode, roadName, description, latitude, longitude));
                             }
-                            volleyResponseListener.onResponse(busStops);
+                            volleyResponseListener.onResponse(busStops); //Triggers on response callback in MainActivity, returns the busStops
                         } catch (JSONException e) {
                             e.printStackTrace();
                             volleyResponseListener.onError("Cannot Get Bus Stops");
@@ -76,13 +76,14 @@ public class ApiBusStopService {
         MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequestBusStops);
     }
 
+    //Another API to call the Bus Services(Bus Timings) for each bus stop
     public void getBusService(ArrayList<BusStop> nearBusStops, VolleyResponseListener2 volleyResponseListener2){
         ArrayList<BusStop> busStopsService = new ArrayList<>();
         String busStopsUrl = "https://mad-assignment-backend.herokuapp.com/BusCodes?codes=";
         for (int i = 0; i < nearBusStops.size();i++){
             String code = nearBusStops.get(i).getBusStopCode();
             if (i !=0){
-                busStopsUrl = busStopsUrl+"," +code;
+                busStopsUrl = busStopsUrl+"," +code; //Formats url of bus stop codes for API
             }
             else {
                 busStopsUrl = busStopsUrl+code;
@@ -95,14 +96,14 @@ public class ApiBusStopService {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+                            //Load api Data into objects
                             JSONArray jsonArrayBusStops = response.getJSONArray("Results");
                             List<String> nextBusString = Arrays.asList("NextBus","NextBus2","NextBus3");
                             ArrayList<BusStop> nearBusStopLoaded = new ArrayList<>();
-                            Log.d("before", jsonArrayBusStops.toString());
-                            LocalDateTime current = LocalDateTime.now();
+                            LocalDateTime current = LocalDateTime.now(); //Get Current time to compare with estimated arrival time
 
                             DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ssXXXXX");
-
+                            //Load API data into objects
                             for (int i=0; i<jsonArrayBusStops.length(); i++){
                                 JSONObject jsonBusStop = (JSONObject) jsonArrayBusStops.get(i);
                                 BusStop nearBusStop = nearBusStops.get(i);
@@ -115,10 +116,10 @@ public class ApiBusStopService {
 
                                     for (String nextbusstring: nextBusString){
                                         JSONObject nextbus = jsonBusService.getJSONObject(nextbusstring);
-
+                                        // Load next bus data to object
                                         String estArrival = nextbus.getString("EstimatedArrival");
                                         String arrivalMinutes = "Null";
-                                        if (!estArrival.equals("")){
+                                        if (!estArrival.equals("")){  //Get difference between time for Arrival Time
                                             LocalDateTime parsed = LocalDateTime.parse(estArrival,DATE_TIME_FORMATTER);
                                             Duration duration = Duration.between(current,parsed);
                                             arrivalMinutes = String.valueOf(duration.toMinutes());
@@ -137,7 +138,7 @@ public class ApiBusStopService {
                                 nearBusStop.setBusServices(busServices);
                                 nearBusStopLoaded.add(nearBusStop);
                             }
-                            volleyResponseListener2.onResponse(nearBusStopLoaded);
+                            volleyResponseListener2.onResponse(nearBusStopLoaded); //Call the onResponse callback in MainActivity
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -147,10 +148,10 @@ public class ApiBusStopService {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("TAG", error.getMessage(), error);
-                volleyResponseListener2.onError("Cannot Get data");
+                volleyResponseListener2.onError("Cannot Get data"); //Call onError Callback in main Activity
             }
         });
-        MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequestBusStop);
+        MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequestBusStop); //Add to request queue
 
         volleyResponseListener2.onResponse(busStopsService);
     }

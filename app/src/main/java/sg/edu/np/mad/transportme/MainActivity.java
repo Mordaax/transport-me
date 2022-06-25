@@ -141,10 +141,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         LatLng latLng = new LatLng(Latitude, Longitude);
                         Geocoder geocoder = new Geocoder(getApplicationContext());
 
-                        /* For testing purposes, Remove at the end */
-                    /*Latitude = 1.332346;
-                    Longitude = 103.777561;*/
-
                         ArrayList<BusStop> closeBusStops = new ArrayList<>();
                         for (int i = 0; i < busStops.size(); i++){
                             BusStop busStop = busStops.get(i);
