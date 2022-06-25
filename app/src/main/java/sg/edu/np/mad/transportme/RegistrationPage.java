@@ -57,7 +57,6 @@ public class RegistrationPage extends AppCompatActivity {
 
         DatabaseUser dbUser = new DatabaseUser();
 
-        Intent regIntent = new Intent(RegistrationPage.this, LoginPage.class);
         registerUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,7 +65,7 @@ public class RegistrationPage extends AppCompatActivity {
                 String password = editTextPassword.getText().toString().trim();
                 String name = editTextName.getText().toString().trim();
 
-                if (name.isEmpty()) {
+                if (name.isEmpty()) { //handling errors for the inputs
                     editTextName.setError("Full name is required");
                     editTextName.requestFocus();
                     return;
@@ -95,33 +94,33 @@ public class RegistrationPage extends AppCompatActivity {
                     return;
                 }
 
-                editTextEmail.setEnabled(false);
+                editTextEmail.setEnabled(false); //making sure user cannot edit the inputs when register is pressed and its loading
                 editTextName.setEnabled(false);
                 editTextPassword.setEnabled(false);
                 progressBar.setVisibility(View.VISIBLE);
 
-                String hashedpw = BCrypt.withDefaults().hashToString(12, password.toCharArray());
-                User u = new User(name, email, hashedpw, null);
+                String hashedpw = BCrypt.withDefaults().hashToString(12, password.toCharArray()); //hashing the password for security
+                User u = new User(name, email, hashedpw, null); //creating the user class to add to the database
 
 // ...
-                mDatabase = FirebaseDatabase.getInstance().getReference();
+                mDatabase = FirebaseDatabase.getInstance().getReference(); //Getting reference to the database
 
                 mDatabase.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (!SignedIn){
-                            if(String.valueOf(snapshot.child("name").getValue()).equals(name)){
+                            if(String.valueOf(snapshot.child("name").getValue()).equals(name)){ //Making sure that the same name cannot be registered
                                 startActivity(new Intent(RegistrationPage.this, RegistrationPage.class));
                                 Toast.makeText(RegistrationPage.this, "Please Enter another Username", Toast.LENGTH_LONG).show();
                                 finish();
                             }
-                            else if(String.valueOf(snapshot.child("email").getValue()).equals(email)){
+                            else if(String.valueOf(snapshot.child("email").getValue()).equals(email)){ //Making sure that the same email cannot be registered
                                 Toast.makeText(RegistrationPage.this, "Email already registered", Toast.LENGTH_LONG).show();
                                 startActivity(new Intent(RegistrationPage.this, RegistrationPage.class));
                                 finish();
                             }
                             else{
-                                dbUser.add(u).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                dbUser.add(u).addOnSuccessListener(new OnSuccessListener<Void>() { //Add user to the database via the method in DatabaseUser
                                     @Override
                                     public void onSuccess(Void unused) {
                                         Toast.makeText(RegistrationPage.this, "Registration successful!", Toast.LENGTH_LONG).show();
@@ -132,9 +131,9 @@ public class RegistrationPage extends AppCompatActivity {
                                         editor.putString("name", globalName);
                                         editor.putString("email", globalEmail);
                                         editor.putString("login","True" );
-                                        editor.apply();
+                                        editor.apply(); //adding the names, email and login status to SharedPreference so if user exits the app and re enters, they will still be logged in
                                         SignedIn = true;
-                                        startActivity(new Intent(RegistrationPage.this, MainActivity.class));
+                                        startActivity(new Intent(RegistrationPage.this, MainActivity.class)); //Intent to MainActivity after registration
                                         finish();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
@@ -143,16 +142,16 @@ public class RegistrationPage extends AppCompatActivity {
                                         editTextEmail.setEnabled(true);
                                         editTextName.setEnabled(true);
                                         editTextPassword.setEnabled(true);
-                                        progressBar.setVisibility(View.INVISIBLE);
-                                        Toast.makeText(RegistrationPage.this, "Registration failed! Try again!", Toast.LENGTH_LONG).show();
+                                        progressBar.setVisibility(View.INVISIBLE); //If the registration fails, the progressbar must disappear so that users can edit inputs
+                                        Toast.makeText(RegistrationPage.this, "Registration failed! Try again!", Toast.LENGTH_LONG).show(); //Showing that registration has failed
                                     }
                                 });
                             }
                         }
                         else{
-                            globalFavouriteBusStop.clear();
+                            globalFavouriteBusStop.clear(); //globalFavouriteBusStop contains the favourited bus stops by the user loaded into Global variable
                             /*DatabaseReference favouriteref = myRef.child(globalName).child("Favourited");*/
-                            for ( DataSnapshot favBS : snapshot.child("Favourited").getChildren()) {
+                            for ( DataSnapshot favBS : snapshot.child("Favourited").getChildren()) { //On every favourite change reloads the globalFavouriteBusStop variable
                                 String busStopCode = favBS.getKey();
                                 for (int i = 0 ; i< globalBusStops.size(); i++){
                                     if (busStopCode.equals(globalBusStops.get(i).getBusStopCode())){
@@ -172,7 +171,7 @@ public class RegistrationPage extends AppCompatActivity {
             }
         });
         Intent myIntent = new Intent(this, LoginPage.class);
-        switchtoLogin.setOnClickListener(new View.OnClickListener() {
+        switchtoLogin.setOnClickListener(new View.OnClickListener() { //User can go back to login page if they do not wish to register
             @Override
             public void onClick(View view) {
                 startActivity(myIntent);
