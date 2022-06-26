@@ -85,8 +85,8 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
 
                 }
             });
-
-            startActivity(new Intent(LoginPage.this, MainActivity.class));
+            Intent intent = new Intent(LoginPage.this, MainActivity.class);
+            startActivity(intent);
         }
 
     }
@@ -122,15 +122,15 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
 
                 editTextEmail.setEnabled(false);
                 editTextPassword.setEnabled(false);
-                progressBar.setVisibility(View.VISIBLE);
-                FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/");
-                DatabaseReference myRef = db.getReference("User");
+                progressBar.setVisibility(View.VISIBLE); //Ensure that user cannot edit the input while it is loading
+                FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/"); //Initialise Database
+                DatabaseReference myRef = db.getReference("User"); //Database Reference User
                 myRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for(DataSnapshot user : snapshot.getChildren()) {
                             if (user.child("email").getValue().toString().equals(email)) {
-                                if (BCrypt.verifyer().verify(password.toCharArray(), user.child("password").getValue().toString()).verified){
+                                if (BCrypt.verifyer().verify(password.toCharArray(), user.child("password").getValue().toString()).verified){ //Making sure the password of the email account is correct
                                     if(!SignedIn)
                                     {
 
@@ -145,15 +145,15 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                                         editor.putString("email", globalEmail);
                                         editor.putString("login","True" );
                                         editor.apply();
-
-                                        startActivity(new Intent(LoginPage.this, MainActivity.class));
+                                        Intent intent = new Intent(LoginPage.this, MainActivity.class);
+                                        startActivity(intent);
                                     }
                                 }
                             }
 
                         }
 
-                        if(SignedIn){
+                        if(SignedIn){ //On every favourite change reloads the globalFavouriteBusStop variable
                             globalFavouriteBusStop.clear();
                             /*DatabaseReference favouriteref = myRef.child(globalName).child("Favourited");*/
                             for (DataSnapshot favBS : snapshot.child(globalName).child("Favourited").getChildren()) {
@@ -166,7 +166,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                             }
                         }
 
-                        if (!SignedIn){
+                        if (!SignedIn){ //If the password is entered incorrectly or if there is no such email existing in the database
                             Toast.makeText(LoginPage.this, "Invalid Credentials, please try again", Toast.LENGTH_LONG).show();
                             editTextEmail.setEnabled(true);
                             editTextPassword.setEnabled(true);
@@ -181,7 +181,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                 });
                 break;
 
-            case R.id.gotoregisterpage:
+            case R.id.gotoregisterpage: //when register is pressed
                 startActivity(new Intent(this, RegistrationPage.class));
                 break;
         }
