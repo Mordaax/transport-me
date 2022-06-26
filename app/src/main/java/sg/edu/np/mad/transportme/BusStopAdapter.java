@@ -39,56 +39,23 @@ public class BusStopAdapter
 {
     ArrayList<BusStop> data;
     Context c;
-    FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/");
+    FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/");     //Initialise database instance
     public BusStopAdapter(ArrayList<BusStop> data, Context c)
     {
         this.c = c;
         this.data = data;
-        //this = this class / object
-    }
-    /* Remove This????? */
-    @Override
-    public int getItemViewType(int position){
-        return (position%5==0)?0:1;
     }
 
     @NonNull
     @Override
     public BusStopViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.bus_stop_layout, parent,false);
-
+        View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.bus_stop_layout, parent,false);       //Creates layout declaring parent object
         return new BusStopViewHolder(item);
     }
 
     @Override
     public void onBindViewHolder(@NonNull BusStopViewHolder holder, int position) {
-        BusStop content = data.get(position);
-
-        if (c.getClass().getSimpleName().equals("FavouritesFragment"))
-        {
-            String busStopCode = content.getBusStopCode();
-            //FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-            DatabaseReference reference = db.getReference()
-                    .child("User")
-                    //.child(firebaseUser.getUid())
-                    .child(globalName)
-                    .child("Favourited");
-            reference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (!snapshot.child(busStopCode).exists())
-                    {
-                        return;
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-            return;
-        }
+        BusStop content = data.get(position);       //Using row id to retrieve data from list
 
         ViewGroup cardView = holder.itemView.findViewById(R.id.base_cardview);
         View hiddenView = holder.itemView.findViewById(R.id.recyclerView2);
@@ -96,11 +63,10 @@ public class BusStopAdapter
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (c.getClass().getSimpleName().equals("MainActivity"))
-                {
-                    ((MainActivity)c).moveMapsCamera(content.getLatitude(), content.getLongitude());
-                }
+                //Moving the camera for the main Google Maps to the bus stop clicked
+                ((MainActivity)c).moveMapsCamera(content.getLatitude(), content.getLongitude());
 
+                //Smooth animation for drop down arrow when bus services are expanded
                 if (holder.itemView.findViewById(R.id.recyclerView2).getVisibility() == View.VISIBLE){
                     RotateAnimation rotate = new RotateAnimation(-90, 0, Animation.RELATIVE_TO_SELF, 0.5f,          Animation.RELATIVE_TO_SELF, 0.5f);
                     rotate.setDuration(250);
@@ -122,86 +88,83 @@ public class BusStopAdapter
             }
         });
 
-        holder.Description.setText(content.getDescription());
+        holder.Description.setText(content.getDescription());       //Setting text for relevant fields in Bus Stop Layout
         holder.BusStopCode.setText(content.getBusStopCode());
         holder.RoadName.setText(content.getRoadName());
 
-        isFavourited(content.getBusStopCode(), holder.Favourite);
+        isFavourited(content.getBusStopCode(), holder.Favourite);   //Method to check whether bus stop is favourited, sets heart icon to red if favourited
         holder.Favourite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isNetworkAvailable())
+                if(isNetworkAvailable())                            //Method to check if Wi-Fi/Mobile data is on
                 {
                     DatabaseReference reference = db.getReference()
                             .child("User")
-                            //.child(firebaseUser.getUid())
                             .child(globalName)
                             .child("Favourited")
-                            .child(content.getBusStopCode());
+                            .child(content.getBusStopCode());       //Gets database reference of the child of the bus stop clicked on, under the current user's favourited list in RTDB
 
                     if (holder.Favourite.getTag() == "Favourite")
                     {
-                        holder.Favourite.setImageResource(R.drawable.filled_favourite);
+                        holder.Favourite.setImageResource(R.drawable.filled_favourite);     //Setting the heart icon to red if it is not favourited
                         holder.Favourite.setTag("Favourited");
-                        reference.setValue(true);
+                        reference.setValue(true);                                           //Adding the bus stop code of selected bus stop into the user's favourite list in RTDB
                     }
                     else
                     {
-                        holder.Favourite.setImageResource(R.drawable.favourite);
+                        holder.Favourite.setImageResource(R.drawable.favourite);            //Setting the heart icon to empty if it is favourited
                         holder.Favourite.setTag("Favourite");
-                        reference.setValue(null);
+                        reference.setValue(null);                                           //Removing the bus stop code of selected bus stop from the user's favourite list in RTDB
                     }
                 }
                 else
                 {
+                    //Notifies user that Wi-Fi/Mobile data is off and updates are not sent to the database
                     Toast.makeText(c, "Wifi is OFF, favourites may not update.", Toast.LENGTH_SHORT).show();
                     if (holder.Favourite.getTag() == "Favourite")
                     {
-                        holder.Favourite.setImageResource(R.drawable.filled_favourite);
+                        holder.Favourite.setImageResource(R.drawable.filled_favourite);     //Setting the heart icon to red if it is not favourited
                         holder.Favourite.setTag("Favourited");
                     }
                     else
                     {
-                        holder.Favourite.setImageResource(R.drawable.favourite);
+                        holder.Favourite.setImageResource(R.drawable.favourite);            //Setting the heart icon to empty if it is favourited
                         holder.Favourite.setTag("Favourite");
                     }
                 }
             }
         });
 
-        /*RecyclerView rv = c.findViewById(R.id.recyclerView2);*/
-        BusServiceAdapter adapterMember = new BusServiceAdapter(content.getBusServices());
-        LinearLayoutManager layout = new LinearLayoutManager(c);
-        /*rv.setAdapter(adapter);
-        rv.setLayoutManager(layout);*/
-        holder.RecyclerView2.setLayoutManager(layout);
+        BusServiceAdapter adapterMember = new BusServiceAdapter(content.getBusServices());  //Create the RecyclerView for BusServices
+        LinearLayoutManager layout = new LinearLayoutManager(c);                            //LayoutManager tells RecyclerView how to draw the list
+
+        holder.RecyclerView2.setLayoutManager(layout);          //Pass in layout and adapter
         holder.RecyclerView2.setAdapter(adapterMember);
     }
 
-
+    //Method that searches for the bus stop code when the Bus Stop card view is loaded in,
+    //and sets the heart to red if it exists in the favourited list, and empty if it does not
     private void isFavourited(String busStopCode, ImageView favouritedView)
     {
-        //FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (isNetworkAvailable())
+        if (isNetworkAvailable())           //Checks whether Wi-Fi/Mobile data is on before making a reference in firebase
         {
             DatabaseReference reference = db.getReference()
                     .child("User")
-                    //.child(firebaseUser.getUid())
                     .child(globalName)
                     .child("Favourited")
-                    .child(busStopCode);
+                    .child(busStopCode);    //Gets database reference of the child of the bus stop clicked on, under the current user's favourited list in RTDB
 
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.getValue() != null)
+                    if (snapshot.getValue() != null)                                    //Checks whether bus stop exists in favourited list
                     {
-                        favouritedView.setImageResource(R.drawable.filled_favourite);
+                        favouritedView.setImageResource(R.drawable.filled_favourite);   //Sets heart icon to red if favourited
                         favouritedView.setTag("Favourited");
                     }
                     else
                     {
-                        favouritedView.setImageResource(R.drawable.favourite);
+                        favouritedView.setImageResource(R.drawable.favourite);          //Sets heart icon to empty if not favourited
                         favouritedView.setTag("Favourite");
                     }
                 }
@@ -214,6 +177,7 @@ public class BusStopAdapter
         }
         else
         {
+            //Notifies user the Wi-Fi/Mobile data is OFF and list in RTDB will not be checked
             Toast.makeText(c, "Wifi is OFF, favourites may not be up to date.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -223,14 +187,14 @@ public class BusStopAdapter
         return data.size();
     }
 
-    public boolean isNetworkAvailable()
+    public boolean isNetworkAvailable()     //Method to check whether Wi-Fi/Mobile data is OFF or ON
     {
         try{
             ConnectivityManager manager = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = null;
 
             if(manager != null){
-                networkInfo = manager.getActiveNetworkInfo();
+                networkInfo = manager.getActiveNetworkInfo();       //Check for active network connections
             }
             return networkInfo != null && networkInfo.isConnected();
         }
