@@ -45,12 +45,10 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 2. Responsive MainActivity (and fragment) layout
 3. Favouriting Bus Stop Mechanism
 4. Favourites Fragment (Displays all favourited bus stops)
-5. Login page Debugging
-6. Map Debugging
-7. Firebase Implementation
-8. App Style and Theme Files
-9. Nav Bar Design
-10. BusStopAdapter, BusServiceAdapter, FavouriteFragment Comments
+5. General App Debugging
+6. Firebase Implementation
+7. App Style and Theme Files
+8. Nav Bar Design
 
 ### Koo Wen Qi
 1. Map implementation
