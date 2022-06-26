@@ -37,7 +37,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 public class RegistrationPage extends AppCompatActivity {
 
     private Button registerUser, switchtoLogin;
-    private EditText editTextName, editTextEmail, editTextPassword;
+    private EditText editTextName, editTextEmail, editTextPassword, editTextConfirmPassword;
     private ProgressBar progressBar;
     private boolean register;
     private DatabaseReference mDatabase;
@@ -49,7 +49,7 @@ public class RegistrationPage extends AppCompatActivity {
         editTextName = findViewById(R.id.reg_FullName);
         editTextEmail = findViewById(R.id.reg_Email);
         editTextPassword = findViewById(R.id.reg_Password);
-
+        editTextConfirmPassword = findViewById(R.id.reg_Password2);
         progressBar = findViewById(R.id.progressBar);
 
         switchtoLogin = findViewById(R.id.gotologinpage);
@@ -93,6 +93,18 @@ public class RegistrationPage extends AppCompatActivity {
                     editTextPassword.requestFocus();
                     return;
                 }
+                if (editTextConfirmPassword.getText().toString().length() <1){
+                    editTextConfirmPassword.setError("Please Confirm Password");
+                    editTextConfirmPassword.requestFocus();
+                    return;
+                }
+                if (!password.equals(editTextConfirmPassword.getText().toString())){
+                    editTextConfirmPassword.setError("Passwords are not the same");
+                    editTextPassword.setError("Passwords are not the same");
+                    editTextConfirmPassword.requestFocus();
+
+                    return;
+                }
 
                 editTextEmail.setEnabled(false); //making sure user cannot edit the inputs when register is pressed and its loading
                 editTextName.setEnabled(false);
@@ -133,7 +145,7 @@ public class RegistrationPage extends AppCompatActivity {
                                         editor.putString("login","True" );
                                         editor.apply(); //adding the names, email and login status to SharedPreference so if user exits the app and re enters, they will still be logged in
                                         SignedIn = true;
-                                        startActivity(new Intent(RegistrationPage.this, MainActivity.class)); //Intent to MainActivity after registration
+                                        startActivity(new Intent(RegistrationPage.this, LoginPage.class)); //Intent to MainActivity after registration
                                         finish();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
@@ -148,11 +160,13 @@ public class RegistrationPage extends AppCompatActivity {
                                 });
                             }
                         }
-                        else{
-                            globalFavouriteBusStop.clear(); //globalFavouriteBusStop contains the favourited bus stops by the user loaded into Global variable
+                        if(SignedIn){
+                            /*globalFavouriteBusStop.clear();*/ //globalFavouriteBusStop contains the favourited bus stops by the user loaded into Global variable
                             /*DatabaseReference favouriteref = myRef.child(globalName).child("Favourited");*/
+
                             for ( DataSnapshot favBS : snapshot.child("Favourited").getChildren()) { //On every favourite change reloads the globalFavouriteBusStop variable
                                 String busStopCode = favBS.getKey();
+
                                 for (int i = 0 ; i< globalBusStops.size(); i++){
                                     if (busStopCode.equals(globalBusStops.get(i).getBusStopCode())){
                                         globalFavouriteBusStop.add(globalBusStops.get(i));
