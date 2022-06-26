@@ -1,6 +1,6 @@
 # MAD Assignment Transport Me
 
-AY22 P03 Group L 
+AY22 P03 Group L Play Store:https://play.google.com/store/apps/details?id=sg.edu.np.mad.transportme
 
 **Group Members**
 | Name                 | Student ID  |
@@ -75,7 +75,7 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 4. Image Zoom
 5. Firebase Authentication
 
-## App Navigation
+## App Screenshots
 ![App Navigation](https://github.com/Mordaax/MAD-Assignment-TransportMe/blob/main/images/App%20Navigation.png)
 
 ## ER Data Diagram
