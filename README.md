@@ -36,10 +36,9 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 8. Loading screen
 9. Fixed errors throughout the app
 10. Merge Maps Fragment to Recycler View for main activity
-11. Error and excpetion handling
-12. Initalized Project and Classes
-13. Ensure group is on time
-14. Added confirm password
+11. Initalized Project and Classes
+12. Ensure group is on time
+13. Added confirm password
 
 ### Dalbert Chea Zhi Jun
 1. Main Page Nested Recycler View Implementation & UI
