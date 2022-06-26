@@ -76,25 +76,22 @@ public class FavouritesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        Log.d("Yes", globalFavouriteBusStop.toString());
         View rootView = inflater.inflate(R.layout.fragment_favourites, container, false);
-        if(globalFavouriteBusStop.size() > 0)
+        if(globalFavouriteBusStop.size() > 0)       //Does not run this API function if there is not bus stops in the favourited list
         {
             ApiBusStopService apiBusStopService = new ApiBusStopService(getContext());
-            apiBusStopService.getBusService(globalFavouriteBusStop,new ApiBusStopService.VolleyResponseListener2() {
+            apiBusStopService.getBusService(globalFavouriteBusStop,new ApiBusStopService.VolleyResponseListener2() {    //Gets the bus services for the bus stop
                 @Override
                 public void onError(String message) {
                     Toast.makeText(getContext(),"Cannot Get Bus Stops",Toast.LENGTH_LONG).show();
                 }
                 @Override
                 public void onResponse(ArrayList<BusStop> busStopsLoaded) {
-
-
-                    RecyclerView rv = rootView.findViewById(R.id.favouritesrecyclerView);
-                    BusStopAdapter adapter = new BusStopAdapter(globalFavouriteBusStop,getContext());
-                    LinearLayoutManager layout = new LinearLayoutManager(getContext());
+                    RecyclerView rv = rootView.findViewById(R.id.favouritesrecyclerView);               //Declare recyclerview
+                    BusStopAdapter adapter = new BusStopAdapter(globalFavouriteBusStop,getContext());   //Create the RecyclerView for BusStop
+                    LinearLayoutManager layout = new LinearLayoutManager(getContext());                 //LayoutManager tells RecyclerView how to draw the list
                     rv.setAdapter(adapter);
-                    rv.setLayoutManager(layout);
+                    rv.setLayoutManager(layout);        //Pass in layout and adapter
                 }
             });
         }

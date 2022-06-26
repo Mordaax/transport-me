@@ -105,7 +105,7 @@ public class BusStopAdapter
                             .child(globalName)
                             .child("Favourited")
                             .child(content.getBusStopCode());       //Gets database reference of the child of the bus stop clicked on, under the current user's favourited list in RTDB
-                    globalFavouriteBusStop.add(content);
+                    globalFavouriteBusStop.add(content);            //Adds bus stop to favourite list when clicked on
                     if (holder.Favourite.getTag() == "Favourite")
                     {
                         holder.Favourite.setImageResource(R.drawable.filled_favourite);     //Setting the heart icon to red if it is not favourited
