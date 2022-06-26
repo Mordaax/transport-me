@@ -9,7 +9,7 @@ AY22 P03 Group L
 | Dalbert Chea Zhi Jun | S10222553C  |
 | Koo Wen Qi           | S10222922  |
 | Kyler Lee            | S10222789H  |
-| Tristan Tan Jun Xian | S10223003  |
+| Tristan Tan Jun Xian | S10223003B  |
 
 ## App Description
 Designed for all commuters, TransportMe provides fast and easy access to bus timings and ensures that you are never late for work. It lets you know the next bus's arrival time anywhere and anytime in Singapore, with up-to-date data directly sourced from the Land Transport Authority. 
@@ -65,3 +65,8 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 5. Nav Bar Design
 
 ### Tristan Tan Jun Xian
+1. Login Page
+2. Registration Page
+3. Mrt Map
+4. Image Zoom
+5. Firebase Authentication
