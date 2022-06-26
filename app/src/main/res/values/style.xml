@@ -6,7 +6,7 @@
 
 
 
-    <!-- Base application theme. -->
+    <!-- Base application theme.  -->
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
 
         <item name="colorPrimary">@color/app_yellow</item>
@@ -14,6 +14,8 @@
         <item name="colorPrimaryDark">@color/app_yellow</item>
 
         <item name="colorAccent">@color/app_red</item>
+
+        <item name="android:navigationBarColor">@color/app_yellow</item>
 
     </style>
     <style name="AppTheme" parent="AppTheme.Base"></style>
