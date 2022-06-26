@@ -29,26 +29,30 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 1. API Calling with LTA DataMall for Bus Stops and Bus Services https://datamall.lta.gov.sg/content/datamall/en/dynamic-data.html
 
 ### Dalbert Chea Zhi Jun
-1. Main Page Nested Recycler View UI
+1. Main Page Nested Recycler View Implementation & UI
 2. Responsive MainActivity (and fragment) layout
 3. Favouriting Bus Stop Mechanism
 4. Favourites Fragment (Displays all favourited bus stops)
 5. Login page Debugging
 6. Map Debugging
-7. App Style and Theme Files
-8. Nav Bar Design
-9. BusStopAdapter, BusServiceAdapter, FavouriteFragment Comments
+7. Firebase Implementation
+8. App Style and Theme Files
+9. Nav Bar Design
+10. BusStopAdapter, BusServiceAdapter, FavouriteFragment Comments
 
 ### Koo Wen Qi
 1. Map implementation
-2. Logging in
-3. Registering
-4. Database Handling
+2. Google Maps API implementation
+3. Login Page
+4. Registration Page
+5. Database Handling
+6. Firebase Implementation
 
 ### Kyler Lee
 1. Creation of Logo
 2. App colour scheme design
 3. Loading Screen and Login UI
 4. Profiles Page and UI
+5. Nav Bar Design
 
 ### Tristan Tan Jun Xian
