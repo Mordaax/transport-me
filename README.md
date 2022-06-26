@@ -40,6 +40,10 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 9. BusStopAdapter, BusServiceAdapter, FavouriteFragment Comments
 
 ### Koo Wen Qi
+1. Map implementation
+2. Logging in
+3. Registering
+4. Database Handling
 
 ### Kyler Lee
 1. Creation of Logo
