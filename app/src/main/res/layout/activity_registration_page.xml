@@ -91,6 +91,18 @@
                     android:padding="16dp"
                     android:textColorHint="#E9B872" />
 
+                <EditText
+                    android:id="@+id/reg_Password2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/edittext_bg"
+                    android:fontFamily="@font/inter_bold"
+                    android:hint="Confirm Password"
+                    android:inputType="textPassword"
+                    android:padding="16dp"
+                    android:textColorHint="#E9B872" />
+
                 <Button
                     android:id="@+id/registerbutton"
                     android:layout_width="match_parent"

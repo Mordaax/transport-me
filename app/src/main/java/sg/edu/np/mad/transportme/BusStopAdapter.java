@@ -1,5 +1,6 @@
 package sg.edu.np.mad.transportme;
 
+import static sg.edu.np.mad.transportme.LoginPage.globalFavouriteBusStop;
 import static sg.edu.np.mad.transportme.LoginPage.globalName;
 
 import android.app.Activity;
@@ -138,7 +139,7 @@ public class BusStopAdapter
                             .child(globalName)
                             .child("Favourited")
                             .child(content.getBusStopCode());
-
+                    globalFavouriteBusStop.add(content);
                     if (holder.Favourite.getTag() == "Favourite")
                     {
                         holder.Favourite.setImageResource(R.drawable.filled_favourite);

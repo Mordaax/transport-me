@@ -85,8 +85,8 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
 
                 }
             });
-
-            startActivity(new Intent(LoginPage.this, MainActivity.class));
+            Intent intent = new Intent(LoginPage.this, MainActivity.class);
+            startActivity(intent);
         }
 
     }
@@ -145,8 +145,8 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                                         editor.putString("email", globalEmail);
                                         editor.putString("login","True" );
                                         editor.apply();
-
-                                        startActivity(new Intent(LoginPage.this, MainActivity.class));
+                                        Intent intent = new Intent(LoginPage.this, MainActivity.class);
+                                        startActivity(intent);
                                     }
                                 }
                             }

@@ -53,7 +53,9 @@ public class LoadingScreen extends AppCompatActivity {
                     busStopDBHandler.addBusStops(busStops);
                     progressBar.setProgress(100);
                     globalBusStops = busStops; // Load called bus stop data to globalBusStop to be access by all classes
+
                     Intent goToLoginPage = new Intent(LoadingScreen.this, LoginPage.class); //Go to login page
+                    goToLoginPage.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(goToLoginPage);
                 }
             });
@@ -91,7 +93,9 @@ public class LoadingScreen extends AppCompatActivity {
                     }
                 }
             }, 200);
+
             Intent goToLoginPage = new Intent(LoadingScreen.this, LoginPage.class);
+            goToLoginPage.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(goToLoginPage);
 
         }
