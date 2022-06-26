@@ -73,3 +73,12 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 3. Mrt Map
 4. Image Zoom
 5. Firebase Authentication
+
+## App Navigation
+![App Navigation](./images/App Navigation.png)
+
+## ER Data Diagram
+![ER Diagram](./images/ER Diagram.png)
+
+## SQL database 
+![SQL](./images/SQL Database.PNG)
