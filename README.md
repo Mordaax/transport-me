@@ -60,9 +60,11 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 ### Kyler Lee
 1. Creation of Logo
 2. App colour scheme design
-3. Loading Screen and Login UI
+3. Loading Screen
 4. Profiles Page and UI
 5. Nav Bar Design
+6. Login UI
+7. Registration UI
 
 ### Tristan Tan Jun Xian
 1. Login Page
