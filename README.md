@@ -6,7 +6,7 @@ AY22 P03 Group L
 | Name                 | Student ID  |
 |----------------------|-------------|
 | Cyrus Tan Rui Xuan   | S10219142C  |
-| Dalbert Chea Zhi Jun | S10222553  |
+| Dalbert Chea Zhi Jun | S10222553C  |
 | Koo Wen Qi           | S10222922  |
 | Kyler Lee            | S10222789H  |
 | Tristan Tan Jun Xian | S10223003  |
@@ -29,12 +29,22 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 1. API Calling with LTA DataMall for Bus Stops and Bus Services https://datamall.lta.gov.sg/content/datamall/en/dynamic-data.html
 
 ### Dalbert Chea Zhi Jun
+1. Main Page Nested Recycler View UI
+2. Responsive MainActivity (and fragment) layout
+3. Favouriting Bus Stop Mechanism
+4. Favourites Fragment (Displays all favourited bus stops)
+5. Login page Debugging
+6. Map Debugging
+7. App Style and Theme Files
+8. Nav Bar Design
+9. BusStopAdapter, BusServiceAdapter, FavouriteFragment Comments
 
 ### Koo Wen Qi
 
 ### Kyler Lee
 1. Creation of Logo
-2. Loading Screen and Login UI
-3. Profiles Page and UI
+2. App colour scheme design
+3. Loading Screen and Login UI
+4. Profiles Page and UI
 
 ### Tristan Tan Jun Xian
