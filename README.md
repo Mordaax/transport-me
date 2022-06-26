@@ -38,6 +38,7 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 10. Merge Maps Fragment to Recycler View for main activity
 11. Initalized Project and Classes
 12. Added confirm password
+13. Exception handling / Toast Messages
 
 ### Dalbert Chea Zhi Jun
 1. Main Page Nested Recycler View Implementation & UI
@@ -75,10 +76,10 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 5. Firebase Authentication
 
 ## App Navigation
-![App Navigation](images/App Navigation.png)
+![App Navigation](https://github.com/Mordaax/MAD-Assignment-TransportMe/blob/main/images/App%20Navigation.png)
 
 ## ER Data Diagram
-![ER Diagram](images/ER Diagram.png)
+![ER Diagram](https://github.com/Mordaax/MAD-Assignment-TransportMe/blob/main/images/ER%20Diagram.png)
 
-## SQL database 
-![SQL](images/SQL Database.PNG)
+## SQL database for bus stops
+![SQL](https://github.com/Mordaax/MAD-Assignment-TransportMe/blob/main/images/SQL%20Database.PNG)
