@@ -58,7 +58,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
         globalName = prefs.getString("name", "");
         globalEmail = prefs.getString("email", "");
         SignedIn = prefs.getString("login", "").equals("True");
-        globalCloseness = Double.valueOf(prefs.getString("closeness","0.3"));
+        globalCloseness = Double.valueOf(prefs.getString("closeness","0.5"));
         if(SignedIn){ // If User is signedIn, phone connects to Firebase and gets favourite bus stops
 
             FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/");
