@@ -131,6 +131,10 @@ public class SearchFragment extends Fragment {
                 if(event.getAction() == MotionEvent.ACTION_UP) {
                     if(event.getRawX() >= (searchAutoComplete.getRight() - searchAutoComplete.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) { //If search icon is clicked, run code bellow
                         String searchText = String.valueOf(searchAutoComplete.getText());
+                        if (searchText.equals("")){
+                            Toast.makeText(getContext(),"No Bus Stops",Toast.LENGTH_LONG).show();
+                            return true;
+                        }
                         searchText = searchText.substring(0, 1).toUpperCase() + searchText.substring(1);
 
                         ArrayList<BusStop> searchBusStops = new ArrayList<>();
@@ -151,6 +155,9 @@ public class SearchFragment extends Fragment {
                             Toast.makeText(getContext(), "Please be more specific", Toast.LENGTH_SHORT).show();
                         }
                         else if (searchBusStops.size()>0){ //Call api to get bus stop timing for bus services
+                            if (searchBusStops.size() > 20){
+                                Toast.makeText(getContext(),"More than 20 bus stops found, Might take a while",Toast.LENGTH_LONG).show();
+                            }
                             ApiBusStopService apiBusStopService = new ApiBusStopService(getActivity());
                             apiBusStopService.getBusService(searchBusStops,new ApiBusStopService.VolleyResponseListener2() {
                                 @Override
@@ -185,6 +192,10 @@ public class SearchFragment extends Fragment {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     String searchText = String.valueOf(searchAutoComplete.getText());
+                    if (searchText.equals("")){
+                        Toast.makeText(getContext(),"No Bus Stops",Toast.LENGTH_LONG).show();
+                        return true;
+                    }
                     searchText = searchText.substring(0, 1).toUpperCase() + searchText.substring(1);
                     ProgressDialog progressDialog = new ProgressDialog(getContext(),R.style.MyAlertDialogStyle);
                     progressDialog.show();
@@ -234,8 +245,10 @@ public class SearchFragment extends Fragment {
                         });
                     }
 
+
                     else{
                         Toast.makeText(getContext(), "No Matching Bus Stops", Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
                     }
 
                     return true;

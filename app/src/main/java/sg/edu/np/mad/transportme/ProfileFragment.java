@@ -170,7 +170,20 @@ public class ProfileFragment extends Fragment {
                     email.requestFocus();
                     return;
                 }
-
+                if (uEmail.isEmpty()) {
+                    email.setError("Email is required");
+                    email.requestFocus();
+                    return;
+                }
+                if (uPassw.length() < 6) {
+                    password.setError("Password should be at least 6 characters");
+                    password.requestFocus();
+                    return;
+                }
+                if (uEmail == globalEmail) {
+                    Toast.makeText(getContext(), "Nothing Changed", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 AlertDialog.Builder confirmDataChange = new AlertDialog.Builder(getActivity());
                 confirmDataChange.setTitle("Confirm edit profile?");
@@ -205,6 +218,7 @@ public class ProfileFragment extends Fragment {
                                 //checks to see if user changed their hashed password
                                 if (!BCrypt.verifyer().verify(uPassw.toCharArray(), snapshot.child(globalName).child("password").getValue().toString()).verified){
                                     if (String.valueOf(password.getText()).equals("CHANGE PASSWORD")){ //prevents user from accidentally making placeholder their password
+                                        Toast.makeText(getContext(), "Password Not Changed", Toast.LENGTH_SHORT).show();
                                         return;
                                     }
                                     else{
