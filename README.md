@@ -29,7 +29,7 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 1. API Calling with LTA DataMall for Bus Stops and Bus Services https://datamall.lta.gov.sg/content/datamall/en/dynamic-data.html
 2. Created A backend for the API Call, Deplyed using heroku https://github.com/Mordaax/transportme-backend.git
 3. Main Activity Nested RecyclerView with Android Cards for Nearby Bus Stop Timings 
-4. Search Feature for all bus Stops
+4. Search Feature with autocorrect for all bus Stops
 5. Persistent Storage (SQL) For all bus stops so that users dont have to download all the bus stops everytime the app loads
 6. Bottom Nav Bar and initializing of fragments
 7. Shared preferences so that users wouldnt have to login everytime they load the app
@@ -39,6 +39,7 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 11. Initalized Project and Classes
 12. Added confirm password
 13. Exception handling / Toast Messages
+14. Added Bus Stop refresh
 
 ### Dalbert Chea Zhi Jun
 1. Main Page Nested Recycler View Implementation & UI
