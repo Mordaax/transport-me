@@ -84,3 +84,13 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 
 ## SQL database for bus stops
 ![SQL](https://github.com/Mordaax/MAD-Assignment-TransportMe/blob/main/images/SQL%20Database.PNG)
+
+## Emulator vs phones
+Due to location provider issues, both emulator and android phone cannot work together. 
+For eumlator, line 136 (GPS provider) Comes before line 248 (Network provider) - Github Build
+For phones(Release), Line 248 (Network provider) comes before line 136 (GPS provider) 
+For Android Studio Emulator (MainActivity)
+![image](https://user-images.githubusercontent.com/53942938/176345429-25eeaf57-9698-4788-a94a-de4d150a56cb.png)
+For Android Phone Release (Main Activity)
+![image](https://user-images.githubusercontent.com/53942938/176345703-2c11a6a0-decd-43b2-87f5-07981df424a8.png)
+
