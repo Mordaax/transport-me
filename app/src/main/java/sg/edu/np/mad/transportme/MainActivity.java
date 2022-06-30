@@ -132,15 +132,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             return;
         }
-        else{
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        else{ 
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) { //Comments in this section is the same as the one in the LocationManager.NETWORK_PROVIDER
                 swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 10, new LocationListener() {
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 10, new LocationListener() { //Every 60 seconds or 10m change, run code
                             @Override
                             public void onLocationChanged(@NonNull Location location) {
-                                Double Latitude = location.getLatitude();
+                                Double Latitude = location.getLatitude(); //Get latitude and logitude
                                 Double Longitude = location.getLongitude();
 
 
@@ -149,8 +149,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
                                 ArrayList<BusStop> closeBusStops = new ArrayList<>();
-                                map.clear();
-                                for (int i = 0; i < busStops.size(); i++){
+                                map.clear(); //Clear all existing markers on the map
+                                for (int i = 0; i < busStops.size(); i++){ //Get all bus stop given the radius
                                     BusStop busStop = busStops.get(i);
                                     busStop.setDistanceToLocation(DistanceCalculator.distanceBetween(busStop.getLatitude(), busStop.getLongitude(), Latitude, Longitude));
 
@@ -170,7 +170,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                         @Override
                                         public void onResponse(ArrayList<BusStop> busStopsLoaded) {
 
-                                            RecyclerView rv = findViewById(R.id.recyclerView);
+                                            RecyclerView rv = findViewById(R.id.recyclerView); //Load recyclerview when they onresponse is recieved
                                             BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,MainActivity.this);
                                             LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);
                                             rv.setAdapter(adapter);
@@ -203,7 +203,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
                         ArrayList<BusStop> closeBusStops = new ArrayList<>();
-                        for (int i = 0; i < busStops.size(); i++){
+                        for (int i = 0; i < busStops.size(); i++){ //Get bus stops nearby
                             BusStop busStop = busStops.get(i);
                             busStop.setDistanceToLocation(DistanceCalculator.distanceBetween(busStop.getLatitude(), busStop.getLongitude(), Latitude, Longitude));
 
@@ -213,9 +213,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 map.addMarker(new MarkerOptions().position(latlongmarker).title(busStop.getDescription()));
                             }
                         }
-                        if(closeBusStops.size() > 0){
+                        if(closeBusStops.size() > 0){ //Call API if there nearby bus stops, if there arent, send toast message
                             ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);
-                            apiBusStopService.getBusService(closeBusStops,new ApiBusStopService.VolleyResponseListener2() {
+                            apiBusStopService.getBusService(closeBusStops,new ApiBusStopService.VolleyResponseListener2() { //call api to get bus services
                                 @Override
                                 public void onError(String message) {
                                     Toast.makeText(MainActivity.this,"Cannot Get Bus Stops, Check Location and Connection",Toast.LENGTH_LONG).show();
@@ -223,7 +223,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 @Override
                                 public void onResponse(ArrayList<BusStop> busStopsLoaded) {
 
-                                    RecyclerView rv = findViewById(R.id.recyclerView);
+                                    RecyclerView rv = findViewById(R.id.recyclerView); //Load recyclerview on response from API
                                     BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,MainActivity.this);
                                     LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);
                                     rv.setAdapter(adapter);
@@ -240,16 +240,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
 
-                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16.2f));
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16.2f)); //Move camera to here the user is
 
                     }
                 });
             }
-            else if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+            else if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){ //This section is similar to the LocationManager.GPS_PROVIDER section above
                 //For users to refresh the recyclerview, runs the location reqeust updates
                 swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
-                    public void onRefresh() {
+                    public void onRefresh() { //Whene user refresh run code
                         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60000, 10, new LocationListener() {
                             @Override
                             public void onLocationChanged(@NonNull Location location) {
@@ -316,7 +316,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
                         ArrayList<BusStop> closeBusStops = new ArrayList<>();
-                        for (int i = 0; i < busStops.size(); i++){
+                        for (int i = 0; i < busStops.size(); i++){ //Get nearby bus stops
                             BusStop busStop = busStops.get(i);
                             busStop.setDistanceToLocation(DistanceCalculator.distanceBetween(busStop.getLatitude(), busStop.getLongitude(), Latitude, Longitude));
 
@@ -328,7 +328,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                         if(closeBusStops.size() > 0){
                             ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);
-                            apiBusStopService.getBusService(closeBusStops,new ApiBusStopService.VolleyResponseListener2() {
+                            apiBusStopService.getBusService(closeBusStops,new ApiBusStopService.VolleyResponseListener2() { //Call API for nearby bus stops
                                 @Override
                                 public void onError(String message) {
                                     Toast.makeText(MainActivity.this,"Cannot Get Bus Stops, Check Location and Connection",Toast.LENGTH_LONG).show();
@@ -369,7 +369,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     }
-    public void moveMapsCamera(Double latitude, Double longitude){
+    public void moveMapsCamera(Double latitude, Double longitude){ //Function to enable move camera from other classes
         LatLng latlongmove = new LatLng(latitude, longitude);
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(latlongmove)
@@ -379,7 +379,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         map.animateCamera(cu);
 
     }
-    private void replaceFragment(Fragment fragment){
+    private void replaceFragment(Fragment fragment){ //Replace fragment for nav bar
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout,fragment);
