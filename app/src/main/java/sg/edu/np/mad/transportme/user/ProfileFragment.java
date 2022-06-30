@@ -1,13 +1,12 @@
-package sg.edu.np.mad.transportme;
+package sg.edu.np.mad.transportme.user;
 
 import static android.content.Context.MODE_PRIVATE;
-import static sg.edu.np.mad.transportme.LoginPage.globalEmail;
-import static sg.edu.np.mad.transportme.LoginPage.globalFavouriteBusStop;
-import static sg.edu.np.mad.transportme.LoginPage.globalName;
-import static sg.edu.np.mad.transportme.LoginPage.globalCloseness;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalEmail;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalFavouriteBusStop;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalName;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalCloseness;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,7 +15,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +24,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import sg.edu.np.mad.transportme.R;
+
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,7 +33,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import android.content.SharedPreferences;
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ProfileFragment#newInstance} factory method to

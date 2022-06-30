@@ -1,4 +1,4 @@
-package sg.edu.np.mad.transportme;
+package sg.edu.np.mad.transportme.api;
 
 import android.content.Context;
 

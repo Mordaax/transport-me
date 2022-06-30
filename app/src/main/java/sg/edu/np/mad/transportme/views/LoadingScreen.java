@@ -1,4 +1,4 @@
-package sg.edu.np.mad.transportme;
+package sg.edu.np.mad.transportme.views;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +13,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import sg.edu.np.mad.transportme.BusStop;
+import sg.edu.np.mad.transportme.BusStopDBHandler;
+import sg.edu.np.mad.transportme.R;
+import sg.edu.np.mad.transportme.api.ApiBusStopService;
+import sg.edu.np.mad.transportme.user.LoginPage;
 
 public class LoadingScreen extends AppCompatActivity {
 
@@ -31,6 +37,7 @@ public class LoadingScreen extends AppCompatActivity {
         };
 
         final int LOCATION_REQUEST=1337;
+
         requestPermissions(LOCATION_PERMS, LOCATION_REQUEST); //Request permissions from user
 
         ProgressBar progressBar = findViewById(R.id.progress_bar); //Progress Bar for loading screen to downlaod all bus stops

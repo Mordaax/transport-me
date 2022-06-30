@@ -1,10 +1,10 @@
-package sg.edu.np.mad.transportme;
+package sg.edu.np.mad.transportme.user;
 
-import static sg.edu.np.mad.transportme.LoadingScreen.globalBusStops;
-import static sg.edu.np.mad.transportme.LoginPage.SignedIn;
-import static sg.edu.np.mad.transportme.LoginPage.globalEmail;
-import static sg.edu.np.mad.transportme.LoginPage.globalFavouriteBusStop;
-import static sg.edu.np.mad.transportme.LoginPage.globalName;
+import static sg.edu.np.mad.transportme.views.LoadingScreen.globalBusStops;
+import static sg.edu.np.mad.transportme.user.LoginPage.SignedIn;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalEmail;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalFavouriteBusStop;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalName;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -20,10 +19,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +30,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import sg.edu.np.mad.transportme.BusStop;
+import sg.edu.np.mad.transportme.R;
+import sg.edu.np.mad.transportme.User;
 
 public class RegistrationPage extends AppCompatActivity {
 

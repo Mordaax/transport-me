@@ -1,4 +1,4 @@
-package sg.edu.np.mad.transportme;
+package sg.edu.np.mad.transportme.api;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
@@ -20,6 +20,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import sg.edu.np.mad.transportme.BusService;
+import sg.edu.np.mad.transportme.BusStop;
+import sg.edu.np.mad.transportme.NextBus;
 
 public class ApiBusStopService {
 

@@ -1,29 +1,24 @@
-package sg.edu.np.mad.transportme;
+package sg.edu.np.mad.transportme.views;
 
-import static sg.edu.np.mad.transportme.LoginPage.globalFavouriteBusStop;
-import static sg.edu.np.mad.transportme.LoginPage.globalName;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalFavouriteBusStop;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
-import java.util.Collections;
+
+import sg.edu.np.mad.transportme.BusStop;
+import sg.edu.np.mad.transportme.BusStopAdapter;
+import sg.edu.np.mad.transportme.R;
+import sg.edu.np.mad.transportme.api.ApiBusStopService;
 
 /**
  * A simple {@link Fragment} subclass.

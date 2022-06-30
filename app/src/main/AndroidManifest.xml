@@ -15,14 +15,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TransportMe">
         <activity
-            android:name=".RegistrationPage"
+            android:name=".user.RegistrationPage"
             android:exported="false"
-            android:parentActivityName=".LoginPage" />
+            android:parentActivityName=".user.LoginPage" />
         <activity
-            android:name=".LoginPage"
+            android:name=".user.LoginPage"
             android:exported="true"></activity>
         <activity
-            android:name=".LoadingScreen"
+            android:name=".views.LoadingScreen"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,7 +36,7 @@
             android:value="AIzaSyC5TLFoQWmsorYN0--un6BieG6VI2STONE" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".views.MainActivity"
             android:exported="false"></activity>
     </application>
 
