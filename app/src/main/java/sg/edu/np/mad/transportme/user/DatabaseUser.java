@@ -1,8 +1,10 @@
-package sg.edu.np.mad.transportme;
+package sg.edu.np.mad.transportme.user;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import sg.edu.np.mad.transportme.User;
 
 public class DatabaseUser {
     private DatabaseReference dr;

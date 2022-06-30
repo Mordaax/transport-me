@@ -1,8 +1,8 @@
-package sg.edu.np.mad.transportme;
+package sg.edu.np.mad.transportme.views;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 
-import static sg.edu.np.mad.transportme.LoginPage.globalCloseness;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalCloseness;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -19,15 +19,12 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
-import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -43,10 +40,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+
+import sg.edu.np.mad.transportme.BusStop;
+import sg.edu.np.mad.transportme.BusStopAdapter;
+import sg.edu.np.mad.transportme.DistanceCalculator;
+import sg.edu.np.mad.transportme.R;
+import sg.edu.np.mad.transportme.api.ApiBusStopService;
+import sg.edu.np.mad.transportme.user.ProfileFragment;
 
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback  {

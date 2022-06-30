@@ -1,12 +1,8 @@
-package sg.edu.np.mad.transportme;
+package sg.edu.np.mad.transportme.views;
 
-import static sg.edu.np.mad.transportme.LoadingScreen.globalBusStops;
+import static sg.edu.np.mad.transportme.views.LoadingScreen.globalBusStops;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Intent;
-import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 
@@ -16,8 +12,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -27,24 +21,16 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.io.IOException;
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
+import sg.edu.np.mad.transportme.BusStop;
+import sg.edu.np.mad.transportme.BusStopAdapter;
+import sg.edu.np.mad.transportme.R;
+import sg.edu.np.mad.transportme.api.ApiBusStopService;
 
 /**
  * A simple {@link Fragment} subclass.

@@ -1,17 +1,15 @@
-package sg.edu.np.mad.transportme;
+package sg.edu.np.mad.transportme.views;
 
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import android.provider.ContactsContract;
-import android.text.method.Touch;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.ablanco.zoomy.Zoomy;
+import sg.edu.np.mad.transportme.R;
 
 /**
  * A simple {@link Fragment} subclass.
