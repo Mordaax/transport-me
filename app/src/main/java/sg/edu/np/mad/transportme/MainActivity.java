@@ -70,20 +70,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipeLayout);
-        ProgressDialog progressDialog = new ProgressDialog(MainActivity.this,R.style.MyAlertDialogStyle);
+        ProgressDialog progressDialog = new ProgressDialog(MainActivity.this,R.style.MyAlertDialogStyle); //Show Loading icon when the user first loads
         progressDialog.show();
         progressDialog.setContentView(R.layout.progress_dialog);
         progressDialog.getWindow().setBackgroundDrawableResource(
                 android.R.color.transparent
         );
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView); // load botttom navigation bar
         bottomNavigationView.setOnItemSelectedListener(item ->{
             LinearLayout mapandrv = findViewById(R.id.MapAndRV);
             FrameLayout fragmentlayout = findViewById(R.id.frame_layout);
             switch(item.getItemId()){
                 case R.id.home:
-                    fragmentlayout.setVisibility(View.INVISIBLE);
+                    fragmentlayout.setVisibility(View.INVISIBLE); //Set fragment to invisible, show map and main recycler view to help with loading times
                     mapandrv.setVisibility(View.VISIBLE);
                     favourite = false;
                     break;
@@ -120,6 +120,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         ArrayList<BusStop> busStops = LoadingScreen.globalBusStops;
 
+        // If location permission is rejected, send toast message to user
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
