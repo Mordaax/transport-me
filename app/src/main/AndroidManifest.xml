@@ -20,7 +20,7 @@
             android:parentActivityName=".user.LoginPage" />
         <activity
             android:name=".user.LoginPage"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".views.LoadingScreen"
             android:exported="true">
@@ -37,7 +37,7 @@
 
         <activity
             android:name=".views.MainActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
     </application>
 
 </manifest>
