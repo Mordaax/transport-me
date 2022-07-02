@@ -1,7 +1,6 @@
 package sg.edu.np.mad.transportme.views;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
-import static android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION;
 
 import static sg.edu.np.mad.transportme.user.LoginPage.globalCloseness;
 
@@ -22,7 +21,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Geocoder;
@@ -60,7 +58,8 @@ import sg.edu.np.mad.transportme.user.ProfileFragment;
 
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
-
+    LinearLayout mapandrv;
+    FrameLayout fragmentlayout;
     GoogleMap map;
     LocationManager locationManager;
     DrawerLayout drawerLayout;
@@ -108,12 +107,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         });
         animateNavigationDrawer();
 
-
+        mapandrv = findViewById(R.id.MapAndRV);
+        fragmentlayout = findViewById(R.id.frame_layout);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView); // load botttom navigation bar
         bottomNavigationView.setOnItemSelectedListener(item ->{
-            LinearLayout mapandrv = findViewById(R.id.MapAndRV);
-            FrameLayout fragmentlayout = findViewById(R.id.frame_layout);
+
             switch(item.getItemId()){
                 case R.id.home:
                     fragmentlayout.setVisibility(View.INVISIBLE); //Set fragment to invisible, show map and main recycler view to help with loading times
@@ -136,11 +135,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     fragmentlayout.setVisibility(View.VISIBLE);
                     replaceFragment(new MrtMapFragment());
                     break;
-                case R.id.profile:
+                /*case R.id.profile:
                     mapandrv.setVisibility(View.INVISIBLE);
                     fragmentlayout.setVisibility(View.VISIBLE);
                     replaceFragment(new ProfileFragment());
-                    break;
+                    break;*/
 
             }
             return true;
@@ -466,13 +465,23 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()){
             case R.id.nav_home:
+                fragmentlayout.setVisibility(View.INVISIBLE); //Set fragment to invisible, show map and main recycler view to help with loading times
+                mapandrv.setVisibility(View.VISIBLE);
+                favourite = false;
                 break;
             case R.id.nav_train:
                 /*Intent intent = new Intent(MainActivity.this, Bus.class);
                 intent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);*/
                 break;
+            case R.id.nav_profile:
+                mapandrv.setVisibility(View.INVISIBLE);
+                fragmentlayout.setVisibility(View.VISIBLE);
+                replaceFragment(new ProfileFragment());
+                break;
+
         }
+        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
     @Override
@@ -483,4 +492,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             super.onBackPressed();
         }
     }
+    /*@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // The action bar home/up action should open or close the drawer.
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                drawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }*/
 }
