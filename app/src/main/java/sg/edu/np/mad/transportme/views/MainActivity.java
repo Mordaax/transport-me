@@ -1,12 +1,16 @@
 package sg.edu.np.mad.transportme.views;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION;
 
 import static sg.edu.np.mad.transportme.user.LoginPage.globalCloseness;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -18,15 +22,19 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -39,6 +47,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 
@@ -50,11 +59,13 @@ import sg.edu.np.mad.transportme.api.ApiBusStopService;
 import sg.edu.np.mad.transportme.user.ProfileFragment;
 
 
-public class MainActivity extends FragmentActivity implements OnMapReadyCallback  {
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
     GoogleMap map;
     LocationManager locationManager;
-
+    DrawerLayout drawerLayout;
+    static final float END_SCALE = 0.7f;
+    ConstraintLayout contentView;
 
     public static Boolean favourite = false;
     private static final String[] LOCATION_PERMS={
@@ -77,6 +88,27 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         progressDialog.getWindow().setBackgroundDrawableResource(
                 android.R.color.transparent
         );
+
+        contentView = findViewById(R.id.content);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        ImageView menuIcon = findViewById(R.id.menu_icon);
+        navigationView.bringToFront();
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.nav_home);
+
+        menuIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(drawerLayout.isDrawerVisible(GravityCompat.START)){
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                }
+                else drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+        animateNavigationDrawer();
+
+
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView); // load botttom navigation bar
         bottomNavigationView.setOnItemSelectedListener(item ->{
@@ -396,4 +428,59 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    private void animateNavigationDrawer(){
+        /*drawerLayout.setScrimColor(getResources().getColor(com.google.android.material.R.color.));*/
+        drawerLayout.setScrimColor(Color.parseColor("#e8c490"));
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+                final float diffScaledOffset = slideOffset * (1 - END_SCALE);
+                final float offsetScale = 1 - diffScaledOffset;
+                contentView.setScaleX(offsetScale);
+                contentView.setScaleY(offsetScale);
+
+                final float xOffset = drawerView.getWidth() * slideOffset;
+                final float xOffsetDiff = contentView.getWidth() * diffScaledOffset / 2;
+                final float xTranslation = xOffset - xOffsetDiff;
+                contentView.setTranslationX(xTranslation);
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.nav_home:
+                break;
+            case R.id.nav_train:
+                /*Intent intent = new Intent(MainActivity.this, Bus.class);
+                intent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);*/
+                break;
+        }
+        return true;
+    }
+    @Override
+    public void onBackPressed(){
+        if(drawerLayout.isDrawerVisible(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }else{
+            super.onBackPressed();
+        }
+    }
 }
