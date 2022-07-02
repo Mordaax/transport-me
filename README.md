@@ -7,7 +7,7 @@ AY22 P03 Group L Play Store:https://play.google.com/store/apps/details?id=sg.edu
 |----------------------|-------------|
 | Cyrus Tan Rui Xuan   | S10219142C  |
 | Dalbert Chea Zhi Jun | S10222553C  |
-| Koo Wen Qi           | S10222922  |
+| Koo Wen Qi           | S10222922   |
 | Kyler Lee            | S10222789H  |
 | Tristan Tan Jun Xian | S10223003B  |
 
