@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TransportMe" >
         <activity
+            android:name=".MonthViewActivity"
+            android:exported="true" />
+        <activity
             android:name=".user.RegistrationPage"
             android:exported="false"
             android:parentActivityName=".user.LoginPage" />
