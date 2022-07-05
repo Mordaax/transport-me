@@ -1,4 +1,6 @@
 package sg.edu.np.mad.transportme.api;
+import static sg.edu.np.mad.transportme.views.LoadingScreen.globalBusStops;
+
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
@@ -42,7 +44,10 @@ public class ApiBusStopService {
         void onError(String message);
         void onResponse(ArrayList<BusStop> busStopsService);
     }
-
+    public interface VolleyResponseListener3{
+        void onError(String message);
+        void onResponse(ArrayList<BusStop> busStopRoute);
+    }
 
     public void getBusStop(VolleyResponseListener volleyResponseListener){
 
@@ -55,7 +60,6 @@ public class ApiBusStopService {
                     public void onResponse(JSONObject response) {
                         try {
                             JSONArray jsonArray = response.getJSONArray("Results");
-                            Log.d("results", String.valueOf(jsonArray.length()));
                             for(int i = 0; i<jsonArray.length();i++) { //Convert JsonArray object to objects
                                 JSONObject jsonBusStop = jsonArray.getJSONObject(i);
                                 String busStopCode = jsonBusStop.get("BusStopCode").toString();
@@ -159,5 +163,36 @@ public class ApiBusStopService {
 
         volleyResponseListener2.onResponse(busStopsService);
     }
+    public void getBusRoute(String busServiceNumber, VolleyResponseListener3 volleyResponseListener3){
 
+        String busRouteUrl = "https://mad-assignment-backend.herokuapp.com/BusRoutes?services=" + busServiceNumber; //Call all bus stops from heroku backend
+        ArrayList<BusStop> busStopRoute = new ArrayList<>();
+        // Calls API using JsonObjectRequest
+        JsonObjectRequest jsonObjectRequestBusStops = new JsonObjectRequest(Request.Method.GET, busRouteUrl, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray jsonArray = response.getJSONArray(busServiceNumber);
+                            for(int i = 0; i<jsonArray.length();i++) { //Convert JsonArray object to objects
+                                for (int x =0; x<globalBusStops.size(); x++){
+                                    if(jsonArray.get(i) == globalBusStops.get(x).getBusStopCode()){
+                                        busStopRoute.add(globalBusStops.get(x));
+                                    }
+                                }
+                            }
+                            volleyResponseListener3.onResponse(busStopRoute); //Triggers on response callback in MainActivity, returns the busStops
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            volleyResponseListener3.onError("Cannot Get Bus Route");
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("TAG", error.getMessage(), error);
+            }
+        });
+        MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequestBusStops);
+    }
 }
