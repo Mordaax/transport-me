@@ -18,14 +18,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.concurrent.ConcurrentHashMap;
 
 import sg.edu.np.mad.transportme.api.ApiBusStopService;
 import sg.edu.np.mad.transportme.views.MainActivity;
@@ -34,7 +43,7 @@ public class BusServiceAdapter
         extends RecyclerView.Adapter<BusServiceViewHolder> {
     ArrayList<BusService> data;
     Context c;
-
+    List<Marker> mList = new ArrayList<>();
     public BusServiceAdapter(ArrayList<BusService> data, Context c) {
         this.c = c;
         this.data = data;
@@ -47,13 +56,14 @@ public class BusServiceAdapter
 
         return new BusServiceViewHolder(item);
     }
-
     @Override
     public void onBindViewHolder(@NonNull BusServiceViewHolder holder, int position) {
         BusService content = data.get(position);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((MainActivity) c).removemarker(mList);
+                mList.clear();
                 final CharSequence[] options = {"Yes", "Cancel"};
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getRootView().getContext());
                 builder.setTitle("Show bus routes for " + content.getServiceNumber() + "?");
@@ -61,6 +71,7 @@ public class BusServiceAdapter
                 builder.setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int item) {
+
                         if (options[item].equals("Yes")) {
                             ApiBusStopService apiBusStopService = new ApiBusStopService(c);
                             apiBusStopService.getBusRoute(content.getServiceNumber(),new ApiBusStopService.VolleyResponseListener3() { //Call API for nearby bus stops
@@ -70,9 +81,10 @@ public class BusServiceAdapter
                                 }
                                 @Override
                                 public void onResponse(ArrayList<BusStop> busStopRouteLoaded) {
-                                    Log.d("key", busStopRouteLoaded.toString());
                                     for(BusStop busStop : busStopRouteLoaded) {
-                                        ((MainActivity) c).busroute(busStop.getLatitude(), busStop.getLongitude(), busStop);
+                                        ((MainActivity) c).busroute(busStop.getLatitude(), busStop.getLongitude(), busStop, mList);
+                                        Log.d("yes", mList.toString());
+                                        ((MainActivity) c).camerazoom(mList);
                                     }
                                 }
                             });
