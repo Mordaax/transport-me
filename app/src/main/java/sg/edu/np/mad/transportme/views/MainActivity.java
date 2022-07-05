@@ -56,6 +56,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -71,6 +73,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
+import sg.edu.np.mad.transportme.BusServiceAdapter;
 import sg.edu.np.mad.transportme.BusStop;
 import sg.edu.np.mad.transportme.BusStopAdapter;
 import sg.edu.np.mad.transportme.DistanceCalculator;
@@ -434,6 +437,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         map.animateCamera(cu);
 
     }
+
+    public void busroute(Double latitude, Double longitude, BusStop currentStop){
+        map.clear();
+        LatLng latlongmarker = new LatLng(latitude, longitude);
+        map.addMarker(new MarkerOptions().position(latlongmarker).title(currentStop.getDescription()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+    }
+
     private void replaceFragment(Fragment fragment){ //Replace fragment for nav bar
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
