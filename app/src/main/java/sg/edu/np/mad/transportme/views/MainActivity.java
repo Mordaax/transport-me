@@ -60,6 +60,8 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
@@ -71,6 +73,8 @@ import com.google.android.material.navigation.NavigationView;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 import sg.edu.np.mad.transportme.BusServiceAdapter;
@@ -438,10 +442,26 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public void busroute(Double latitude, Double longitude, BusStop currentStop){
-        map.clear();
+    public void busroute(Double latitude, Double longitude, BusStop currentStop, List<Marker> mList){
         LatLng latlongmarker = new LatLng(latitude, longitude);
-        map.addMarker(new MarkerOptions().position(latlongmarker).title(currentStop.getDescription()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        Marker marker = map.addMarker(new MarkerOptions().position(latlongmarker).title(currentStop.getDescription()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        mList.add(marker);
+    }
+
+    public void camerazoom(List<Marker> mList) {
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (Marker m : mList) {
+            builder.include(m.getPosition());
+        }
+        LatLngBounds bounds = builder.build();
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+        map.animateCamera(cu);
+    }
+
+    public void removemarker(List<Marker> mList) {
+        for (Marker m : mList) {
+            m.remove();
+        }
     }
 
     private void replaceFragment(Fragment fragment){ //Replace fragment for nav bar
