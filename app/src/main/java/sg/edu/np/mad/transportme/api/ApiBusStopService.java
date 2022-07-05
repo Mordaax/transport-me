@@ -176,10 +176,11 @@ public class ApiBusStopService {
                             JSONArray jsonArray = response.getJSONArray(busServiceNumber);
                             for(int i = 0; i<jsonArray.length();i++) { //Convert JsonArray object to objects
                                 for (int x =0; x<globalBusStops.size(); x++){
-                                    if(jsonArray.get(i) == globalBusStops.get(x).getBusStopCode()){
+                                    if(((String) jsonArray.get(i)).equals(globalBusStops.get(x).getBusStopCode())){
                                         busStopRoute.add(globalBusStops.get(x));
                                     }
                                 }
+
                             }
                             volleyResponseListener3.onResponse(busStopRoute); //Triggers on response callback in MainActivity, returns the busStops
                         } catch (JSONException e) {
