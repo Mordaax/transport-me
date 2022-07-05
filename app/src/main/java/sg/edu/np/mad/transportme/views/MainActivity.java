@@ -408,6 +408,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     progressDialog.dismiss();
                                 }
                             });
+
                         }
                         if(closeBusStops.size() == 0){
                             Toast.makeText(MainActivity.this,"No nearby bus stops",Toast.LENGTH_LONG).show();
