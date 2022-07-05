@@ -133,7 +133,7 @@ public class BusStopAdapter
             }
         });
 
-        BusServiceAdapter adapterMember = new BusServiceAdapter(content.getBusServices());  //Create the RecyclerView for BusServices
+        BusServiceAdapter adapterMember = new BusServiceAdapter(content.getBusServices(), c);  //Create the RecyclerView for BusServices
         LinearLayoutManager layout = new LinearLayoutManager(c);                            //LayoutManager tells RecyclerView how to draw the list
 
         holder.RecyclerView2.setLayoutManager(layout);          //Pass in layout and adapter

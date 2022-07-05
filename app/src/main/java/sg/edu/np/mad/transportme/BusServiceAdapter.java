@@ -1,31 +1,53 @@
 package sg.edu.np.mad.transportme;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import sg.edu.np.mad.transportme.api.ApiBusStopService;
+import sg.edu.np.mad.transportme.views.MainActivity;
+
 public class BusServiceAdapter
-        extends RecyclerView.Adapter<BusServiceViewHolder>
-{
+        extends RecyclerView.Adapter<BusServiceViewHolder> {
     ArrayList<BusService> data;
-    public BusServiceAdapter(ArrayList<BusService> data)
-    {
+    Context c;
+
+    public BusServiceAdapter(ArrayList<BusService> data, Context c) {
+        this.c = c;
         this.data = data;
     }
 
     @NonNull
     @Override
     public BusServiceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.bus_service_layout, null,false);
+        View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.bus_service_layout, null, false);
 
         return new BusServiceViewHolder(item);
     }
@@ -36,7 +58,35 @@ public class BusServiceAdapter
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                final CharSequence[] options = {"Yes", "Cancel"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getRootView().getContext());
+                builder.setTitle("Show bus routes for " + content.getServiceNumber() + "?");
+                builder.setIcon(R.drawable.appsplashicon);
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int item) {
+                        if (options[item].equals("Yes")) {
+                            ApiBusStopService apiBusStopService = new ApiBusStopService(c);
+                            apiBusStopService.getBusRoute(content.getServiceNumber(),new ApiBusStopService.VolleyResponseListener3() { //Call API for nearby bus stops
+                                @Override
+                                public void onError(String message) {
+                                    Toast.makeText(c,"Cannot Get Bus Route, Check Location and Connection",Toast.LENGTH_LONG).show();
+                                }
+                                @Override
+                                public void onResponse(ArrayList<BusStop> busStopRouteLoaded) {
+                                    Log.d("key", busStopRouteLoaded.toString());
+                                    for(BusStop busStop : busStopRouteLoaded) {
+                                        ((MainActivity) c).busroute(busStop.getLatitude(), busStop.getLongitude(), busStop);
+                                    }
+                                }
+                            });
+                        }
+                        if (options[item].equals("Cancel")) {
+                            dialogInterface.dismiss();
+                        }
+                    }
+                });
+                builder.show();
             }
         });
 
