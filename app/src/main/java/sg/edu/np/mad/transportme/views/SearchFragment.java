@@ -125,7 +125,7 @@ public class SearchFragment extends Fragment {
 
                         ArrayList<BusStop> searchBusStops = new ArrayList<>();
                         for (int i = 0; i<globalBusStops.size();i++) { //Compare search term with all description and Roadname in globalBusStop
-                            if (globalBusStops.get(i).getDescription().contains(searchText) || globalBusStops.get(i).getRoadName().equalsIgnoreCase(searchText)){
+                            if (globalBusStops.get(i).getDescription().toLowerCase().contains(searchText.toLowerCase()) || globalBusStops.get(i).getRoadName().equalsIgnoreCase(searchText)){
                                 searchBusStops.add(globalBusStops.get(i));
                             }
                         }
@@ -191,7 +191,7 @@ public class SearchFragment extends Fragment {
                     );
                     ArrayList<BusStop> searchBusStops = new ArrayList<>();
                     for (int i = 0; i<globalBusStops.size();i++) {  //Compare search term with all description and Roadname in globalBusStop
-                        if (globalBusStops.get(i).getDescription().contains(searchText) || globalBusStops.get(i).getRoadName().equalsIgnoreCase(searchText)){
+                        if (globalBusStops.get(i).getDescription().toLowerCase().contains(searchText.toLowerCase()) || globalBusStops.get(i).getRoadName().equalsIgnoreCase(searchText)){
                             searchBusStops.add(globalBusStops.get(i));
                         }
                     }
