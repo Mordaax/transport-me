@@ -19,6 +19,7 @@ public class BusService {
         NextBuses = nextBuses;
     }
 
+    public ArrayList<String> busRoute;
     private String ServiceNumber;
     private ArrayList<NextBus> NextBuses;
     public BusService(String serviceNumber, ArrayList<NextBus> nextBuses){

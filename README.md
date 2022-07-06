@@ -1,15 +1,15 @@
 # MAD Assignment Transport Me
 
-AY22 P03 Group L 
+AY22 P03 Group L Play Store:https://play.google.com/store/apps/details?id=sg.edu.np.mad.transportme
 
 **Group Members**
 | Name                 | Student ID  |
 |----------------------|-------------|
 | Cyrus Tan Rui Xuan   | S10219142C  |
 | Dalbert Chea Zhi Jun | S10222553C  |
-| Koo Wen Qi           | S10222922  |
+| Koo Wen Qi           | S10222922   |
 | Kyler Lee            | S10222789H  |
-| Tristan Tan Jun Xian | S10223003  |
+| Tristan Tan Jun Xian | S10223003B  |
 
 ## App Description
 Designed for all commuters, TransportMe provides fast and easy access to bus timings and ensures that you are never late for work. It lets you know the next bus's arrival time anywhere and anytime in Singapore, with up-to-date data directly sourced from the Land Transport Authority. 
@@ -29,7 +29,7 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 1. API Calling with LTA DataMall for Bus Stops and Bus Services https://datamall.lta.gov.sg/content/datamall/en/dynamic-data.html
 2. Created A backend for the API Call, Deplyed using heroku https://github.com/Mordaax/transportme-backend.git
 3. Main Activity Nested RecyclerView with Android Cards for Nearby Bus Stop Timings 
-4. Search Feature for all bus Stops
+4. Search Feature with autocorrect for all bus Stops
 5. Persistent Storage (SQL) For all bus stops so that users dont have to download all the bus stops everytime the app loads
 6. Bottom Nav Bar and initializing of fragments
 7. Shared preferences so that users wouldnt have to login everytime they load the app
@@ -38,6 +38,8 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 10. Merge Maps Fragment to Recycler View for main activity
 11. Initalized Project and Classes
 12. Added confirm password
+13. Exception handling / Toast Messages
+14. Added Bus Stop refresh
 
 ### Dalbert Chea Zhi Jun
 1. Main Page Nested Recycler View Implementation & UI
@@ -60,8 +62,35 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 ### Kyler Lee
 1. Creation of Logo
 2. App colour scheme design
-3. Loading Screen and Login UI
-4. Profiles Page and UI
-5. Nav Bar Design
+3. Loading Screen
+4. Profiles Page Implementation
+5. Profiles Page UI
+6. Nav Bar Design
+7. Login UI
+8. Registration UI
 
 ### Tristan Tan Jun Xian
+1. Login Page
+2. Registration Page
+3. Mrt Map
+4. Image Zoom
+5. Firebase Authentication
+
+## App Screenshots
+![App Navigation](https://github.com/Mordaax/MAD-Assignment-TransportMe/blob/main/images/App%20Navigation.png)
+
+## ER Data Diagram
+![ER Diagram](https://github.com/Mordaax/MAD-Assignment-TransportMe/blob/main/images/ER%20Diagram.png)
+
+## SQL database for bus stops
+![SQL](https://github.com/Mordaax/MAD-Assignment-TransportMe/blob/main/images/SQL%20Database.PNG)
+
+## Emulator vs phones
+Due to location provider issues, both emulator and android phone cannot work together. 
+For eumlator, line 136 (GPS provider) Comes before line 248 (Network provider) - Github Build
+For phones(Release), Line 248 (Network provider) comes before line 136 (GPS provider) 
+For Android Studio Emulator (MainActivity)
+![image](https://user-images.githubusercontent.com/53942938/176345429-25eeaf57-9698-4788-a94a-de4d150a56cb.png)
+For Android Phone Release (Main Activity)
+![image](https://user-images.githubusercontent.com/53942938/176345703-2c11a6a0-decd-43b2-87f5-07981df424a8.png)
+
