@@ -44,6 +44,7 @@ public class BusServiceAdapter
     ArrayList<BusService> data;
     Context c;
     List<Marker> mList = new ArrayList<>();
+    List<LatLng> lList = new ArrayList<>();
     public BusServiceAdapter(ArrayList<BusService> data, Context c) {
         this.c = c;
         this.data = data;
@@ -82,10 +83,10 @@ public class BusServiceAdapter
                                 @Override
                                 public void onResponse(ArrayList<BusStop> busStopRouteLoaded) {
                                     for(BusStop busStop : busStopRouteLoaded) {
-                                        ((MainActivity) c).busroute(busStop.getLatitude(), busStop.getLongitude(), busStop, mList);
-                                        Log.d("yes", mList.toString());
-                                        ((MainActivity) c).camerazoom(mList);
+                                        ((MainActivity) c).busroute(busStop.getLatitude(), busStop.getLongitude(), busStop, mList, lList);
                                     }
+                                    ((MainActivity) c).camerazoom(mList);
+                                    ((MainActivity) c).polyline(lList);
                                 }
                             });
                         }

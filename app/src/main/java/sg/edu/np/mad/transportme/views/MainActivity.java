@@ -63,6 +63,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
@@ -442,10 +444,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public void busroute(Double latitude, Double longitude, BusStop currentStop, List<Marker> mList){
+    public void busroute(Double latitude, Double longitude, BusStop currentStop, List<Marker> mList, List<LatLng> lList){
         LatLng latlongmarker = new LatLng(latitude, longitude);
         Marker marker = map.addMarker(new MarkerOptions().position(latlongmarker).title(currentStop.getDescription()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        lList.add(latlongmarker);
         mList.add(marker);
+    }
+
+    public void polyline(List<LatLng> lList) {
+        Polyline polyline = map.addPolyline(new PolylineOptions().addAll(lList));
     }
 
     public void camerazoom(List<Marker> mList) {
@@ -460,6 +467,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void removemarker(List<Marker> mList) {
         for (Marker m : mList) {
+
             m.remove();
         }
     }
