@@ -17,8 +17,8 @@
         android:id="@+id/mrtmap"
         android:icon="@drawable/ic_baseline_map_24"
         android:title="Map" />
-    <item
+    <!--<item
         android:id="@+id/profile"
         android:icon="@drawable/ic_baseline_person_24"
-        android:title="Profile" />
+        android:title="Profile" />-->
 </menu>
