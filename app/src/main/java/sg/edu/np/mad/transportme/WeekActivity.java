@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -20,7 +21,7 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
     private RecyclerView calendarRV;
     private TextView weekText;
     public LocalDate dateSelected;
-    private Button weekBefore, weekAfter;
+    private Button weekBefore, weekAfter, log;
 
 
     @Override
@@ -32,6 +33,8 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
         weekText = findViewById(R.id.yearMonth);
         weekBefore = findViewById(R.id.weekBefore);
         weekAfter = findViewById(R.id.weekAfter);
+        log = findViewById(R.id.log);
+        Intent intent = new Intent(this, ExpenseEditActivity.class);
         dateSelected = LocalDate.now();
         setWeek();
 
@@ -48,6 +51,13 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
             public void onClick(View view) {
                 dateSelected = dateSelected.plusWeeks(1);
                 setWeek();
+            }
+        });
+        log.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                startActivity(intent);
             }
         });
     }
