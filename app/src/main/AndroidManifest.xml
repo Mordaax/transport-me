@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TransportMe">
         <activity
-            android:name=".ExpenseEditActivity"
+            android:name=".AddExpenseActivity"
             android:exported="true" />
         <activity
             android:name=".WeekActivity"

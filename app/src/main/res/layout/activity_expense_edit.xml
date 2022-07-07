@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ExpenseEditActivity"
+    tools:context=".AddExpenseActivity"
     android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="125dp"
-        android:background="#6494AA"
+        android:background="@color/app_yellow"
         android:padding="20dp">
 
         <ImageView
@@ -18,7 +18,7 @@
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/appsplashiconblue" />
+            android:src="@drawable/appsplashicon" />
         <TextView
             android:id="@+id/TransportMe"
             android:layout_width="wrap_content"
@@ -51,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="2000dp"
         app:cardCornerRadius="26dp"
-        android:backgroundTint="#6494AA"
+        android:backgroundTint="@color/app_yellow"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp">
         <LinearLayout
@@ -73,7 +73,7 @@
                     android:layout_margin="15dp"
                     android:textSize="18dp"
                     android:fontFamily="@font/inter_bold"
-                    android:textColor="#6494AA"/>
+                    android:textColor="@color/app_yellow"/>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -91,7 +91,7 @@
                     android:layout_margin="15dp"
                     android:textSize="18dp"
                     android:fontFamily="@font/inter_bold"
-                    android:textColor="#6494AA"/>
+                    android:textColor="@color/app_yellow"/>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -107,7 +107,8 @@
                     android:singleLine="true"
                     android:layout_margin="5dp"
                     android:fontFamily="@font/inter_bold"
-                    android:hint="Cost"
+                    android:hint=" Enter Cost"
+                    android:textColorHint="@color/app_yellow"
                     android:inputType="numberDecimal"/>
             </androidx.cardview.widget.CardView>
             <Button
