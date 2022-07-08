@@ -111,7 +111,7 @@
       android:id="@+id/calendarRV"
       android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:layout_weight="0.5"/>
+      android:layout_weight="0.4"/>
 
   <Button
       android:id="@+id/log"

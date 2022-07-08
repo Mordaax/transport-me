@@ -5,10 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.time.DayOfWeek;
@@ -18,9 +20,9 @@ import java.util.ArrayList;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemListener {
     private RecyclerView calendarRV;
+    private ListView weekListView;
     private TextView weekText;
-    public LocalDate dateSelected;
-    private Button weekBefore, weekAfter;
+    private Button weekBefore, weekAfter, log;
 
 
     @Override
@@ -29,16 +31,19 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
         setContentView(R.layout.activity_week);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy");
         calendarRV = findViewById(R.id.calendarRV);
+        weekListView = findViewById(R.id.weekListView);
         weekText = findViewById(R.id.yearMonth);
         weekBefore = findViewById(R.id.weekBefore);
         weekAfter = findViewById(R.id.weekAfter);
-        dateSelected = LocalDate.now();
+        log = findViewById(R.id.log);
+        Intent intent = new Intent(this, AddExpenseActivity.class);
+        WeekUtils.dateSelected = LocalDate.now();
         setWeek();
 
         weekBefore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dateSelected = dateSelected.minusWeeks(1);
+                WeekUtils.dateSelected = WeekUtils.dateSelected.minusWeeks(1);
                 setWeek();
             }
         });
@@ -46,17 +51,24 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
         weekAfter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dateSelected = dateSelected.plusWeeks(1);
+                WeekUtils.dateSelected = WeekUtils.dateSelected.plusWeeks(1);
                 setWeek();
+            }
+        });
+        log.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                startActivity(intent);
             }
         });
     }
     private void setWeek() {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy");
-        weekText.setText(dateSelected.format(formatter)); //sets date in MMMM yyyy
+        weekText.setText(WeekUtils.dateSelected.format(formatter)); //sets date in MMMM yyyy
         ArrayList<LocalDate> daysInWeekArray = new ArrayList<>();
-        LocalDate chosenDate = weeksSunday(dateSelected);
+        LocalDate chosenDate = weeksSunday(WeekUtils.dateSelected);
         LocalDate endDate = chosenDate.plusWeeks(1);
         while (chosenDate.isBefore(endDate))
         {
@@ -64,7 +76,7 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
             chosenDate = chosenDate.plusDays(1);
         }
 
-        WeekAdapter monthAdapter = new WeekAdapter(daysInWeekArray, this, dateSelected);
+        WeekAdapter monthAdapter = new WeekAdapter(daysInWeekArray, this);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 7);
         calendarRV.setLayoutManager(layoutManager);
         calendarRV.setAdapter(monthAdapter);
@@ -86,7 +98,20 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
 
     @Override
     public void onItemClick(int position, LocalDate day) {
-        dateSelected = day;
+        WeekUtils.dateSelected = day;
         setWeek();
+        setEventAdapter();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setEventAdapter();
+    }
+
+    private void setEventAdapter() {
+        ArrayList<Expense> daysExpense = Expense.expensePerDate(WeekUtils.dateSelected);
+        ExpenseAdapter expenseAdapter = new ExpenseAdapter(getApplicationContext(), daysExpense);
+        weekListView.setAdapter(expenseAdapter);
     }
 }

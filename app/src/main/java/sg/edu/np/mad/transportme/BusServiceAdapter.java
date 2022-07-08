@@ -26,6 +26,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.Polyline;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +46,8 @@ public class BusServiceAdapter
     ArrayList<BusService> data;
     Context c;
     List<Marker> mList = new ArrayList<>();
+    List<LatLng> lList = new ArrayList<>();
+    Polyline line = null;
     public BusServiceAdapter(ArrayList<BusService> data, Context c) {
         this.c = c;
         this.data = data;
@@ -62,7 +66,9 @@ public class BusServiceAdapter
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) c).removemarker(mList);
+                ((MainActivity) c).removemarker(mList, line);
+                //line = null;
+                lList.clear();
                 mList.clear();
                 final CharSequence[] options = {"Yes", "Cancel"};
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getRootView().getContext());
@@ -82,10 +88,10 @@ public class BusServiceAdapter
                                 @Override
                                 public void onResponse(ArrayList<BusStop> busStopRouteLoaded) {
                                     for(BusStop busStop : busStopRouteLoaded) {
-                                        ((MainActivity) c).busroute(busStop.getLatitude(), busStop.getLongitude(), busStop, mList);
-                                        Log.d("yes", mList.toString());
-                                        ((MainActivity) c).camerazoom(mList);
+                                        ((MainActivity) c).busroute(busStop.getLatitude(), busStop.getLongitude(), busStop, mList, lList);
                                     }
+                                    ((MainActivity) c).camerazoom(mList);
+                                    line = ((MainActivity) c).polyline(lList);
                                 }
                             });
                         }
