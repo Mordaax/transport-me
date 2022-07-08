@@ -17,12 +17,10 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekViewHolder> {
 
     private ArrayList<LocalDate> daysInMonth;
     private ItemListener itemListener;
-    private LocalDate dateSelected;
 
-    public WeekAdapter(ArrayList<LocalDate> dayInMonth, ItemListener itemListener, LocalDate dateSelected) {
+    public WeekAdapter(ArrayList<LocalDate> dayInMonth, ItemListener itemListener) {
         this.daysInMonth = dayInMonth;
         this.itemListener = itemListener;
-        this.dateSelected = dateSelected;
     }
 
     @NonNull
@@ -38,7 +36,7 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekViewHolder> {
     public void onBindViewHolder(@NonNull WeekViewHolder holder, int position) {
         LocalDate date = daysInMonth.get(position);
         holder.dayInMonth.setText(String.valueOf(date.getDayOfMonth()));
-        if(date.equals(dateSelected)){
+        if(date.equals(WeekUtils.dateSelected)){
             holder.parent.setBackgroundColor(Color.LTGRAY);
         }
 

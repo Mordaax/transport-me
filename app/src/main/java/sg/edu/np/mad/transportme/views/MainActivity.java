@@ -63,6 +63,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
@@ -442,10 +444,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public void busroute(Double latitude, Double longitude, BusStop currentStop, List<Marker> mList){
+    public void busroute(Double latitude, Double longitude, BusStop currentStop, List<Marker> mList, List<LatLng> lList){
         LatLng latlongmarker = new LatLng(latitude, longitude);
-        Marker marker = map.addMarker(new MarkerOptions().position(latlongmarker).title(currentStop.getDescription()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        Marker marker = map.addMarker(new MarkerOptions().position(latlongmarker).title(currentStop.getDescription()).icon(BitmapDescriptorFactory.fromResource(R.drawable.dot)));
+        lList.add(latlongmarker);
         mList.add(marker);
+    }
+
+    public Polyline polyline(List<LatLng> lList) {
+        Polyline polyline = map.addPolyline(new PolylineOptions().addAll(lList).color(Color.RED));
+        return polyline;
     }
 
     public void camerazoom(List<Marker> mList) {
@@ -454,11 +462,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             builder.include(m.getPosition());
         }
         LatLngBounds bounds = builder.build();
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 0);
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 30);
         map.animateCamera(cu);
     }
 
-    public void removemarker(List<Marker> mList) {
+    public void removemarker(List<Marker> mList, Polyline line) {
+        /**if (!line.equals(null)) {
+            line.remove();
+        }**/
         for (Marker m : mList) {
             m.remove();
         }
