@@ -71,6 +71,7 @@ import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.io.IOException;
@@ -446,7 +447,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void busroute(Double latitude, Double longitude, BusStop currentStop, List<Marker> mList, List<LatLng> lList){
         LatLng latlongmarker = new LatLng(latitude, longitude);
-        Marker marker = map.addMarker(new MarkerOptions().position(latlongmarker).title(currentStop.getDescription()).icon(BitmapDescriptorFactory.fromResource(R.drawable.dot)));
+        Marker marker = map.addMarker(new MarkerOptions().position(latlongmarker).title(currentStop.getDescription()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
         lList.add(latlongmarker);
         mList.add(marker);
     }
@@ -467,9 +468,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void removemarker(List<Marker> mList, Polyline line) {
-        /**if (!line.equals(null)) {
+        if (line != null) {
             line.remove();
-        }**/
+        }
         for (Marker m : mList) {
             m.remove();
         }
