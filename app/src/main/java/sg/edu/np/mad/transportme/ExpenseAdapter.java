@@ -31,9 +31,15 @@ public class ExpenseAdapter extends ArrayAdapter<Expense> {
         if(convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.expense_layout, parent, false);
         }
+        TextView expenseTransport = convertView.findViewById(R.id.expenseTransport);
         TextView expenseType = convertView.findViewById(R.id.expenseType);
-        String expenseName = expense.getSelected() + " " + timeFormatter.format(expense.getTime()) + " $" + expense.getCost();
-        expenseType.setText(expenseName);
+        TextView expenseTime2 = convertView.findViewById(R.id.expenseTime2);
+        //String setExpenseTransport = expense.getSelected();
+        expenseTransport.setText(expense.getSelected());
+        //String setExpenseType = " $" + expense.getCost();
+        expenseType.setText("$" + expense.getCost());
+        //String setExpenseTime = timeFormatter.format(expense.getTime());
+        expenseTime2.setText(timeFormatter.format(expense.getTime()));
         return convertView;
     }
 }
