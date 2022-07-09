@@ -1,6 +1,7 @@
 package sg.edu.np.mad.transportme.views;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION;
 
 import static sg.edu.np.mad.transportme.BitmapResize.getResizedBitmap;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalCloseness;
@@ -71,7 +72,6 @@ import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,6 +85,7 @@ import sg.edu.np.mad.transportme.BusStop;
 import sg.edu.np.mad.transportme.BusStopAdapter;
 import sg.edu.np.mad.transportme.DistanceCalculator;
 import sg.edu.np.mad.transportme.R;
+import sg.edu.np.mad.transportme.Route;
 import sg.edu.np.mad.transportme.api.ApiBusStopService;
 import sg.edu.np.mad.transportme.user.ProfileFragment;
 
@@ -472,6 +473,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             line.remove();
         }
         for (Marker m : mList) {
+
             m.remove();
         }
     }
@@ -533,17 +535,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 mapandrv.setVisibility(View.VISIBLE);
                 favourite = false;
                 break;
-            case R.id.nav_train:
-                /*Intent intent = new Intent(MainActivity.this, Bus.class);
-                intent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);*/
+            case R.id.nav_carpark:
+                Intent intentcarpark = new Intent(MainActivity.this, CarparkActivity.class);
+                intentcarpark.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intentcarpark);
                 break;
             case R.id.nav_profile:
                 mapandrv.setVisibility(View.INVISIBLE);
                 fragmentlayout.setVisibility(View.VISIBLE);
                 replaceFragment(new ProfileFragment());
                 break;
-
+            case R.id.nav_route:
+                Intent intent = new Intent(MainActivity.this, Route.class);
+                intent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
