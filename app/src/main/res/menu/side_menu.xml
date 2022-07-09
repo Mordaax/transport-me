@@ -6,9 +6,13 @@
             android:title="Bus"
             android:icon="@drawable/ic_baseline_directions_bus_24"/>
         <item
-            android:id="@+id/nav_train"
-            android:title="MRT"
-            android:icon="@drawable/ic_baseline_train_24"/>
+            android:id="@+id/nav_carpark"
+            android:title="Carpark Availability"
+            android:icon="@drawable/ic_baseline_directions_car_24"/>
+        <item
+            android:id="@+id/nav_route"
+            android:title="Directions"
+            android:icon="@drawable/ic_baseline_route_24"/>
     </group>
     <group android:checkableBehavior="single">
         <item
