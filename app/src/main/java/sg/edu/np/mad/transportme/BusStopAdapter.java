@@ -2,12 +2,14 @@ package sg.edu.np.mad.transportme;
 
 import static sg.edu.np.mad.transportme.user.LoginPage.globalFavouriteBusStop;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalName;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalNotify;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,7 +32,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import sg.edu.np.mad.transportme.user.LoginPage;
 import sg.edu.np.mad.transportme.views.MainActivity;
+import sg.edu.np.mad.transportme.views.NotifyFragment;
 
 public class BusStopAdapter
         extends RecyclerView.Adapter<BusStopViewHolder>        //just like list, need declare <data type>
@@ -89,6 +94,7 @@ public class BusStopAdapter
         holder.BusStopCode.setText(content.getBusStopCode());
         holder.RoadName.setText(content.getRoadName());
 
+        isNotify(content.getBusStopCode(), holder.Notify);      //Method to check whether bus stop is set to notify when reached
         isFavourited(content.getBusStopCode(), holder.Favourite);   //Method to check whether bus stop is favourited, sets heart icon to red if favourited
         holder.Favourite.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,6 +134,31 @@ public class BusStopAdapter
                     {
                         holder.Favourite.setImageResource(R.drawable.favourite);            //Setting the heart icon to empty if it is favourited
                         holder.Favourite.setTag("Favourite");
+                    }
+                }
+            }
+        });
+        holder.Notify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isNetworkAvailable())
+                {
+                    DatabaseReference reference = db.getReference()
+                            .child("User")
+                            //.child(firebaseUser.getUid())
+                            .child(globalName)
+                            .child("notify");
+                    if (holder.Notify.getTag() == "Un-Notify")
+                    {
+                        holder.Notify.setImageResource(R.drawable.filled_bell);
+                        holder.Favourite.setTag("Notify");
+                        reference.setValue(content.getBusStopCode());
+                    }
+                    else
+                    {
+                        holder.Notify.setImageResource(R.drawable.bell);
+                        holder.Favourite.setTag("Un-Notify");
+                        reference.setValue("");
                     }
                 }
             }
@@ -178,6 +209,44 @@ public class BusStopAdapter
         {
             //Notifies user the Wi-Fi/Mobile data is OFF and list in RTDB will not be checked
             Toast.makeText(c, "Wifi is OFF, favourites may not be up to date.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void isNotify(String busStopCode, ImageView notifyView)
+    {
+        if (isNetworkAvailable())           //Checks whether Wi-Fi/Mobile data is on before making a reference in firebase
+        {
+            DatabaseReference reference = db.getReference()
+                    .child("User")
+                    //.child(firebaseUser.getUid())
+                    .child(globalName)
+                    .child("notify");
+
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (busStopCode.equals(snapshot.getValue()))
+                    {
+                        notifyView.setImageResource(R.drawable.filled_bell);
+                        notifyView.setTag("Notify");
+                    }
+                    else
+                    {
+                        notifyView.setImageResource(R.drawable.bell);
+                        notifyView.setTag("Un-Notify");
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+        else
+        {
+            //Notifies user the Wi-Fi/Mobile data is OFF and list in RTDB will not be checked
+            Toast.makeText(c, "Wifi is OFF, Notification may not be up to date.", Toast.LENGTH_SHORT).show();
         }
     }
 
