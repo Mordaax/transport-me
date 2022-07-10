@@ -1,6 +1,7 @@
 package sg.edu.np.mad.transportme.views;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION;
 
 import static sg.edu.np.mad.transportme.BitmapResize.getResizedBitmap;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalCloseness;
@@ -84,6 +85,7 @@ import sg.edu.np.mad.transportme.BusStop;
 import sg.edu.np.mad.transportme.BusStopAdapter;
 import sg.edu.np.mad.transportme.DistanceCalculator;
 import sg.edu.np.mad.transportme.R;
+import sg.edu.np.mad.transportme.Route;
 import sg.edu.np.mad.transportme.api.ApiBusStopService;
 import sg.edu.np.mad.transportme.user.ProfileFragment;
 
@@ -175,11 +177,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     fragmentlayout.setVisibility(View.VISIBLE);
                     replaceFragment(new MrtMapFragment());
                     break;
-                /*case R.id.profile:
-                    mapandrv.setVisibility(View.INVISIBLE);
+                case R.id.notify:
+                    mapandrv.setVisibility(View.VISIBLE);
                     fragmentlayout.setVisibility(View.VISIBLE);
-                    replaceFragment(new ProfileFragment());
-                    break;*/
+                    replaceFragment(new NotifyFragment());
+                    break;
 
             }
             return true;
@@ -446,7 +448,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void busroute(Double latitude, Double longitude, BusStop currentStop, List<Marker> mList, List<LatLng> lList){
         LatLng latlongmarker = new LatLng(latitude, longitude);
-        Marker marker = map.addMarker(new MarkerOptions().position(latlongmarker).title(currentStop.getDescription()).icon(BitmapDescriptorFactory.fromResource(R.drawable.dot)));
+        Marker marker = map.addMarker(new MarkerOptions().position(latlongmarker).title(currentStop.getDescription()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
         lList.add(latlongmarker);
         mList.add(marker);
     }
@@ -467,10 +469,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void removemarker(List<Marker> mList, Polyline line) {
-        /**if (!line.equals(null)) {
+        if (line != null) {
             line.remove();
-        }**/
+        }
         for (Marker m : mList) {
+
             m.remove();
         }
     }
@@ -532,17 +535,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 mapandrv.setVisibility(View.VISIBLE);
                 favourite = false;
                 break;
-            case R.id.nav_train:
-                /*Intent intent = new Intent(MainActivity.this, Bus.class);
-                intent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);*/
+            case R.id.nav_carpark:
+                Intent intentcarpark = new Intent(MainActivity.this, CarparkActivity.class);
+                intentcarpark.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intentcarpark);
                 break;
             case R.id.nav_profile:
                 mapandrv.setVisibility(View.INVISIBLE);
                 fragmentlayout.setVisibility(View.VISIBLE);
                 replaceFragment(new ProfileFragment());
                 break;
-
+            case R.id.nav_route:
+                Intent intent = new Intent(MainActivity.this, Route.class);
+                intent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;

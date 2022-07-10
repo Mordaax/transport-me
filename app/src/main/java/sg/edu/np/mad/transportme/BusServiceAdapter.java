@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,10 +67,6 @@ public class BusServiceAdapter
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) c).removemarker(mList, line);
-                //line = null;
-                lList.clear();
-                mList.clear();
                 final CharSequence[] options = {"Yes", "Cancel"};
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getRootView().getContext());
                 builder.setTitle("Show bus routes for " + content.getServiceNumber() + "?");
@@ -79,6 +76,10 @@ public class BusServiceAdapter
                     public void onClick(DialogInterface dialogInterface, int item) {
 
                         if (options[item].equals("Yes")) {
+                            ((MainActivity) c).removemarker(mList, line);
+                            line = null;
+                            lList.clear();
+                            mList.clear();
                             ApiBusStopService apiBusStopService = new ApiBusStopService(c);
                             apiBusStopService.getBusRoute(content.getServiceNumber(),new ApiBusStopService.VolleyResponseListener3() { //Call API for nearby bus stops
                                 @Override
@@ -92,6 +93,17 @@ public class BusServiceAdapter
                                     }
                                     ((MainActivity) c).camerazoom(mList);
                                     line = ((MainActivity) c).polyline(lList);
+                                    //Snackbar snackbar = Snackbar.make(view.findViewById(R.id.MapAndRV), "Showing route for "+content.getServiceNumber(), Snackbar.LENGTH_INDEFINITE);
+                                    /**snackbar.setAction("cancel", new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    ((MainActivity) c).removemarker(mList, line);
+                                                    line = null;
+                                                    lList.clear();
+                                                    mList.clear();
+                                                }
+                                            });**/
+                                    //snackbar.show();
                                 }
                             });
                         }
