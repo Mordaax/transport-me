@@ -20,5 +20,5 @@
     <item
         android:id="@+id/notify"
         android:icon="@drawable/bell"
-        android:title="Notify" />
+        android:title="Remind" />
 </menu>

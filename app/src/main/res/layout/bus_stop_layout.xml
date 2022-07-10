@@ -65,7 +65,7 @@
                         app:layout_constraintTop_toTopOf="parent"></ImageView>
 
                     <ImageView
-                        android:id="@+id/Notify"
+                        android:id="@+id/Reminder"
                         android:layout_width="27dp"
                         android:layout_height="27dp"
                         android:layout_marginEnd="8dp"
@@ -95,7 +95,7 @@
                         android:text="Description"
                         android:textColor="#000000"
                         android:textSize="17sp"
-                        app:layout_constraintEnd_toStartOf="@+id/Notify"
+                        app:layout_constraintEnd_toStartOf="@+id/Reminder"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toEndOf="@+id/BusAppIcon"
                         app:layout_constraintTop_toTopOf="parent" />

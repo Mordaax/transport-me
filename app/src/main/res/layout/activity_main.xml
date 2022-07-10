@@ -27,6 +27,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <Button
+            android:id="@+id/reminderButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/app_red"
+            android:drawableLeft="@drawable/small_bell"
+            android:radius="15dp"
+            android:text="Alight at"
+            android:textColor="@android:color/white"
+            android:textSize="10sp"
+            android:visibility="invisible"
+            app:iconPadding="2dp"
+            app:layout_constraintBottom_toBottomOf="@+id/relativeLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/relativeLayout" />
+
         <RelativeLayout
             android:id="@+id/relativeLayout"
             android:layout_width="match_parent"
@@ -63,6 +80,42 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 tools:context=".MapsActivity" />
+
+            <ScrollView
+                android:id="@+id/reminderView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:visibility="gone">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                        android:id="@+id/swipeLayoutNotify"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        app:layout_constraintTop_toBottomOf="parent">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerViewNotify"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="1dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_weight="1"
+                            android:clipToPadding="false"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                        </androidx.recyclerview.widget.RecyclerView>
+                    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </ScrollView>
 
             <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                 android:id="@+id/swipeLayout"
@@ -110,6 +163,7 @@
             android:src="@drawable/ic_baseline_photo_camera_24"
             app:layout_constraintBottom_toBottomOf="@+id/MapAndRV"
             app:layout_constraintEnd_toEndOf="parent" />
+
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
