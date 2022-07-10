@@ -177,11 +177,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     fragmentlayout.setVisibility(View.VISIBLE);
                     replaceFragment(new MrtMapFragment());
                     break;
-                /*case R.id.profile:
-                    mapandrv.setVisibility(View.INVISIBLE);
+                case R.id.notify:
+                    mapandrv.setVisibility(View.VISIBLE);
                     fragmentlayout.setVisibility(View.VISIBLE);
-                    replaceFragment(new ProfileFragment());
-                    break;*/
+                    replaceFragment(new NotifyFragment());
+                    break;
 
             }
             return true;
