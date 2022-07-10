@@ -5,13 +5,13 @@ import static android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION;
 
 import static sg.edu.np.mad.transportme.BitmapResize.getResizedBitmap;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalCloseness;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalReminder;
 import static sg.edu.np.mad.transportme.views.LoadingScreen.globalBusStops;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -41,15 +41,16 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -57,7 +58,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -73,14 +73,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
-import sg.edu.np.mad.transportme.BusServiceAdapter;
 import sg.edu.np.mad.transportme.BusStop;
 import sg.edu.np.mad.transportme.BusStopAdapter;
 import sg.edu.np.mad.transportme.DistanceCalculator;
@@ -93,6 +89,8 @@ import sg.edu.np.mad.transportme.user.ProfileFragment;
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
     LinearLayout mapandrv;
     FrameLayout fragmentlayout;
+    ScrollView reminderView;
+    Button reminderButton;
     GoogleMap map;
     Uri image_uri;
     LocationManager locationManager;
@@ -152,35 +150,44 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         mapandrv = findViewById(R.id.MapAndRV);
         fragmentlayout = findViewById(R.id.frame_layout);
+        reminderView = findViewById(R.id.reminderView);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView); // load botttom navigation bar
         bottomNavigationView.setOnItemSelectedListener(item ->{
 
             switch(item.getItemId()){
                 case R.id.home:
                     fragmentlayout.setVisibility(View.INVISIBLE); //Set fragment to invisible, show map and main recycler view to help with loading times
+                    reminderView.setVisibility(View.GONE);
+                    cameraSearch.setVisibility(View.VISIBLE);
                     mapandrv.setVisibility(View.VISIBLE);
+                    swipeRefreshLayout.setVisibility(View.VISIBLE);
                     favourite = false;
                     break;
                 case R.id.favourites:
                     mapandrv.setVisibility(View.INVISIBLE);
+                    cameraSearch.setVisibility(View.INVISIBLE);
                     fragmentlayout.setVisibility(View.VISIBLE);
                     replaceFragment(new FavouritesFragment());
                     favourite = true;
                     break;
                 case R.id.search:
                     mapandrv.setVisibility(View.INVISIBLE);
+                    cameraSearch.setVisibility(View.INVISIBLE);
                     fragmentlayout.setVisibility(View.VISIBLE);
                     replaceFragment(new SearchFragment());
                     break;
                 case R.id.mrtmap:
                     mapandrv.setVisibility(View.INVISIBLE);
+                    cameraSearch.setVisibility(View.INVISIBLE);
                     fragmentlayout.setVisibility(View.VISIBLE);
                     replaceFragment(new MrtMapFragment());
                     break;
                 case R.id.notify:
+                    reminderView.setVisibility(View.VISIBLE);
                     mapandrv.setVisibility(View.VISIBLE);
-                    fragmentlayout.setVisibility(View.VISIBLE);
-                    replaceFragment(new NotifyFragment());
+                    fragmentlayout.setVisibility(View.INVISIBLE);
+                    cameraSearch.setVisibility(View.INVISIBLE);
+                    swipeRefreshLayout.setVisibility(View.GONE);
                     break;
 
             }
@@ -432,9 +439,18 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
             }
-
+        }
+        showReminderButton();
+    }
+    public void showReminderButton()
+    {
+        if(!(globalReminder == null))
+        {
+            reminderButton.setText("Alight at "+globalReminder.getDescription());
+            reminderButton.setVisibility(View.VISIBLE);
         }
     }
+
     public void moveMapsCamera(Double latitude, Double longitude){ //Function to enable move camera from other classes
         LatLng latlongmove = new LatLng(latitude, longitude);
         CameraPosition cameraPosition = new CameraPosition.Builder()

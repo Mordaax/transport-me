@@ -2,11 +2,14 @@ package sg.edu.np.mad.transportme;
 
 import static sg.edu.np.mad.transportme.user.LoginPage.globalFavouriteBusStop;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalName;
-import static sg.edu.np.mad.transportme.user.LoginPage.globalNotify;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalReminder;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.text.InputType;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -16,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -34,7 +38,6 @@ import java.util.ArrayList;
 
 import sg.edu.np.mad.transportme.user.LoginPage;
 import sg.edu.np.mad.transportme.views.MainActivity;
-import sg.edu.np.mad.transportme.views.NotifyFragment;
 
 public class BusStopAdapter
         extends RecyclerView.Adapter<BusStopViewHolder>        //just like list, need declare <data type>
@@ -94,7 +97,7 @@ public class BusStopAdapter
         holder.BusStopCode.setText(content.getBusStopCode());
         holder.RoadName.setText(content.getRoadName());
 
-        isNotify(content.getBusStopCode(), holder.Notify);      //Method to check whether bus stop is set to notify when reached
+        isReminder(content.getBusStopCode(), holder.Reminder, content);      //Method to check whether bus stop is set to remind when reached
         isFavourited(content.getBusStopCode(), holder.Favourite);   //Method to check whether bus stop is favourited, sets heart icon to red if favourited
         holder.Favourite.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,7 +141,7 @@ public class BusStopAdapter
                 }
             }
         });
-        holder.Notify.setOnClickListener(new View.OnClickListener() {
+        holder.Reminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(isNetworkAvailable())
@@ -147,17 +150,50 @@ public class BusStopAdapter
                             .child("User")
                             //.child(firebaseUser.getUid())
                             .child(globalName)
-                            .child("notify");
-                    if (holder.Notify.getTag() == "Un-Notify")
+                            .child("reminder");
+                    if (holder.Reminder.getTag() == "False")
                     {
-                        holder.Notify.setImageResource(R.drawable.filled_bell);
-                        holder.Favourite.setTag("Notify");
-                        reference.setValue(content.getBusStopCode());
+                        if(!(globalReminder == null))
+                        {
+                            AlertDialog.Builder reminderBuilder = new AlertDialog.Builder(c);
+                            reminderBuilder.setTitle("Marked bus stop exists!");
+                            reminderBuilder.setIcon(R.drawable.appsplashicon);
+                            reminderBuilder.setMessage("Do you wish to remove " + globalReminder.getDescription() + " and mark this bus stop?");
+                            reminderBuilder.setCancelable(false);
+                            reminderBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    holder.Reminder.setImageResource(R.drawable.filled_bell);
+                                    holder.Favourite.setTag("Remind");
+                                    reference.setValue(content.getBusStopCode());
+                                    globalReminder = content;
+                                    Toast.makeText(c, "Remind when arriving " + globalReminder.getDescription(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            reminderBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            });
+                            AlertDialog alert = reminderBuilder.create();
+                            alert.show();
+                        }
+                        else
+                        {
+                            holder.Reminder.setImageResource(R.drawable.filled_bell);
+                            holder.Favourite.setTag("Remind");
+                            reference.setValue(content.getBusStopCode());
+                            globalReminder = content;
+                            isValidBusService(content);
+                            Toast.makeText(c, "Remind when arriving " + globalReminder.getDescription(), Toast.LENGTH_SHORT).show();
+                        }
                     }
                     else
                     {
-                        holder.Notify.setImageResource(R.drawable.bell);
-                        holder.Favourite.setTag("Un-Notify");
+                        holder.Reminder.setImageResource(R.drawable.grey_bell);
+                        holder.Favourite.setTag("False");
+                        globalReminder = null;
                         reference.setValue("");
                     }
                 }
@@ -212,7 +248,7 @@ public class BusStopAdapter
         }
     }
 
-    private void isNotify(String busStopCode, ImageView notifyView)
+    private void isReminder(String busStopCode, ImageView reminderView, BusStop busStop)
     {
         if (isNetworkAvailable())           //Checks whether Wi-Fi/Mobile data is on before making a reference in firebase
         {
@@ -220,20 +256,21 @@ public class BusStopAdapter
                     .child("User")
                     //.child(firebaseUser.getUid())
                     .child(globalName)
-                    .child("notify");
+                    .child("reminder");
 
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (busStopCode.equals(snapshot.getValue()))
                     {
-                        notifyView.setImageResource(R.drawable.filled_bell);
-                        notifyView.setTag("Notify");
+                        reminderView.setImageResource(R.drawable.filled_bell);
+                        reminderView.setTag("Remind");
+                        globalReminder = busStop;
                     }
                     else
                     {
-                        notifyView.setImageResource(R.drawable.bell);
-                        notifyView.setTag("Un-Notify");
+                        reminderView.setImageResource(R.drawable.grey_bell);
+                        reminderView.setTag("False");
                     }
                 }
 
@@ -248,6 +285,39 @@ public class BusStopAdapter
             //Notifies user the Wi-Fi/Mobile data is OFF and list in RTDB will not be checked
             Toast.makeText(c, "Wifi is OFF, Notification may not be up to date.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private String isValidBusService(BusStop bs)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(c);
+        builder.setTitle("What bus will you be riding?");
+        final EditText input = new EditText(c) ;
+        input.setPadding(
+                c.getResources().getDimensionPixelOffset(R.dimen.dp_64),
+                c.getResources().getDimensionPixelOffset(R.dimen.dp_10),
+                c.getResources().getDimensionPixelOffset(R.dimen.dp_30),
+                c.getResources().getDimensionPixelOffset(R.dimen.dp_10)
+        );
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        builder.setView(input);
+        builder.setIcon(R.drawable.appsplashicon);
+        builder.setCancelable(false);
+        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String m_Text = input.getText().toString();
+                Log.e("t",""+m_Text);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+        return "";
     }
 
     @Override
@@ -269,7 +339,5 @@ public class BusStopAdapter
         catch(NullPointerException e){
             return false;
         }
-
-
     }
 }

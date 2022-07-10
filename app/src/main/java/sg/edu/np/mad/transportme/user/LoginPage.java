@@ -32,7 +32,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
     public static String globalName = "";
     public static String globalEmail = "";
     public static Boolean SignedIn = false;
-    public static String globalNotify = "65009";
+    public static BusStop globalReminder = null;
     public static ArrayList<BusStop> globalFavouriteBusStop = new ArrayList<>();
     public static Double globalCloseness;
     //private TextView register;
