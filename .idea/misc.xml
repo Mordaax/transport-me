@@ -62,6 +62,7 @@
         <entry key="..\:/Users/voidi/Desktop/MAD/FIXREGIS N WORD!!!/app/src/main/res/drawable/ic_baseline_notifications_active_24.xml" value="0.26" />
         <entry key="..\:/Users/voidi/Desktop/MAD/FIXREGIS N WORD!!!/app/src/main/res/drawable/rounded_button.xml" value="0.14" />
         <entry key="..\:/Users/voidi/Desktop/MAD/FIXREGIS N WORD!!!/app/src/main/res/drawable/small_bell.xml" value="0.2985" />
+        <entry key="..\:/Users/voidi/Desktop/MAD/FIXREGIS N WORD!!!/app/src/main/res/layout/activity_login_page.xml" value="0.17831813576494426" />
         <entry key="..\:/Users/voidi/Desktop/MAD/FIXREGIS N WORD!!!/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/Users/voidi/Desktop/MAD/FIXREGIS N WORD!!!/app/src/main/res/layout/bus_stop_layout.xml" value="0.5" />
         <entry key="..\:/Users/voidi/Desktop/MAD/FIXREGIS N WORD!!!/app/src/main/res/layout/fragment_notify.xml" value="0.36666666666666664" />
@@ -74,7 +75,7 @@
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/../FIXREGIS N WORD!/!/!/build/classes" />
+    <output url="file://$PROJECT_DIR$/../FIXREGIS N WORD/!/!/!/build/classes" />
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
