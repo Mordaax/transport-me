@@ -89,7 +89,7 @@ import sg.edu.np.mad.transportme.user.ProfileFragment;
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
     LinearLayout mapandrv;
     FrameLayout fragmentlayout;
-    ScrollView reminderView;
+    LinearLayout reminderView;      //CHANGE TO SCROLLVIEW LATER
     Button reminderButton;
     GoogleMap map;
     Uri image_uri;
