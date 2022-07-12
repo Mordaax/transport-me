@@ -4,6 +4,7 @@ import static sg.edu.np.mad.transportme.user.LoginPage.globalFavouriteBusStop;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalName;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalReminder;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalReminderBusService;
+import static sg.edu.np.mad.transportme.user.LoginPage.grbsChange;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -266,6 +267,7 @@ public class BusStopAdapter
                         reminderView.setTag("Remind");
                         globalReminder = busStop;
                         globalReminderBusService = snapshot.child("BusService").getValue().toString();
+                        grbsChange.setValue(globalReminderBusService);
                     }
                     else
                     {
@@ -276,6 +278,7 @@ public class BusStopAdapter
                     {
                         globalReminder = null;
                         globalReminderBusService = "";
+                        grbsChange.setValue(globalReminderBusService);
                     }
                 }
 

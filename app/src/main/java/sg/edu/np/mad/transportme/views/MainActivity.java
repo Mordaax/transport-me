@@ -6,6 +6,8 @@ import static android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION;
 import static sg.edu.np.mad.transportme.BitmapResize.getResizedBitmap;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalCloseness;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalReminder;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalReminderBusService;
+import static sg.edu.np.mad.transportme.user.LoginPage.grbsChange;
 import static sg.edu.np.mad.transportme.views.LoadingScreen.globalBusStops;
 
 import androidx.annotation.NonNull;
@@ -18,6 +20,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -151,6 +155,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mapandrv = findViewById(R.id.MapAndRV);
         fragmentlayout = findViewById(R.id.frame_layout);
         reminderView = findViewById(R.id.reminderView);
+        reminderButton = findViewById(R.id.reminderButton);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView); // load botttom navigation bar
         bottomNavigationView.setOnItemSelectedListener(item ->{
 
@@ -440,14 +445,24 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 });
             }
         }
-        showReminderButton();
+        grbsChange.observe(this,new Observer<String>() {
+            @Override
+            public void onChanged(String changedValue) {
+                Log.e("change",""+globalReminderBusService);
+                showReminderButton(reminderButton);
+            }
+        });
     }
-    public void showReminderButton()
+    public void showReminderButton(Button reminderButton)
     {
         if(!(globalReminder == null))
         {
             reminderButton.setText("Alight at "+globalReminder.getDescription());
             reminderButton.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            reminderButton.setVisibility(View.INVISIBLE);
         }
     }
 
