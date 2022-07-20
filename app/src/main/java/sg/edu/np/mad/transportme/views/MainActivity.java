@@ -95,6 +95,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     FrameLayout fragmentlayout;
     LinearLayout reminderView;      //CHANGE TO SCROLLVIEW LATER
     Button reminderButton;
+    Button cancelReminderButton;
     GoogleMap map;
     Uri image_uri;
     LocationManager locationManager;
@@ -156,6 +157,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         fragmentlayout = findViewById(R.id.frame_layout);
         reminderView = findViewById(R.id.reminderView);
         reminderButton = findViewById(R.id.reminderButton);
+        cancelReminderButton = findViewById(R.id.cancelReminderButton);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView); // load botttom navigation bar
         bottomNavigationView.setOnItemSelectedListener(item ->{
 
@@ -198,7 +200,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
             return true;
         });
+        cancelReminderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+            }
+        });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mrtmap);
         mapFragment.getMapAsync(this);
@@ -286,7 +293,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                         LatLng latLng = new LatLng(Latitude, Longitude);
                         Geocoder geocoder = new Geocoder(getApplicationContext());
-
 
 
                         ArrayList<BusStop> closeBusStops = new ArrayList<>();

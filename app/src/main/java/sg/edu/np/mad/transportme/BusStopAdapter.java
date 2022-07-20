@@ -344,15 +344,6 @@ public class BusStopAdapter
 
             }
         });
-        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                if(!globalReminderBusService.equals(""))
-                {
-
-                }
-            }
-        });
         AlertDialog alert = builder.create();
         alert.show();
     }
