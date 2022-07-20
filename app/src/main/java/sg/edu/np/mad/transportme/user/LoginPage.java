@@ -4,6 +4,7 @@ import static sg.edu.np.mad.transportme.views.LoadingScreen.globalBusStops;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.MutableLiveData;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -32,7 +33,9 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
     public static String globalName = "";
     public static String globalEmail = "";
     public static Boolean SignedIn = false;
-    public static String globalNotify = "65009";
+    public static BusStop globalReminder = null;
+    public static String globalReminderBusService = "";
+    public static MutableLiveData<String> grbsChange = new MutableLiveData<>();
     public static ArrayList<BusStop> globalFavouriteBusStop = new ArrayList<>();
     public static Double globalCloseness;
     //private TextView register;
