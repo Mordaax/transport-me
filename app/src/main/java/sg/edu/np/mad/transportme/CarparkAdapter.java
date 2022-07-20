@@ -30,7 +30,7 @@ import sg.edu.np.mad.transportme.api.MySingleton;
 public class CarparkAdapter
         extends RecyclerView.Adapter<CarparkViewHolder> {
 
-    ArrayList<Carpark> data;
+    ArrayList<Carpark> data = getCarparkAvailability();
     Context c;
     JsonObjectRequest jsonObjectRequestCarPark;
 
@@ -47,7 +47,7 @@ public class CarparkAdapter
 
     @Override
     public void onBindViewHolder(@NonNull CarparkViewHolder holder, int position) {
-        getCarparkAvailability();
+        //getCarparkAvailability();
         Carpark carpark_content = data.get(position);
 
         holder.CarparkDescription.setText(carpark_content.Development);
@@ -83,7 +83,7 @@ public class CarparkAdapter
         return data.size();
     }
 
-    public void getCarparkAvailability(){
+    public ArrayList<Carpark> getCarparkAvailability(){
         String url = "http://datamall2.mytransport.sg/ltaodataservice/CarParkAvailabilityv2";
         //Get carparks using api
         jsonObjectRequestCarPark = new JsonObjectRequest( Request.Method.GET, url,null,
@@ -129,6 +129,8 @@ public class CarparkAdapter
             }
         };
         MySingleton.getInstance(c).addToRequestQueue(jsonObjectRequestCarPark);
+        return data;
     }
+
 
 }

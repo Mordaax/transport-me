@@ -182,6 +182,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     fragmentlayout.setVisibility(View.VISIBLE);
                     replaceFragment(new NotifyFragment());
                     break;
+                case R.id.nav_carpark:
+                    Intent intent = new Intent(MainActivity.this, CarparkActivity.class);
+                    startActivity(intent);
 
             }
             return true;
