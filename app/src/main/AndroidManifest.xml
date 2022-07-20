@@ -19,7 +19,7 @@
         android:theme="@style/Theme.TransportMe">
         <activity
             android:name=".views.CarparkActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".Route"
             android:exported="false" />
