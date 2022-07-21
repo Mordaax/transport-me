@@ -75,24 +75,7 @@
                     android:fontFamily="@font/inter_bold"
                     android:textColor="@color/app_yellow"/>
             </androidx.cardview.widget.CardView>
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"
-                android:layout_marginBottom="25dp">
-                <TextView
-                    android:id="@+id/expenseTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Time:"
-                    android:layout_margin="15dp"
-                    android:textSize="18dp"
-                    android:fontFamily="@font/inter_bold"
-                    android:textColor="@color/app_yellow"/>
-            </androidx.cardview.widget.CardView>
+
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

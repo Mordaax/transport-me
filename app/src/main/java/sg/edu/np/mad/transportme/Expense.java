@@ -6,13 +6,11 @@ import java.util.ArrayList;
 
 public class Expense {
     private LocalDate date;
-    private LocalTime time;
     private String cost;
     private String selected;
 
-    public Expense(LocalDate date, LocalTime time, String cost, String selected) {
+    public Expense(LocalDate date,  String cost, String selected) {
         this.date = date;
-        this.time = time;
         this.cost = cost;
         this.selected = selected;
     }
@@ -25,13 +23,13 @@ public class Expense {
         this.date = date;
     }
 
-    public LocalTime getTime() {
-        return time;
-    }
+    //public LocalTime getTime() {
+        //return time;
+    //}
 
-    public void setTime(LocalTime time) {
-        this.time = time;
-    }
+    //public void setTime(LocalTime time) {
+        //this.time = time;
+    //}
 
     public String getCost() {
         return cost;
@@ -53,6 +51,7 @@ public class Expense {
 
     public static ArrayList<Expense> expensePerDate(LocalDate date){
         ArrayList<Expense> expenses = new ArrayList<>();
+
         for(Expense expense : expenseArrayList)
         {
             if (expense.getDate().equals(date))

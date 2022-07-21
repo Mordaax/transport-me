@@ -1,35 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginStart="20dp"
         android:id="@+id/expenseTransport"
-        android:textSize="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="18dp"
+        android:text="expenseTransport"
         android:textColor="@color/black"
-        android:text="expenseTransport"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginStart="20dp"
-        android:id="@+id/expenseType"
-        android:textSize="20dp"
+        android:textSize="24dp"
         android:textStyle="bold"
-        android:textColor="@color/app_yellow"
-        android:text="expense"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
+        android:id="@+id/expenseType"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginStart="20dp"
-        android:id="@+id/expenseTime2"
-        android:textSize="16dp"
-        android:textColor="#808080"
-        android:text="expenseTime"
-        android:paddingBottom="5dp"/>
+        android:paddingTop="18dp"
+        android:paddingBottom="18dp"
+        android:paddingRight="30dp"
 
-</LinearLayout>
+        android:text="expense"
+        android:textColor="@color/app_yellow"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
