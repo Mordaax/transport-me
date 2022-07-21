@@ -2,6 +2,7 @@ package sg.edu.np.mad.transportme.views;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION;
+import static android.graphics.BitmapFactory.decodeResource;
 
 import static sg.edu.np.mad.transportme.BitmapResize.getResizedBitmap;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalCloseness;
@@ -37,7 +38,10 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
@@ -488,7 +492,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void busroute(Double latitude, Double longitude, BusStop currentStop, List<Marker> mList, List<LatLng> lList){
         LatLng latlongmarker = new LatLng(latitude, longitude);
-        Marker marker = map.addMarker(new MarkerOptions().position(latlongmarker).title(currentStop.getDescription()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        Bitmap icon = Bitmap.createBitmap(15,15, Bitmap.Config.ARGB_8888);
+        Drawable shape = getResources().getDrawable(R.drawable.marker_icon);
+        Canvas canvas = new Canvas(icon);
+        shape.setBounds(0,0,icon.getWidth(),icon.getHeight());
+        shape.draw(canvas);
+        Marker marker = map.addMarker(new MarkerOptions().position(latlongmarker).title(currentStop.getDescription()).icon(BitmapDescriptorFactory.fromBitmap(icon)));
         lList.add(latlongmarker);
         mList.add(marker);
     }
