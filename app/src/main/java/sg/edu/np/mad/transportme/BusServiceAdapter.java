@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -93,8 +94,8 @@ public class BusServiceAdapter
                                     }
                                     ((MainActivity) c).camerazoom(mList);
                                     line = ((MainActivity) c).polyline(lList);
-                                    //Snackbar snackbar = Snackbar.make(view.findViewById(R.id.MapAndRV), "Showing route for "+content.getServiceNumber(), Snackbar.LENGTH_INDEFINITE);
-                                    /**snackbar.setAction("cancel", new View.OnClickListener() {
+                                    Snackbar snackbar = Snackbar.make(view.getRootView(), "Showing route for "+content.getServiceNumber(), Snackbar.LENGTH_INDEFINITE);
+                                    snackbar.setAction("cancel", new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View view) {
                                                     ((MainActivity) c).removemarker(mList, line);
@@ -102,8 +103,15 @@ public class BusServiceAdapter
                                                     lList.clear();
                                                     mList.clear();
                                                 }
-                                            });**/
-                                    //snackbar.show();
+                                            });
+                                    View snackbarLayout = snackbar.getView();
+                                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                                            LinearLayout.LayoutParams.WRAP_CONTENT
+                                    );
+                                    lp.setMargins(200, 1000, 0, 0);
+                                    snackbarLayout.setLayoutParams(lp);
+                                    snackbar.show();
                                 }
                             });
                         }
