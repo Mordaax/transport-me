@@ -43,6 +43,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
@@ -82,6 +83,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,11 +110,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     static final float END_SCALE = 0.7f;
     ConstraintLayout contentView;
     public static Boolean favourite = false;
-    private static final String[] LOCATION_PERMS={
+    private static final String[] LOCATION_PERMS = {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION
     };
-    private static final int LOCATION_REQUEST=1337;
+    private static final int LOCATION_REQUEST = 1337;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("MissingPermission")
@@ -124,7 +126,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipeLayout);
-        ProgressDialog progressDialog = new ProgressDialog(MainActivity.this,R.style.MyAlertDialogStyle); //Show Loading icon when the user first loads
+        ProgressDialog progressDialog = new ProgressDialog(MainActivity.this, R.style.MyAlertDialogStyle); //Show Loading icon when the user first loads
         progressDialog.show();
         progressDialog.setContentView(R.layout.progress_dialog);
         progressDialog.getWindow().setBackgroundDrawableResource(
@@ -142,10 +144,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         menuIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(drawerLayout.isDrawerVisible(GravityCompat.START)){
+                if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
                     drawerLayout.closeDrawer(GravityCompat.START);
-                }
-                else drawerLayout.openDrawer(GravityCompat.START);
+                } else drawerLayout.openDrawer(GravityCompat.START);
             }
         });
         animateNavigationDrawer();
@@ -167,9 +168,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         reminderButton = findViewById(R.id.reminderButton);
         cancelReminderButton = findViewById(R.id.cancelReminderButton);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView); // load botttom navigation bar
-        bottomNavigationView.setOnItemSelectedListener(item ->{
+        bottomNavigationView.setOnItemSelectedListener(item -> {
 
-            switch(item.getItemId()){
+            switch (item.getItemId()) {
                 case R.id.home:
                     fragmentlayout.setVisibility(View.INVISIBLE); //Set fragment to invisible, show map and main recycler view to help with loading times
                     reminderView.setVisibility(View.GONE);
@@ -243,11 +244,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            Toast.makeText(MainActivity.this,"Check Location and Connection Settings",Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, "Check Location and Connection Settings", Toast.LENGTH_LONG).show();
 
             return;
-        }
-        else{ 
+        } else {
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) { //Comments in this section is the same as the one in the LocationManager.NETWORK_PROVIDER
                 swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -265,28 +265,29 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                                 ArrayList<BusStop> closeBusStops = new ArrayList<>();
                                 map.clear(); //Clear all existing markers on the map
-                                for (int i = 0; i < busStops.size(); i++){ //Get all bus stop given the radius
+                                for (int i = 0; i < busStops.size(); i++) { //Get all bus stop given the radius
                                     BusStop busStop = busStops.get(i);
                                     busStop.setDistanceToLocation(DistanceCalculator.distanceBetween(busStop.getLatitude(), busStop.getLongitude(), Latitude, Longitude));
 
-                                    if (busStop.getDistanceToLocation() <= globalCloseness){
+                                    if (busStop.getDistanceToLocation() <= globalCloseness) {
                                         closeBusStops.add(busStop);
                                         LatLng latlongmarker = new LatLng(busStop.getLatitude(), busStop.getLongitude());
                                         map.addMarker(new MarkerOptions().position(latlongmarker).title(busStop.getDescription()));
                                     }
                                 }
-                                if(closeBusStops.size() > 0){ // If close bus stops > 0 run API and load recycler view
+                                if (closeBusStops.size() > 0) { // If close bus stops > 0 run API and load recycler view
                                     ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);
-                                    apiBusStopService.getBusService(closeBusStops,new ApiBusStopService.VolleyResponseListener2() {
+                                    apiBusStopService.getBusService(closeBusStops, new ApiBusStopService.VolleyResponseListener2() {
                                         @Override
                                         public void onError(String message) {
-                                            Toast.makeText(MainActivity.this,"Cannot Get Bus Stops, Check Location and Connection",Toast.LENGTH_LONG).show();
+                                            Toast.makeText(MainActivity.this, "Cannot Get Bus Stops, Check Location and Connection", Toast.LENGTH_LONG).show();
                                         }
+
                                         @Override
                                         public void onResponse(ArrayList<BusStop> busStopsLoaded) {
 
                                             RecyclerView rv = findViewById(R.id.recyclerView); //Load recyclerview when they onresponse is recieved
-                                            BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,MainActivity.this);
+                                            BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded, MainActivity.this);
                                             LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);
                                             rv.setAdapter(adapter);
                                             rv.setLayoutManager(layout);
@@ -295,8 +296,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     });
                                 }
                                 swipeRefreshLayout.setRefreshing(false); //Close refreshing Icon
-                                if(closeBusStops.size() == 0){ // If there are no nearby bus stop, show toast message
-                                    Toast.makeText(MainActivity.this,"No nearby bus stops",Toast.LENGTH_LONG).show();
+                                if (closeBusStops.size() == 0) { // If there are no nearby bus stop, show toast message
+                                    Toast.makeText(MainActivity.this, "No nearby bus stops", Toast.LENGTH_LONG).show();
                                     map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16.2f));
                                     progressDialog.dismiss();
                                 }
@@ -317,28 +318,29 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
                         ArrayList<BusStop> closeBusStops = new ArrayList<>();
-                        for (int i = 0; i < busStops.size(); i++){ //Get bus stops nearby
+                        for (int i = 0; i < busStops.size(); i++) { //Get bus stops nearby
                             BusStop busStop = busStops.get(i);
                             busStop.setDistanceToLocation(DistanceCalculator.distanceBetween(busStop.getLatitude(), busStop.getLongitude(), Latitude, Longitude));
 
-                            if (busStop.getDistanceToLocation() <= globalCloseness){
+                            if (busStop.getDistanceToLocation() <= globalCloseness) {
                                 closeBusStops.add(busStop);
                                 LatLng latlongmarker = new LatLng(busStop.getLatitude(), busStop.getLongitude());
                                 map.addMarker(new MarkerOptions().position(latlongmarker).title(busStop.getDescription()));
                             }
                         }
-                        if(closeBusStops.size() > 0){ //Call API if there nearby bus stops, if there arent, send toast message
+                        if (closeBusStops.size() > 0) { //Call API if there nearby bus stops, if there arent, send toast message
                             ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);
-                            apiBusStopService.getBusService(closeBusStops,new ApiBusStopService.VolleyResponseListener2() { //call api to get bus services
+                            apiBusStopService.getBusService(closeBusStops, new ApiBusStopService.VolleyResponseListener2() { //call api to get bus services
                                 @Override
                                 public void onError(String message) {
-                                    Toast.makeText(MainActivity.this,"Cannot Get Bus Stops, Check Location and Connection",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(MainActivity.this, "Cannot Get Bus Stops, Check Location and Connection", Toast.LENGTH_LONG).show();
                                 }
+
                                 @Override
                                 public void onResponse(ArrayList<BusStop> busStopsLoaded) {
 
                                     RecyclerView rv = findViewById(R.id.recyclerView); //Load recyclerview on response from API
-                                    BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,MainActivity.this);
+                                    BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded, MainActivity.this);
                                     LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);
                                     rv.setAdapter(adapter);
                                     rv.setLayoutManager(layout);
@@ -346,20 +348,18 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 }
                             });
                         }
-                        if(closeBusStops.size() == 0){
-                            Toast.makeText(MainActivity.this,"No nearby bus stops",Toast.LENGTH_LONG).show();
+                        if (closeBusStops.size() == 0) {
+                            Toast.makeText(MainActivity.this, "No nearby bus stops", Toast.LENGTH_LONG).show();
                             map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16.2f));
                             progressDialog.dismiss();
                         }
-
 
 
                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16.2f)); //Move camera to here the user is
 
                     }
                 });
-            }
-            else if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){ //This section is similar to the LocationManager.GPS_PROVIDER section above
+            } else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) { //This section is similar to the LocationManager.GPS_PROVIDER section above
                 //For users to refresh the recyclerview, runs the location reqeust updates
                 swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -377,28 +377,29 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                                 ArrayList<BusStop> closeBusStops = new ArrayList<>();
                                 map.clear();
-                                for (int i = 0; i < busStops.size(); i++){
+                                for (int i = 0; i < busStops.size(); i++) {
                                     BusStop busStop = busStops.get(i);
                                     busStop.setDistanceToLocation(DistanceCalculator.distanceBetween(busStop.getLatitude(), busStop.getLongitude(), Latitude, Longitude));
 
-                                    if (busStop.getDistanceToLocation() <= globalCloseness){
+                                    if (busStop.getDistanceToLocation() <= globalCloseness) {
                                         closeBusStops.add(busStop);
                                         LatLng latlongmarker = new LatLng(busStop.getLatitude(), busStop.getLongitude());
                                         map.addMarker(new MarkerOptions().position(latlongmarker).title(busStop.getDescription()));
                                     }
                                 }
-                                if(closeBusStops.size() > 0){ // If close bus stops > 0 run API and load recycler view
+                                if (closeBusStops.size() > 0) { // If close bus stops > 0 run API and load recycler view
                                     ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);
-                                    apiBusStopService.getBusService(closeBusStops,new ApiBusStopService.VolleyResponseListener2() {
+                                    apiBusStopService.getBusService(closeBusStops, new ApiBusStopService.VolleyResponseListener2() {
                                         @Override
                                         public void onError(String message) {
-                                            Toast.makeText(MainActivity.this,"Cannot Get Bus Stops, Check Location and Connection",Toast.LENGTH_LONG).show();
+                                            Toast.makeText(MainActivity.this, "Cannot Get Bus Stops, Check Location and Connection", Toast.LENGTH_LONG).show();
                                         }
+
                                         @Override
                                         public void onResponse(ArrayList<BusStop> busStopsLoaded) {
 
                                             RecyclerView rv = findViewById(R.id.recyclerView);
-                                            BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,MainActivity.this);
+                                            BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded, MainActivity.this);
                                             LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);
                                             rv.setAdapter(adapter);
                                             rv.setLayoutManager(layout);
@@ -407,8 +408,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     });
                                 }
                                 swipeRefreshLayout.setRefreshing(false); //Close refreshing Icon
-                                if(closeBusStops.size() == 0){ // If there are no nearby bus stop, show toast message
-                                    Toast.makeText(MainActivity.this,"No nearby bus stops",Toast.LENGTH_LONG).show();
+                                if (closeBusStops.size() == 0) { // If there are no nearby bus stop, show toast message
+                                    Toast.makeText(MainActivity.this, "No nearby bus stops", Toast.LENGTH_LONG).show();
                                     map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16.2f));
                                     progressDialog.dismiss();
                                 }
@@ -428,30 +429,30 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         Geocoder geocoder = new Geocoder(getApplicationContext());
 
 
-
                         ArrayList<BusStop> closeBusStops = new ArrayList<>();
-                        for (int i = 0; i < busStops.size(); i++){ //Get nearby bus stops
+                        for (int i = 0; i < busStops.size(); i++) { //Get nearby bus stops
                             BusStop busStop = busStops.get(i);
                             busStop.setDistanceToLocation(DistanceCalculator.distanceBetween(busStop.getLatitude(), busStop.getLongitude(), Latitude, Longitude));
 
-                            if (busStop.getDistanceToLocation() <= globalCloseness){
+                            if (busStop.getDistanceToLocation() <= globalCloseness) {
                                 closeBusStops.add(busStop);
                                 LatLng latlongmarker = new LatLng(busStop.getLatitude(), busStop.getLongitude());
                                 map.addMarker(new MarkerOptions().position(latlongmarker).title(busStop.getDescription()));
                             }
                         }
-                        if(closeBusStops.size() > 0){
+                        if (closeBusStops.size() > 0) {
                             ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);
-                            apiBusStopService.getBusService(closeBusStops,new ApiBusStopService.VolleyResponseListener2() { //Call API for nearby bus stops
+                            apiBusStopService.getBusService(closeBusStops, new ApiBusStopService.VolleyResponseListener2() { //Call API for nearby bus stops
                                 @Override
                                 public void onError(String message) {
-                                    Toast.makeText(MainActivity.this,"Cannot Get Bus Stops, Check Location and Connection",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(MainActivity.this, "Cannot Get Bus Stops, Check Location and Connection", Toast.LENGTH_LONG).show();
                                 }
+
                                 @Override
                                 public void onResponse(ArrayList<BusStop> busStopsLoaded) {
 
                                     RecyclerView rv = findViewById(R.id.recyclerView);
-                                    BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,MainActivity.this);
+                                    BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded, MainActivity.this);
                                     LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);
                                     rv.setAdapter(adapter);
                                     rv.setLayoutManager(layout);
@@ -460,8 +461,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             });
 
                         }
-                        if(closeBusStops.size() == 0){
-                            Toast.makeText(MainActivity.this,"No nearby bus stops",Toast.LENGTH_LONG).show();
+                        if (closeBusStops.size() == 0) {
+                            Toast.makeText(MainActivity.this, "No nearby bus stops", Toast.LENGTH_LONG).show();
                             map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16.2f));
                             progressDialog.dismiss();
                         }
@@ -472,28 +473,25 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 });
             }
         }
-        grbsChange.observe(this,new Observer<String>() {
+        grbsChange.observe(this, new Observer<String>() {
             @Override
             public void onChanged(String changedValue) {
-                Log.e("change",""+globalReminderBusService);
+                Log.e("change", "" + globalReminderBusService);
                 showReminderButton(reminderButton);
             }
         });
     }
-    public void showReminderButton(Button reminderButton)
-    {
-        if(!(globalReminder == null))
-        {
-            reminderButton.setText("Alight at "+globalReminder.getDescription());
+
+    public void showReminderButton(Button reminderButton) {
+        if (!(globalReminder == null)) {
+            reminderButton.setText("Alight at " + globalReminder.getDescription());
             reminderButton.setVisibility(View.VISIBLE);
-        }
-        else
-        {
+        } else {
             reminderButton.setVisibility(View.INVISIBLE);
         }
     }
 
-    public void moveMapsCamera(Double latitude, Double longitude){ //Function to enable move camera from other classes
+    public void moveMapsCamera(Double latitude, Double longitude) { //Function to enable move camera from other classes
         LatLng latlongmove = new LatLng(latitude, longitude);
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(latlongmove)
@@ -504,12 +502,25 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public void busroute(Double latitude, Double longitude, BusStop currentStop, List<Marker> mList, List<LatLng> lList){
+    public void busrouteview(ArrayList<BusStop> busStopList) {
+        if (busStopList.size() > 0) {
+            RecyclerView orv = findViewById(R.id.recyclerView);
+            RecyclerView rv = findViewById(R.id.busrouterecyclerView);
+            BusStopAdapter adapter = new BusStopAdapter(busStopList, MainActivity.this);
+            LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);
+            rv.setAdapter(adapter);
+            rv.setLayoutManager(layout);
+            orv.setVisibility(View.GONE);
+            rv.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void busroute(Double latitude, Double longitude, BusStop currentStop, List<Marker> mList, List<LatLng> lList) {
         LatLng latlongmarker = new LatLng(latitude, longitude);
-        Bitmap icon = Bitmap.createBitmap(15,15, Bitmap.Config.ARGB_8888);
+        Bitmap icon = Bitmap.createBitmap(15, 15, Bitmap.Config.ARGB_8888);
         Drawable shape = getResources().getDrawable(R.drawable.marker_icon);
         Canvas canvas = new Canvas(icon);
-        shape.setBounds(0,0,icon.getWidth(),icon.getHeight());
+        shape.setBounds(0, 0, icon.getWidth(), icon.getHeight());
         shape.draw(canvas);
         Marker marker = map.addMarker(new MarkerOptions().position(latlongmarker).title(currentStop.getDescription()).icon(BitmapDescriptorFactory.fromBitmap(icon)));
         lList.add(latlongmarker);
@@ -539,6 +550,33 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             m.remove();
         }
+        RecyclerView orv = findViewById(R.id.recyclerView);
+        RecyclerView rv = findViewById(R.id.busrouterecyclerView);
+        rv.setVisibility(View.GONE);
+        orv.setVisibility(View.VISIBLE);
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        String provider = locationManager.getBestProvider(criteria, true);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        Location location = locationManager.getLastKnownLocation(provider);
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+        LatLng latLng = new LatLng(latitude, longitude);
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(latLng)
+                .zoom(17f)
+                .build();
+        CameraUpdate cu = CameraUpdateFactory.newCameraPosition(cameraPosition);
+        map.animateCamera(cu);
     }
 
     private void replaceFragment(Fragment fragment){ //Replace fragment for nav bar

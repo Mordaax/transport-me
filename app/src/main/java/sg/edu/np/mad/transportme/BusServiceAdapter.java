@@ -89,6 +89,7 @@ public class BusServiceAdapter
                                 }
                                 @Override
                                 public void onResponse(ArrayList<BusStop> busStopRouteLoaded) {
+                                    ((MainActivity) c).busrouteview(busStopRouteLoaded);
                                     for(BusStop busStop : busStopRouteLoaded) {
                                         ((MainActivity) c).busroute(busStop.getLatitude(), busStop.getLongitude(), busStop, mList, lList);
                                     }
