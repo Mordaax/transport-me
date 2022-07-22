@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 
 public class StepAdapter extends RecyclerView.Adapter<StepViewHolder> {
@@ -65,7 +67,9 @@ public class StepAdapter extends RecyclerView.Adapter<StepViewHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if (content.stepcoordinates.size() > 0) {
+                    ((Route) c).moveMapCamera(content.stepcoordinates);
+                }
             }
         });
         if (position == 0 || position+1 == data.size()){

@@ -31,6 +31,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -119,6 +120,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
         SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipeLayout);
         ProgressDialog progressDialog = new ProgressDialog(MainActivity.this,R.style.MyAlertDialogStyle); //Show Loading icon when the user first loads
         progressDialog.show();
@@ -203,10 +207,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 case R.id.nav_carpark:
                     Intent intent = new Intent(MainActivity.this, CarparkActivity.class);
                     startActivity(intent);
-
+                    break;
             }
             return true;
         });
+
+        Intent recievingEnd = getIntent();
+        String gotoprofile = recievingEnd.getStringExtra("Profile");
+        if (gotoprofile != null){
+            mapandrv.setVisibility(View.INVISIBLE);
+            fragmentlayout.setVisibility(View.VISIBLE);
+            replaceFragment(new ProfileFragment());
+            navigationView.setCheckedItem(R.id.nav_profile);
+        }
+
         cancelReminderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -595,9 +609,32 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 replaceFragment(new ProfileFragment());
                 break;
             case R.id.nav_route:
-                Intent intent = new Intent(MainActivity.this, Route.class);
-                intent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
+                Intent routeintent = new Intent(MainActivity.this, Route.class);
+                routeintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(routeintent);
+                break;
+            case R.id.nav_rate:
+                Uri uri = Uri.parse("market://details?id=sg.edu.np.mad.transportme");
+                Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+                // To count with Play market backstack, After pressing back button,
+                // to taken back to our application, we need to add following flags to intent.
+                goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                        Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+                        Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                try {
+                    startActivity(goToMarket);
+                } catch (ActivityNotFoundException e) {
+                startActivity(new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://play.google.com/store/apps/details?id=sg.edu.np.mad.transportme")));
+                break;
+            }
+            case R.id.nav_share:
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.setType("text/plain");
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "Download the Best Bus App In Singapore! \n\n https://play.google.com/store/apps/details?id=sg.edu.np.mad.transportme");
+                startActivity(Intent.createChooser(sendIntent,"Share With"));
+                break;
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
@@ -622,8 +659,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         return super.onOptionsItemSelected(item);
     }*/
     private void selectImage() {
-        final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };
-
+        final CharSequence[] options = {"Choose from Gallery","Cancel" };
+        /*final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };*/
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Choose Image to Scan");
         builder.setIcon(R.drawable.appsplashicon);
