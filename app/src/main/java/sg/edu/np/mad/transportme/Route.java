@@ -5,6 +5,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION;
 import static sg.edu.np.mad.transportme.views.LoadingScreen.globalBusStops;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -29,6 +30,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -426,6 +428,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()){
@@ -458,6 +461,11 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                 routeintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(routeintent);
                 break;
+            case R.id.nav_fares:
+                Intent fareintent = new Intent(Route.this, WeekActivity.class);
+                fareintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(fareintent);
+                break;
             case R.id.nav_rate:
                 Uri uri = Uri.parse("market://details?id=sg.edu.np.mad.transportme");
                 Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
@@ -480,6 +488,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "Download the Best Bus App In Singapore! \n\n https://play.google.com/store/apps/details?id=sg.edu.np.mad.transportme");
                 startActivity(Intent.createChooser(sendIntent,"Share With"));
                 break;
+
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;

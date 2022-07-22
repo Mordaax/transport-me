@@ -93,6 +93,7 @@ import sg.edu.np.mad.transportme.BusStopAdapter;
 import sg.edu.np.mad.transportme.DistanceCalculator;
 import sg.edu.np.mad.transportme.R;
 import sg.edu.np.mad.transportme.Route;
+import sg.edu.np.mad.transportme.WeekActivity;
 import sg.edu.np.mad.transportme.api.ApiBusStopService;
 import sg.edu.np.mad.transportme.user.ProfileFragment;
 
@@ -107,6 +108,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     Uri image_uri;
     LocationManager locationManager;
     DrawerLayout drawerLayout;
+    FloatingActionButton cameraSearch;
+    SwipeRefreshLayout swipeRefreshLayout;
+    BottomNavigationView bottomNavigationView;
     static final float END_SCALE = 0.7f;
     ConstraintLayout contentView;
     public static Boolean favourite = false;
@@ -125,7 +129,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
 
-        SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipeLayout);
+        swipeRefreshLayout = findViewById(R.id.swipeLayout);
         ProgressDialog progressDialog = new ProgressDialog(MainActivity.this, R.style.MyAlertDialogStyle); //Show Loading icon when the user first loads
         progressDialog.show();
         progressDialog.setContentView(R.layout.progress_dialog);
@@ -151,7 +155,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         });
         animateNavigationDrawer();
 
-        FloatingActionButton cameraSearch = findViewById(R.id.fab);
+        cameraSearch = findViewById(R.id.fab);
         cameraSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -167,7 +171,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         reminderView = findViewById(R.id.reminderView);
         reminderButton = findViewById(R.id.reminderButton);
         cancelReminderButton = findViewById(R.id.cancelReminderButton);
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView); // load botttom navigation bar
+        bottomNavigationView = findViewById(R.id.bottomNavigationView); // load botttom navigation bar
         bottomNavigationView.setOnItemSelectedListener(item -> {
 
             switch (item.getItemId()) {
@@ -247,7 +251,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             Toast.makeText(MainActivity.this, "Check Location and Connection Settings", Toast.LENGTH_LONG).show();
 
             return;
-        } else {
+        }
+        else {
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) { //Comments in this section is the same as the one in the LocationManager.NETWORK_PROVIDER
                 swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -503,9 +508,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void busrouteview(ArrayList<BusStop> busStopList) {
+        RecyclerView orv = findViewById(R.id.recyclerView);
+        RecyclerView rv = findViewById(R.id.busrouterecyclerView);
         if (busStopList.size() > 0) {
-            RecyclerView orv = findViewById(R.id.recyclerView);
-            RecyclerView rv = findViewById(R.id.busrouterecyclerView);
             BusStopAdapter adapter = new BusStopAdapter(busStopList, MainActivity.this);
             LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);
             rv.setAdapter(adapter);
@@ -513,6 +518,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             orv.setVisibility(View.GONE);
             rv.setVisibility(View.VISIBLE);
         }
+        fragmentlayout.setVisibility(View.INVISIBLE); //Set fragment to invisible, show map and main recycler view to help with loading times
+        reminderView.setVisibility(View.GONE);
+        cameraSearch.setVisibility(View.VISIBLE);
+        mapandrv.setVisibility(View.VISIBLE);
+        orv.setVisibility(View.GONE);
+        rv.setVisibility(View.VISIBLE);
+        swipeRefreshLayout.setVisibility(View.VISIBLE);
+        favourite = false;
+        bottomNavigationView.setSelectedItemId(R.id.nav_home);
     }
 
     public void busroute(Double latitude, Double longitude, BusStop currentStop, List<Marker> mList, List<LatLng> lList) {
@@ -628,6 +642,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()){
@@ -650,6 +665,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 Intent routeintent = new Intent(MainActivity.this, Route.class);
                 routeintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(routeintent);
+                break;
+            case R.id.nav_fares:
+                Intent fareintent = new Intent(MainActivity.this, WeekActivity.class);
+                fareintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(fareintent);
                 break;
             case R.id.nav_rate:
                 Uri uri = Uri.parse("market://details?id=sg.edu.np.mad.transportme");
