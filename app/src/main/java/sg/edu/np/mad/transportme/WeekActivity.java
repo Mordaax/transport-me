@@ -34,7 +34,7 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
     private RecyclerView calendarRV;
     private ListView weekListView;
     private TextView weekText, ttl;
-    private Button weekBefore, weekAfter, log;
+    private Button weekBefore, weekAfter, log, insights;
     public static Boolean arraySet = false;
 
     FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/");
@@ -49,8 +49,10 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
         weekBefore = findViewById(R.id.weekBefore);
         weekAfter = findViewById(R.id.weekAfter);
         log = findViewById(R.id.log);
+        insights = findViewById(R.id.insights);
         ttl = findViewById(R.id.total);
-        Intent intent = new Intent(this, AddExpenseActivity.class);
+        Intent toAddExpense = new Intent(this, AddExpenseActivity.class);
+        Intent toInsights = new Intent(this, InsightsActivity.class);
         WeekUtils.dateSelected = LocalDate.now();
         setExpenseArray();
         setWeek();
@@ -76,7 +78,15 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
             @Override
             public void onClick(View view) {
 
-                startActivity(intent);
+                startActivity(toAddExpense);
+            }
+        });
+
+        insights.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                startActivity(toInsights);
             }
         });
     }
@@ -117,22 +127,22 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
     public void onItemClick(int position, LocalDate day) {
         WeekUtils.dateSelected = day;
         setWeek();
-        setEventAdapter();
+        setExpenseAdapter();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        setEventAdapter();
+        setExpenseAdapter();
     }
 
-    private void setEventAdapter() {
+    private void setExpenseAdapter() {
         ArrayList<Expense> daysExpense = Expense.expensePerDate(WeekUtils.dateSelected);
         ExpenseAdapter expenseAdapter = new ExpenseAdapter(getApplicationContext(), daysExpense);
         weekListView.setAdapter(expenseAdapter);
-        int totalcost = 0;
+        double totalcost = 0;
         for (Expense expense : daysExpense){
-            int cost = Integer.parseInt(expense.getCost());
+            double cost = Double.parseDouble(expense.getCost());
             totalcost += cost;
         }
         ttl.setText("Total: $"+totalcost);
@@ -161,7 +171,7 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
                 SharedPreferences prefs =  getSharedPreferences("ExpenseData", MODE_PRIVATE);
                 arraySet = prefs.getString("arraySet", "").equals("");
                 Log.w("s", arraySet.toString());
-                setEventAdapter();
+                setExpenseAdapter();
             }
 
 
