@@ -33,13 +33,13 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:completionThreshold="1"
-            android:hint="Building, Road Name, Bus Stop Code"
-            android:text=""
-            tools:ignore="TouchTargetSizeCheck"
             android:drawableRight="@drawable/ic_baseline_search_24"
+            android:hint="BusService, Building, Road Name, Bus Stop Code"
             android:imeOptions="actionSearch"
             android:padding="20dp"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:text=""
+            tools:ignore="TouchTargetSizeCheck" />
 
         <EditText
             android:id="@+id/editTextSearch"
