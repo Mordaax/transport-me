@@ -86,6 +86,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
     NavigationView navigationView;
     static final float END_SCALE = 0.7f;
     private GoogleMap mMap;
+    String currentLocation = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,16 +143,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
         });
         TextView placeholder = findViewById(R.id.textviewplaceholder);
         Button routeButton = findViewById(R.id.buttonRoute);
-        routeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mMap.clear();
-                String from = String.valueOf(atcfrom.getText());
-                String to = String.valueOf(actto.getText());
-                direction(from, to);
-                placeholder.setVisibility(View.GONE);
-            }
-        });
+
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -166,17 +158,39 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
 
             return;
         } else {
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 5, new LocationListener() { //Every 60 seconds or 10m change, run code
+                    @Override
+                    public void onLocationChanged(@NonNull Location location) {
+                        Double Latitude = location.getLatitude(); //Get latitude and logitude
+                        Double Longitude = location.getLongitude();
+                        currentLocation = Latitude.toString()+","+Longitude.toString();
+                        routeButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                mMap.clear();
+                                String from = String.valueOf(atcfrom.getText());
+                                String to = String.valueOf(actto.getText());
+                                direction(from, to);
+                                placeholder.setVisibility(View.GONE);
+                            }
+                        });
+                        LatLng latLng = new LatLng(Latitude, Longitude);
+                    }
+                });
+            }
+            else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 5, new LocationListener() { //Every 60 seconds or 10m change, run code
                     @Override
                     public void onLocationChanged(@NonNull Location location) {
                         Double Latitude = location.getLatitude(); //Get latitude and logitude
                         Double Longitude = location.getLongitude();
-
+                        currentLocation = Latitude.toString()+","+Longitude.toString();
                         LatLng latLng = new LatLng(Latitude, Longitude);
                     }
                 });
             }
+
         }
     }
     @SuppressLint("MissingPermission")
@@ -191,7 +205,14 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
     private void direction(String From, String Destination){
         RequestQueue requestQueue= Volley.newRequestQueue(this);
         ArrayList<RouteStep> routeSteps = new ArrayList<>();
-
+        if (From.equals("Current Location")){
+            if (!currentLocation.isEmpty()){
+                From = currentLocation;
+            }
+            else{
+                Toast.makeText(Route.this, "Cannot Get Current location", Toast.LENGTH_SHORT).show();
+            }
+        }
         /*String url = "https://mad-assignment-backend.herokuapp.com/routetest";*/
         String url = Uri.parse("https://maps.googleapis.com/maps/api/directions/json")
                 .buildUpon()
