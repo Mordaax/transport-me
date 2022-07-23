@@ -222,6 +222,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             fragmentlayout.setVisibility(View.VISIBLE);
             replaceFragment(new ProfileFragment());
             navigationView.setCheckedItem(R.id.nav_profile);
+            progressDialog.dismiss();
         }
 
         cancelReminderButton.setOnClickListener(new View.OnClickListener() {
@@ -708,9 +709,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private void selectImage() {
         final CharSequence[] options = {"Choose from Gallery","Cancel" };
         /*final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };*/
+        ImageView image = new ImageView(this);
+        image.setImageResource(R.drawable.bus_stop_next_to_pond);
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Choose Image to Scan");
         builder.setIcon(R.drawable.appsplashicon);
+        builder.setView(image);
         builder.setItems(options, new DialogInterface.OnClickListener() {
 
             @Override
