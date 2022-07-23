@@ -21,6 +21,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -89,7 +90,24 @@ public class BusServiceAdapter
                                 }
                                 @Override
                                 public void onResponse(ArrayList<BusStop> busStopRouteLoaded) {
-                                    ((MainActivity) c).busrouteview(busStopRouteLoaded);
+                                    apiBusStopService.getBusService(busStopRouteLoaded, new ApiBusStopService.VolleyResponseListener2() {
+                                        @Override
+                                        public void onError(String message) {
+                                            Toast.makeText(c, "Cannot Get Bus Stops, Check Location and Connection", Toast.LENGTH_LONG).show();
+                                        }
+
+                                        @Override
+                                        public void onResponse(ArrayList<BusStop> busStopsLoaded) {
+                                            /*RecyclerView rv = view.findViewById(R.id.searchrecyclerView);
+                                            BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,c);
+                                            LinearLayoutManager layout = new LinearLayoutManager(c);
+                                            rv.setAdapter(adapter);
+                                            rv.setLayoutManager(layout);*/
+                                            ((MainActivity) c).busrouteview(busStopsLoaded);
+                                            /*progressDialog.dismiss();*/
+                                        }
+                                    });
+
                                     for(BusStop busStop : busStopRouteLoaded) {
                                         ((MainActivity) c).busroute(busStop.getLatitude(), busStop.getLongitude(), busStop, mList, lList);
                                     }

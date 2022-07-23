@@ -127,8 +127,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
         swipeRefreshLayout = findViewById(R.id.swipeLayout);
         ProgressDialog progressDialog = new ProgressDialog(MainActivity.this, R.style.MyAlertDialogStyle); //Show Loading icon when the user first loads
         progressDialog.show();
@@ -508,14 +506,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void busrouteview(ArrayList<BusStop> busStopList) {
-        RecyclerView orv = findViewById(R.id.recyclerView);
+        SwipeRefreshLayout orv = findViewById(R.id.swipeLayout);
         RecyclerView rv = findViewById(R.id.busrouterecyclerView);
         if (busStopList.size() > 0) {
             BusStopAdapter adapter = new BusStopAdapter(busStopList, MainActivity.this);
             LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);
             rv.setAdapter(adapter);
             rv.setLayoutManager(layout);
-            orv.setVisibility(View.GONE);
+            orv .setVisibility(View.GONE);
             rv.setVisibility(View.VISIBLE);
         }
         fragmentlayout.setVisibility(View.INVISIBLE); //Set fragment to invisible, show map and main recycler view to help with loading times
@@ -524,9 +522,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mapandrv.setVisibility(View.VISIBLE);
         orv.setVisibility(View.GONE);
         rv.setVisibility(View.VISIBLE);
-        swipeRefreshLayout.setVisibility(View.VISIBLE);
+        /*swipeRefreshLayout.setVisibility(View.VISIBLE);*/
         favourite = false;
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
+
     }
 
     public void busroute(Double latitude, Double longitude, BusStop currentStop, List<Marker> mList, List<LatLng> lList) {
@@ -564,7 +563,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             m.remove();
         }
-        RecyclerView orv = findViewById(R.id.recyclerView);
+        SwipeRefreshLayout orv = findViewById(R.id.swipeLayout);
         RecyclerView rv = findViewById(R.id.busrouterecyclerView);
         rv.setVisibility(View.GONE);
         orv.setVisibility(View.VISIBLE);
@@ -705,17 +704,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             super.onBackPressed();
         }
     }
-    /*@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // The action bar home/up action should open or close the drawer.
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                drawerLayout.openDrawer(GravityCompat.START);
-                return true;
-        }
 
-        return super.onOptionsItemSelected(item);
-    }*/
     private void selectImage() {
         final CharSequence[] options = {"Choose from Gallery","Cancel" };
         /*final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };*/
@@ -877,6 +866,4 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
-
-
 }
