@@ -51,6 +51,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseArray;
@@ -484,6 +485,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 showReminderButton(reminderButton);
             }
         });
+        new Handler().postDelayed(new Runnable() {      //Gives app time to load global variables from Login Page before setting value
+            @Override
+            public void run() {
+                grbsChange.setValue(globalReminderBusService);
+            }
+        }, 6500);
     }
 
     public void showReminderButton(Button reminderButton) {
