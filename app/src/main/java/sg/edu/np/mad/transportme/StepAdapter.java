@@ -106,10 +106,7 @@ public class StepAdapter extends RecyclerView.Adapter<StepViewHolder> {
                     ((Route) c).moveMapCamera(content.stepcoordinates);
                 }
                 if (content.TravelMode.equals("Bus")){
-                    Log.d("Hello","Kena clucked");
                     String BusNumber = content.LineName;
-                    Log.d("Hello", BusNumber);
-                    Log.d("Hello", globallol.toString());
                     for (int i=0;i<globallol.size();i++){
                         BusStop currentstop = globallol.get(i);
 

@@ -93,6 +93,8 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
     String currentLocation = "";
     Spinner traveloption;
     String travelmode = "transit";
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,14 +108,13 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
         DropdownMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (dropdown.getVisibility() == View.VISIBLE){
+                if (dropdown.getVisibility() == View.VISIBLE) {
 
                     dropdown.setVisibility(View.GONE);
-                    TransitionManager.beginDelayedTransition(contentView,new AutoTransition());
-                }
-                else{
+                    TransitionManager.beginDelayedTransition(contentView, new AutoTransition());
+                } else {
                     dropdown.setVisibility(View.VISIBLE);
-                    TransitionManager.beginDelayedTransition(contentView,new AutoTransition());
+                    TransitionManager.beginDelayedTransition(contentView, new AutoTransition());
                 }
             }
         });
@@ -135,10 +136,9 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
         menuIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(drawerLayout.isDrawerVisible(GravityCompat.START)){
+                if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
                     drawerLayout.closeDrawer(GravityCompat.START);
-                }
-                else drawerLayout.openDrawer(GravityCompat.START);
+                } else drawerLayout.openDrawer(GravityCompat.START);
             }
         });
         animateNavigationDrawer();
@@ -184,6 +184,17 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+            final String[] LOCATION_PERMS = {
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+            };
+
+            final int LOCATION_REQUEST = 1337;
+
+            requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
             Toast.makeText(Route.this, "Check Location and Connection Settings", Toast.LENGTH_LONG).show();
 
             return;
@@ -195,14 +206,18 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                         Log.d("location", "location changed");
                         Double Latitude = location.getLatitude(); //Get latitude and logitude
                         Double Longitude = location.getLongitude();
-                        currentLocation = Latitude.toString()+","+Longitude.toString();
+                        currentLocation = Latitude.toString() + "," + Longitude.toString();
                         routeButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 mMap.clear();
                                 String from = String.valueOf(atcfrom.getText());
                                 String to = String.valueOf(actto.getText());
-                                direction(from, to);
+                                if (to.equals("")) {
+                                    Toast.makeText(Route.this, "Please Add a location to route to", Toast.LENGTH_LONG).show();
+                                } else {
+                                    direction(from, to);
+                                }
                                 placeholder.setVisibility(View.GONE);
                             }
                         });
@@ -219,7 +234,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
 
                         Double Latitude = location.getLatitude(); //Get latitude and logitude
                         Double Longitude = location.getLongitude();
-                        currentLocation = Latitude.toString()+","+Longitude.toString();
+                        currentLocation = Latitude.toString() + "," + Longitude.toString();
                         routeButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -237,15 +252,28 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
             }
 
 
-
         }
     }
-    @SuppressLint("MissingPermission")
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
-    public void onMapReady(GoogleMap googleMap){
+    public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        LatLng singapore = new LatLng(1.3521,103.8198);
+        LatLng singapore = new LatLng(1.3521, 103.8198);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(singapore, 10f));
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            final String[] LOCATION_PERMS = {
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            };
+
+            final int LOCATION_REQUEST = 1337;
+
+            requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
+            return;
+        }
         mMap.setMyLocationEnabled(true);
     }
 
@@ -275,15 +303,18 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                     String status = response.getString("status");
                     if (status.equals("OK")) {
                         JSONArray routes = response.getJSONArray("routes");
+
                         ArrayList<LatLng> points;
                         LatLngBounds.Builder bounds = LatLngBounds.builder();
-                        Log.d("kek", routes.toString());
+                        if(routes.length()<1){
+                            Toast.makeText(Route.this, "Cannot find route, be more specific", Toast.LENGTH_LONG).show();
+                        }
+
                         for (int i = 0; i < routes.length(); i++) {
 
                             PolylineOptions polylineOptions = null;
                             JSONArray legs = routes.getJSONObject(i).getJSONArray("legs");
 
-                            Log.d("kek", legs.toString());
                             for (int j = 0; j < legs.length(); j++) {
                                 String start_address = legs.getJSONObject(j).getString("start_address");
                                 String end_address = legs.getJSONObject(j).getString("end_address");
@@ -411,12 +442,14 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsbuilt, 30));
                     }
                 } catch(JSONException e){
+                    Toast.makeText(Route.this, "Check Location and Connection Settings", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
             }
         }, new Response.ErrorListener(){
             @Override
             public void onErrorResponse(VolleyError error){
+                Toast.makeText(Route.this, "Check Location and Connection Settings", Toast.LENGTH_LONG).show();
             }
         });
         RetryPolicy retryPolicy = new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
