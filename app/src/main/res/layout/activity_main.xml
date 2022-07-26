@@ -18,7 +18,8 @@
         android:paddingTop="30dp"
         android:visibility="visible"
         app:headerLayout="@layout/header"
-        app:menu="@menu/side_menu">
+        app:menu="@menu/side_menu"
+        tools:visibility="gone">
 
     </com.google.android.material.navigation.NavigationView>
 
@@ -87,13 +88,48 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:id="@+id/noReminderLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:visibility="visible"
+                    tools:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:src="@drawable/red_bell"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="No Reminder Set"
+                        android:textAlignment="center"
+                        android:textSize="34sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+                </LinearLayout>
 
                 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                     android:id="@+id/swipeLayoutRemind"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:visibility="gone"
+                    tools:visibility="visible">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerViewRemind"
@@ -113,9 +149,12 @@
                 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/remindInfoLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:visibility="gone"
+                    tools:visibility="visible">
 
                     <TextView
                         android:id="@+id/textView4"
@@ -131,10 +170,10 @@
 
                     <Button
                         android:id="@+id/cancelReminderButton"
-                        android:backgroundTint="@color/app_yellow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
+                        android:backgroundTint="@color/app_yellow"
                         android:text="Cancel"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -165,7 +204,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:visibility="visible"
-                tools:visibility="visible">
+                tools:visibility="gone">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"

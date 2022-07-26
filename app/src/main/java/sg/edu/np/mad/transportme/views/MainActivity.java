@@ -6,6 +6,7 @@ import static android.graphics.BitmapFactory.decodeResource;
 
 import static sg.edu.np.mad.transportme.BitmapResize.getResizedBitmap;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalCloseness;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalName;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalReminder;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalReminderBusService;
 import static sg.edu.np.mad.transportme.user.LoginPage.grbsChange;
@@ -83,6 +84,8 @@ import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -105,6 +108,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     LinearLayout reminderView;      //CHANGE TO SCROLLVIEW LATER
     Button reminderButton;
     Button cancelReminderButton;
+    LinearLayout noReminderLayout;
+    SwipeRefreshLayout swipeLayoutRemind;
+    ConstraintLayout remindInfoLayout;
     GoogleMap map;
     Uri image_uri;
     LocationManager locationManager;
@@ -164,12 +170,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-
+        FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/");     //Initialise database instance
+        DatabaseReference reminderReference = db.getReference()
+                .child("User")
+                //.child(firebaseUser.getUid())
+                .child(globalName)
+                .child("Reminder");
         mapandrv = findViewById(R.id.MapAndRV);
         fragmentlayout = findViewById(R.id.frame_layout);
         reminderView = findViewById(R.id.reminderView);
         reminderButton = findViewById(R.id.reminderButton);
         cancelReminderButton = findViewById(R.id.cancelReminderButton);
+        noReminderLayout = findViewById(R.id.noReminderLayout);
+        swipeLayoutRemind = findViewById(R.id.swipeLayoutRemind);
+        remindInfoLayout = findViewById(R.id.remindInfoLayout);
         bottomNavigationView = findViewById(R.id.bottomNavigationView); // load botttom navigation bar
         bottomNavigationView.setOnItemSelectedListener(item -> {
 
@@ -207,6 +221,18 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     fragmentlayout.setVisibility(View.INVISIBLE);
                     cameraSearch.setVisibility(View.INVISIBLE);
                     swipeRefreshLayout.setVisibility(View.GONE);
+                    if(globalReminder == null)
+                    {
+                        noReminderLayout.setVisibility(View.VISIBLE);
+                        swipeLayoutRemind.setVisibility(View.GONE);
+                        remindInfoLayout.setVisibility(View.GONE);
+                    }
+                    else
+                    {
+                        noReminderLayout.setVisibility(View.GONE);
+                        swipeLayoutRemind.setVisibility(View.VISIBLE);
+                        remindInfoLayout.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case R.id.nav_carpark:
                     Intent intent = new Intent(MainActivity.this, CarparkActivity.class);
@@ -491,6 +517,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 grbsChange.setValue(globalReminderBusService);
             }
         }, 6500);
+        cancelReminderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                swipeLayoutRemind.setVisibility(View.GONE);
+                remindInfoLayout.setVisibility(View.GONE);
+                noReminderLayout.setVisibility(View.VISIBLE);
+                reminderReference.setValue(null);
+            }
+        });
     }
 
     public void showReminderButton(Button reminderButton) {
