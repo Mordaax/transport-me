@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -74,6 +76,7 @@ public class BusServiceAdapter
                 builder.setTitle("Show bus routes for " + content.getServiceNumber() + "?");
                 builder.setIcon(R.drawable.appsplashicon);
                 builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.M)
                     @Override
                     public void onClick(DialogInterface dialogInterface, int item) {
 
@@ -115,6 +118,7 @@ public class BusServiceAdapter
                                     line = ((MainActivity) c).polyline(lList);
                                     Snackbar snackbar = Snackbar.make(view.getRootView(), "Showing route for "+content.getServiceNumber(), Snackbar.LENGTH_INDEFINITE);
                                     snackbar.setAction("cancel", new View.OnClickListener() {
+                                                @RequiresApi(api = Build.VERSION_CODES.M)
                                                 @Override
                                                 public void onClick(View view) {
                                                     ((MainActivity) c).removemarker(mList, line);
