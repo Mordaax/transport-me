@@ -53,6 +53,7 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
     static final float END_SCALE = 0.7f;
     DrawerLayout drawerLayout;
     LinearLayout contentView;
+    NavigationView navigationView;
     FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/");
 
     @Override
@@ -63,7 +64,7 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
         ImageView menuIcon = findViewById(R.id.menu_icon);
         contentView = findViewById(R.id.weekContentView);
         drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.bringToFront();
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_fares);
@@ -267,6 +268,7 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
                 Intent intentcarpark = new Intent(WeekActivity.this, CarparkActivity.class);
                 intentcarpark.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intentcarpark);
+                finish();
                 break;
             case R.id.nav_profile:
                 Intent intentMainActivity = new Intent(WeekActivity.this, MainActivity.class);
@@ -274,7 +276,7 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
                 intentMainActivity.putExtra("Profile", "Yes");
 
                 startActivity(intentMainActivity);
-
+                finish();
                 /*mapandrv.setVisibility(View.INVISIBLE);
                 fragmentlayout.setVisibility(View.VISIBLE);
                 replaceFragment(new ProfileFragment());*/
@@ -283,11 +285,9 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
                 Intent routeintent = new Intent(WeekActivity.this, Route.class);
                 routeintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(routeintent);
+                finish();
                 break;
             case R.id.nav_fares:
-                Intent fareintent = new Intent(WeekActivity.this, WeekActivity.class);
-                fareintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(fareintent);
                 break;
             case R.id.nav_rate:
                 Uri uri = Uri.parse("market://details?id=sg.edu.np.mad.transportme");
@@ -310,6 +310,11 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
                 sendIntent.setType("text/plain");
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "Download the Best Bus App In Singapore! \n\n https://play.google.com/store/apps/details?id=sg.edu.np.mad.transportme");
                 startActivity(Intent.createChooser(sendIntent,"Share With"));
+                break;
+            case R.id.nav_privacy:
+                Intent privacyintent = new Intent(WeekActivity.this, PrivacyPolicyActivty.class);
+                privacyintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(privacyintent);
                 break;
         }
         drawerLayout.closeDrawer(GravityCompat.START);

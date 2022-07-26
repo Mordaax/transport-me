@@ -21,6 +21,9 @@
         android:theme="@style/Theme.TransportMe"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".PrivacyPolicyActivty"
+            android:exported="false" />
+        <activity
             android:name=".InsightsActivity"
             android:exported="false" />
         <activity

@@ -32,14 +32,18 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.transition.AutoTransition;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,13 +84,17 @@ import sg.edu.np.mad.transportme.user.ProfileFragment;
 import sg.edu.np.mad.transportme.views.CarparkActivity;
 import sg.edu.np.mad.transportme.views.MainActivity;
 
-public class Route extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
+public class Route extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemSelectedListener {
     DrawerLayout drawerLayout;
     LinearLayout contentView;
     NavigationView navigationView;
     static final float END_SCALE = 0.7f;
     private GoogleMap mMap;
     String currentLocation = "";
+    Spinner traveloption;
+    String travelmode = "transit";
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +102,29 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.routemap);
         mapFragment.getMapAsync(this);
+
+        ImageView DropdownMenu = findViewById(R.id.dropdown_icon);
+        LinearLayout dropdown = findViewById(R.id.dropdownmenu);
+        DropdownMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (dropdown.getVisibility() == View.VISIBLE) {
+
+                    dropdown.setVisibility(View.GONE);
+                    TransitionManager.beginDelayedTransition(contentView, new AutoTransition());
+                } else {
+                    dropdown.setVisibility(View.VISIBLE);
+                    TransitionManager.beginDelayedTransition(contentView, new AutoTransition());
+                }
+            }
+        });
+
+        traveloption = findViewById(R.id.spinnerTransportType);
+        ArrayAdapter<CharSequence> travelmodeadapter = ArrayAdapter.createFromResource(this, R.array.travelmodes, android.R.layout.simple_spinner_item);
+        travelmodeadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        traveloption.setAdapter(travelmodeadapter);
+
+        traveloption.setOnItemSelectedListener(this);
 
         ImageView menuIcon = findViewById(R.id.menu_icon);
         contentView = findViewById(R.id.contentView);
@@ -105,10 +136,9 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
         menuIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(drawerLayout.isDrawerVisible(GravityCompat.START)){
+                if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
                     drawerLayout.closeDrawer(GravityCompat.START);
-                }
-                else drawerLayout.openDrawer(GravityCompat.START);
+                } else drawerLayout.openDrawer(GravityCompat.START);
             }
         });
         animateNavigationDrawer();
@@ -154,17 +184,57 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+            final String[] LOCATION_PERMS = {
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+            };
+
+            final int LOCATION_REQUEST = 1337;
+
+            requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
             Toast.makeText(Route.this, "Check Location and Connection Settings", Toast.LENGTH_LONG).show();
 
             return;
         } else {
             if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 5, new LocationListener() { //Every 60 seconds or 10m change, run code
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 2, new LocationListener() { //Every 60 seconds or 10m change, run code
                     @Override
                     public void onLocationChanged(@NonNull Location location) {
+                        Log.d("location", "location changed");
                         Double Latitude = location.getLatitude(); //Get latitude and logitude
                         Double Longitude = location.getLongitude();
-                        currentLocation = Latitude.toString()+","+Longitude.toString();
+                        currentLocation = Latitude.toString() + "," + Longitude.toString();
+                        routeButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                mMap.clear();
+                                String from = String.valueOf(atcfrom.getText());
+                                String to = String.valueOf(actto.getText());
+                                if (to.equals("")) {
+                                    Toast.makeText(Route.this, "Please Add a location to route to", Toast.LENGTH_LONG).show();
+                                } else {
+                                    direction(from, to);
+                                }
+                                placeholder.setVisibility(View.GONE);
+                            }
+                        });
+                        LatLng latLng = new LatLng(Latitude, Longitude);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
+                    }
+                });
+            }
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 2, new LocationListener() { //Every 60 seconds or 10m change, run code
+                    @Override
+                    public void onLocationChanged(@NonNull Location location) {
+                        Log.d("location", "location changed");
+
+                        Double Latitude = location.getLatitude(); //Get latitude and logitude
+                        Double Longitude = location.getLongitude();
+                        currentLocation = Latitude.toString() + "," + Longitude.toString();
                         routeButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -176,29 +246,34 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                             }
                         });
                         LatLng latLng = new LatLng(Latitude, Longitude);
-                    }
-                });
-            }
-            else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 5, new LocationListener() { //Every 60 seconds or 10m change, run code
-                    @Override
-                    public void onLocationChanged(@NonNull Location location) {
-                        Double Latitude = location.getLatitude(); //Get latitude and logitude
-                        Double Longitude = location.getLongitude();
-                        currentLocation = Latitude.toString()+","+Longitude.toString();
-                        LatLng latLng = new LatLng(Latitude, Longitude);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
                     }
                 });
             }
 
+
         }
     }
-    @SuppressLint("MissingPermission")
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
-    public void onMapReady(GoogleMap googleMap){
+    public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        LatLng singapore = new LatLng(1.3521,103.8198);
+        LatLng singapore = new LatLng(1.3521, 103.8198);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(singapore, 10f));
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            final String[] LOCATION_PERMS = {
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            };
+
+            final int LOCATION_REQUEST = 1337;
+
+            requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
+            return;
+        }
         mMap.setMyLocationEnabled(true);
     }
 
@@ -218,7 +293,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                 .buildUpon()
                 .appendQueryParameter("destination",Destination)
                 .appendQueryParameter("origin",From)
-                .appendQueryParameter("mode","transit")
+                .appendQueryParameter("mode",travelmode)
                 .appendQueryParameter("key","AIzaSyC5TLFoQWmsorYN0--un6BieG6VI2STONE")
                 .toString();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
@@ -228,15 +303,18 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                     String status = response.getString("status");
                     if (status.equals("OK")) {
                         JSONArray routes = response.getJSONArray("routes");
+
                         ArrayList<LatLng> points;
                         LatLngBounds.Builder bounds = LatLngBounds.builder();
-                        Log.d("kek", routes.toString());
+                        if(routes.length()<1){
+                            Toast.makeText(Route.this, "Cannot find route, be more specific", Toast.LENGTH_LONG).show();
+                        }
+
                         for (int i = 0; i < routes.length(); i++) {
 
                             PolylineOptions polylineOptions = null;
                             JSONArray legs = routes.getJSONObject(i).getJSONArray("legs");
 
-                            Log.d("kek", legs.toString());
                             for (int j = 0; j < legs.length(); j++) {
                                 String start_address = legs.getJSONObject(j).getString("start_address");
                                 String end_address = legs.getJSONObject(j).getString("end_address");
@@ -289,7 +367,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                                         nextLocation = k==steps.length()-1? end_address: steps.getJSONObject(k+1).getJSONObject("transit_details").getJSONObject("departure_stop").getString("name");
 
                                     }
-                                    else {/*if (travelmode.equals("TRANSIT")){*/
+                                    else if (travelmode.equals("TRANSIT")){
                                         JSONObject transitline = steps.getJSONObject(k).getJSONObject("transit_details").getJSONObject("line");
                                         String transitlinecolor = transitline.getString("color");
                                         travelMode = transitline.getJSONObject("vehicle").getString("name");
@@ -297,15 +375,18 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                                             transitlinecolor = "#c62020";
                                         }
                                         polylineOptions.color(Color.parseColor(transitlinecolor));
+
                                         MarkerOptions marker = new MarkerOptions().position(latlongstart);
                                         marker.icon(bitmapDescriptorFromVector(Route.this,R.drawable.ic_baseline_lens_24));
                                         mMap.addMarker(marker);
+
                                         bounds.include(latlongstart);
                                         stepcoordinates.add(latlongstart);
 
                                         marker = new MarkerOptions().position(latlongend);
                                         marker.icon(bitmapDescriptorFromVector(Route.this,R.drawable.ic_baseline_lens_24));
                                         mMap.addMarker(marker);
+
                                         bounds.include(latlongend);
                                         stepcoordinates.add(latlongend);
 
@@ -313,7 +394,16 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                                         nextLocation = steps.getJSONObject(k).getJSONObject("transit_details").getJSONObject("arrival_stop").getString("name");
 
                                     }
-
+                                    else{
+                                        travelMode = "Drive";
+                                        previousLocation = "Driving Previous Location";
+                                        nextLocation = "Driving Next Location";
+                                        polylineOptions.color(Color.parseColor("#305978"));
+                                        bounds.include(latlongstart);
+                                        stepcoordinates.add(latlongstart);
+                                        bounds.include(latlongend);
+                                        stepcoordinates.add(latlongend);
+                                    }
 
                                     RouteStep currentStep = new RouteStep(latlongstart,latlongend,travelMode,instructions, distance,duration,previousLocation,nextLocation);
                                     currentStep.stepcoordinates = stepcoordinates;
@@ -352,12 +442,14 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsbuilt, 30));
                     }
                 } catch(JSONException e){
+                    Toast.makeText(Route.this, "Check Location and Connection Settings", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
             }
         }, new Response.ErrorListener(){
             @Override
             public void onErrorResponse(VolleyError error){
+                Toast.makeText(Route.this, "Check Location and Connection Settings", Toast.LENGTH_LONG).show();
             }
         });
         RetryPolicy retryPolicy = new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
@@ -454,7 +546,6 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()){
             case R.id.nav_home:
-
                 finish();
 
                 /*fragmentlayout.setVisibility(View.INVISIBLE); //Set fragment to invisible, show map and main recycler view to help with loading times
@@ -465,6 +556,8 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                 Intent intentcarpark = new Intent(Route.this, CarparkActivity.class);
                 intentcarpark.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intentcarpark);
+                navigationView.setCheckedItem(R.id.nav_carpark);
+                finish();
                 break;
             case R.id.nav_profile:
                 Intent intentMainActivity = new Intent(Route.this, MainActivity.class);
@@ -472,20 +565,19 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                 intentMainActivity.putExtra("Profile", "Yes");
 
                 startActivity(intentMainActivity);
-
+                finish();
                 /*mapandrv.setVisibility(View.INVISIBLE);
                 fragmentlayout.setVisibility(View.VISIBLE);
                 replaceFragment(new ProfileFragment());*/
                 break;
             case R.id.nav_route:
-                Intent routeintent = new Intent(Route.this, Route.class);
-                routeintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(routeintent);
                 break;
             case R.id.nav_fares:
                 Intent fareintent = new Intent(Route.this, WeekActivity.class);
                 fareintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(fareintent);
+                navigationView.setCheckedItem(R.id.nav_fares);
+                finish();
                 break;
             case R.id.nav_rate:
                 Uri uri = Uri.parse("market://details?id=sg.edu.np.mad.transportme");
@@ -509,9 +601,32 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "Download the Best Bus App In Singapore! \n\n https://play.google.com/store/apps/details?id=sg.edu.np.mad.transportme");
                 startActivity(Intent.createChooser(sendIntent,"Share With"));
                 break;
+            case R.id.nav_privacy:
+                Intent privacyintent = new Intent(Route.this, PrivacyPolicyActivty.class);
+                privacyintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(privacyintent);
+
+                break;
 
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        String choice = adapterView.getItemAtPosition(i).toString();
+        Log.d("travechoice", choice);
+        if (choice.equals("Public Transport")){
+            travelmode = "transit";
+        }
+        else{
+            travelmode="driving";
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 }

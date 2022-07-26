@@ -17,17 +17,10 @@
             android:id="@+id/nav_fares"
             android:title="Fares"
             android:icon="@drawable/ic_baseline_attach_money_24"/>
-    </group>
-    <group android:checkableBehavior="single">
         <item
-            android:title="Profile">
-            <menu>
-                <item
-                    android:id="@+id/nav_profile"
-                    android:title="Profile"
-                    android:icon="@drawable/ic_baseline_person_24"/>
-            </menu>
-        </item>
+            android:id="@+id/nav_profile"
+            android:title="Profile"
+            android:icon="@drawable/ic_baseline_person_24"/>
     </group>
     <item android:title="Rate our app">
         <menu>
@@ -39,6 +32,10 @@
                 android:id="@+id/nav_rate"
                 android:title="Rate Us"
                 android:icon="@drawable/ic_baseline_star_rate_24"/>
+            <item
+                android:id="@+id/nav_privacy"
+                android:title="Privacy Policy"
+                android:icon="@drawable/ic_baseline_note_24"/>
         </menu>
     </item>
 </menu>

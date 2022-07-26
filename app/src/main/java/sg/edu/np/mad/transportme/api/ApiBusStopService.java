@@ -89,6 +89,7 @@ public class ApiBusStopService {
     public void getBusService(ArrayList<BusStop> nearBusStops, VolleyResponseListener2 volleyResponseListener2){
         ArrayList<BusStop> busStopsService = new ArrayList<>();
         String busStopsUrl = "https://mad-assignment-backend.herokuapp.com/BusCodes?codes=";
+
         for (int i = 0; i < nearBusStops.size();i++){
             String code = nearBusStops.get(i).getBusStopCode();
             if (i !=0){
@@ -98,13 +99,11 @@ public class ApiBusStopService {
                 busStopsUrl = busStopsUrl+code;
             }
         }
-
         JsonObjectRequest jsonObjectRequestBusStop = new JsonObjectRequest(Request.Method.GET, busStopsUrl, null,
                 new Response.Listener<JSONObject>() {
                     @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("Yes", response.toString());
                         try {
                             //Load api Data into objects
                             JSONArray jsonArrayBusStops = response.getJSONArray("Results");
@@ -157,7 +156,6 @@ public class ApiBusStopService {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("TAG", error.getMessage(), error);
                 volleyResponseListener2.onError("Cannot Get data"); //Call onError Callback in main Activity
             }
         });

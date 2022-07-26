@@ -6,24 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".views.CarparkActivity"
+    tools:context=".PrivacyPolicyActivty"
     tools:openDrawer="start">
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="@color/white"
-        android:paddingTop="30dp"
-        android:visibility="visible"
-        app:headerLayout="@layout/header"
-        app:menu="@menu/side_menu">
-
-    </com.google.android.material.navigation.NavigationView>
-
     <LinearLayout
-        android:id="@+id/carparkContentView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -41,20 +27,19 @@
                 android:id="@+id/menu_icon"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/ic_baseline_menu_24"
+                android:src="@drawable/ic_baseline_arrow_back_24"
                 android:visibility="visible" />
 
         </RelativeLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/carparkRecyclerView"
+        <WebView
+            android:id="@+id/webView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
+            android:layout_margin="10dp"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="8dp" />
     </LinearLayout>
 
-</androidx.drawerlayout.widget.DrawerLayout>
+</androidx.drawerlayout.widget.DrawerLayout >
