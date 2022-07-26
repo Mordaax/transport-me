@@ -106,37 +106,45 @@ public class ReminderService extends Service {
                             }
                             @Override
                             public void onResponse(ArrayList<BusStop> busStopRouteLoaded) {
-                                Integer index = busStopRouteLoaded.lastIndexOf(globalReminder);
-                                LatLng destnLL = new LatLng(globalReminder.getLatitude(),globalReminder.getLongitude());
-                                Double destnDist = SphericalUtil.computeDistanceBetween(latLng,destnLL);
-                                Log.e("destndist",""+destnDist);
-                                if(destnDist <= globalRemindCloseness)
+                                if(!reached)
                                 {
-                                    ArrayList<BusStop> busStopDist = new ArrayList<>();
-                                    for (BusStop bs : busStopRouteLoaded)
+                                    try
                                     {
-                                        bs.setDistanceToLocation(SphericalUtil.computeDistanceBetween(latLng, new LatLng(bs.getLatitude(),bs.getLongitude())));
-                                        busStopDist.add(bs);
+                                        Integer index = busStopRouteLoaded.lastIndexOf(globalReminder);
+                                        LatLng destnLL = new LatLng(globalReminder.getLatitude(),globalReminder.getLongitude());
+                                        Double destnDist = SphericalUtil.computeDistanceBetween(latLng,destnLL);
+                                        Log.e("destndist",""+destnDist);
+                                        if(destnDist <= globalRemindCloseness)
+                                        {
+                                            ArrayList<BusStop> busStopDist = new ArrayList<>();
+                                            for (BusStop bs : busStopRouteLoaded)
+                                            {
+                                                bs.setDistanceToLocation(SphericalUtil.computeDistanceBetween(latLng, new LatLng(bs.getLatitude(),bs.getLongitude())));
+                                                busStopDist.add(bs);
+                                            }
+                                            Collections.sort(busStopDist);
+
+                                            Integer closestBusStopIndex = busStopRouteLoaded.indexOf(busStopDist.get(0));
+                                            if(index - closestBusStopIndex < 2 || reached)
+                                            {
+                                                Notification notification = new NotificationCompat.Builder(context,CHANNEL_ID_2)
+                                                        .setSmallIcon(R.drawable.app_logo_vector)
+                                                        .setContentTitle("Reminder to Alight")
+                                                        .setContentIntent(pendingIntent)
+                                                        .setContentText("You are arriving "+ globalReminder.getDescription() + "!")
+                                                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                                        .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                                                        .build();
+
+                                                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+                                                notificationManager.notify(1,notification);
+                                                reached = true;
+                                            }
+                                        }
                                     }
-                                    Collections.sort(busStopDist);
-
-                                    Integer closestBusStopIndex = busStopRouteLoaded.indexOf(busStopDist.get(0));
-                                    if(index - closestBusStopIndex < 2)
+                                    catch(Exception e)
                                     {
-                                        Notification notification = new NotificationCompat.Builder(context,CHANNEL_ID_2)
-                                                .setSmallIcon(R.drawable.app_logo_vector)
-                                                .setContentTitle("Reminder to Alight")
-                                                .setContentIntent(pendingIntent)
-                                                .setContentText("You are arriving "+ globalReminder.getDescription() + "!")
-                                                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                                                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                                                .build();
-
-                                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-                                        notificationManager.notify(1,notification);
-                                        reached = true;
-                                        reminderReference.setValue(null);
-                                        stopSelf();
+                                        Log.e("exc",""+e);
                                     }
                                 }
                             }
