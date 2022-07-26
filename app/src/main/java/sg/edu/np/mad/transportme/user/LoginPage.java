@@ -85,7 +85,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                                 }
                             }
                         }
-                        if(snapshot.child(globalName).child("Reminder") != null && globalReminder == null && globalReminderBusService.equals(""))
+                        if(snapshot.child(globalName).child("Reminder").child("BusStop").getValue() != null && snapshot.child(globalName).child("Reminder").child("BusService").getValue() != null && globalReminder == null && globalReminderBusService.equals(""))
                         {
                             globalReminderBusService = snapshot.child(globalName).child("Reminder").child("BusService").getValue().toString();
                             String reminderBusStop = snapshot.child(globalName).child("Reminder").child("BusStop").getValue().toString();
