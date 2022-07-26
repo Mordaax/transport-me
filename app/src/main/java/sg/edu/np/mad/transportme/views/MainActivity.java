@@ -482,7 +482,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                         Collections.sort(busStopDist);
 
                                         Integer closestBusStopIndex = busStopRouteLoaded.indexOf(busStopDist.get(0));
-                                        if(index - closestBusStopIndex < 2)
+                                        if(index - closestBusStopIndex < 2 && reached != true)
                                         {
                                             Notification notification = new NotificationCompat.Builder(MainActivity.this,CHANNEL_ID_2)
                                                     .setSmallIcon(R.drawable.app_logo_vector)
