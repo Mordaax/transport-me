@@ -4,17 +4,17 @@ import android.location.Location;
 
 public class Carpark {
 
-    public int CarparkID;
+    public String CarparkID;
     public String Area;
     public String Development;
     public Location location;
-    public int AvailableLots;
+    public String AvailableLots;
     public String LotType;
     public String Agency;
 
     public Carpark(){}
 
-    public Carpark(int carparkID,String area, String development, Location location, int availableLots, String lotType, String agency){
+    public Carpark(String carparkID,String area, String development, Location location, String availableLots, String lotType, String agency){
         CarparkID = carparkID;
         Area = area;
         Development = development;

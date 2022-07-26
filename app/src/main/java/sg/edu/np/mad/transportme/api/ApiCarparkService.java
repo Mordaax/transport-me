@@ -35,7 +35,7 @@ public class ApiCarparkService {
     public ApiCarparkService(Context c) {this.context = c;}
 
     public void getCarparkAvailability(ArrayList<Carpark> carparkArrayList, VolleyResponseListener volleyResponseListener){
-        String url = "https://datamall2.mytransport.sg/ltaodataservice/CarParkAvailabilityv2";
+        String url = "http://datamall2.mytransport.sg/ltaodataservice/CarParkAvailabilityv2";
         //Get carparks using api
         jsonObjectRequestCarPark = new JsonObjectRequest( Request.Method.GET, url,null,
                 new Response.Listener<JSONObject>() {
@@ -43,17 +43,18 @@ public class ApiCarparkService {
                     public void onResponse(JSONObject response) {
                         try {
                             JSONArray jsonArray = response.getJSONArray("value");
+                            Log.d("Hello", jsonArray.toString());
                             for (int i = 0; i < jsonArray.length(); i++){
                                 //converting JSONArray to JSONObject
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                int carparkID =  Integer.parseInt(jsonObject.get("CarParkID").toString());
+                                String carparkID =  jsonObject.getString("CarParkID");
                                 String area = jsonObject.get("Area").toString();
                                 String dev = jsonObject.get("Development").toString();
                                 String[] coordinates = jsonObject.get("Location").toString().split(" ");
                                 Location location = new Location(dev);
                                 location.setLatitude(Double.parseDouble(coordinates[0]));
                                 location.setLongitude(Double.parseDouble(coordinates[1]));
-                                int available = Integer.parseInt(jsonObject.get("AvailableLots").toString());
+                                String available = jsonObject.getString("AvailableLots");
                                 String lotType = jsonObject.get("LotType").toString();
                                 String agency = jsonObject.get("Agency").toString();
                                 //Adding object to array
