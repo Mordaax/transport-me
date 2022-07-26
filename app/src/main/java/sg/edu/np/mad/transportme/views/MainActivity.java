@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -96,6 +97,7 @@ import sg.edu.np.mad.transportme.BusStop;
 import sg.edu.np.mad.transportme.BusStopAdapter;
 import sg.edu.np.mad.transportme.DistanceCalculator;
 import sg.edu.np.mad.transportme.R;
+import sg.edu.np.mad.transportme.ReminderService;
 import sg.edu.np.mad.transportme.Route;
 import sg.edu.np.mad.transportme.WeekActivity;
 import sg.edu.np.mad.transportme.api.ApiBusStopService;
@@ -221,6 +223,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     fragmentlayout.setVisibility(View.INVISIBLE);
                     cameraSearch.setVisibility(View.INVISIBLE);
                     swipeRefreshLayout.setVisibility(View.GONE);
+                    findViewById(R.id.busrouterecyclerView).setVisibility(View.GONE);
                     if(globalReminder == null)
                     {
                         noReminderLayout.setVisibility(View.VISIBLE);
@@ -336,6 +339,42 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         });
                     }
                 });
+
+                swipeLayoutRemind.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        if (globalReminder != null)
+                        {
+                            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 10, new LocationListener() {
+                                @Override
+                                public void onLocationChanged(@NonNull Location location) {
+                                    Double Latitude = location.getLatitude(); //Get latitude and logitude
+                                    Double Longitude = location.getLongitude();
+
+
+                                    LatLng latLng = new LatLng(Latitude, Longitude);
+                                    Geocoder geocoder = new Geocoder(getApplicationContext());
+
+
+                                    ArrayList<BusStop> remindBusStop = new ArrayList<>();
+                                    remindBusStop.add(globalReminder);
+                                    ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);
+                                    apiBusStopService.getBusRoute(globalReminderBusService,new ApiBusStopService.VolleyResponseListener3() { //Call API for bus route
+                                        @Override
+                                        public void onError(String message) {
+                                            Toast.makeText(MainActivity.this,"Cannot Get Bus Route, Check Location and Connection",Toast.LENGTH_LONG).show();
+                                        }
+                                        @Override
+                                        public void onResponse(ArrayList<BusStop> busStopRouteLoaded) {
+
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                });
+
                 // Main location request when the app first loads
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 10, new LocationListener() {
                     @Override
@@ -526,6 +565,34 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 reminderReference.setValue(null);
             }
         });
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (globalReminder != null)
+        {
+            startReminderService();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        stopReminderService();
+    }
+
+    public void startReminderService()
+    {
+        Intent serviceIntent = new Intent(this, ReminderService.class);
+        ContextCompat.startForegroundService(this, serviceIntent);
+    }
+
+    public void stopReminderService()
+    {
+        Intent serviceIntent = new Intent(this, ReminderService.class);
+        stopService(serviceIntent);
     }
 
     public void showReminderButton(Button reminderButton) {
