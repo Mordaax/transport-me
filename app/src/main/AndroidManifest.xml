@@ -18,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TransportMe">
         <activity
+            android:name=".InsightsActivity"
+            android:exported="false" />
+        <activity
             android:name=".views.CarparkActivity"
             android:exported="true" />
         <activity

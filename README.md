@@ -40,6 +40,15 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 12. Added confirm password
 13. Exception handling / Toast Messages
 14. Added Bus Stop refresh
+#### Assignment 2
+15. Routing from location to location with Google Directions API feature
+16. Bus Stop Text Recognizer with Google Vision API
+17. Side Navigation Menu with activities, fragments and Animation
+18. Bus Number Search Feature
+19. Extended Backened API for Bus Service Route
+20. App Rating Feature
+21. App Sharing Feature
+22. Fixed Issues With Bus Routes
 
 ### Dalbert Chea Zhi Jun
 1. Main Page Nested Recycler View Implementation & UI
