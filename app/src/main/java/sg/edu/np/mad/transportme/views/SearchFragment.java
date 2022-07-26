@@ -123,7 +123,7 @@ public class SearchFragment extends Fragment {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     String searchText = String.valueOf(searchAutoComplete.getText());
                     if (searchText.equals("")){
-                        Toast.makeText(getContext(),"No Bus Stops",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(),"Please enter a Bus Service, Bus Stop Code, RoadName",Toast.LENGTH_LONG).show();
                         return true;
                     }
                     searchText = searchText.substring(0, 1).toUpperCase() + searchText.substring(1);

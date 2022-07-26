@@ -10,39 +10,101 @@
     android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/buscardview"
         android:layout_width="match_parent"
-        android:layout_height="173dp"
-        android:layout_marginRight="15dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="7dp"
         app:cardCornerRadius="10dp">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#c62020"
-            android:orientation="vertical"
-            android:padding="15dp">
+            android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/linearLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+                android:background="#c62020"
+                android:orientation="vertical"
+                android:padding="15dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/textView_Instructions"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Instructions"
-                        android:textColor="#ffff"
-                        android:textSize="16sp" />
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView_Instructions"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="Instructions"
+                            android:textColor="#ffff"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView_Line"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="4"
+                            android:fontFamily="@font/inter_bold"
+                            android:gravity="center"
+                            android:text="Number"
+                            android:textColor="#FFFFFF"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textView_Duration"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="Duration"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView_StopNumber"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="15"
+                            android:textAlignment="textEnd"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/textView5"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Stops"
+                            android:textAlignment="textEnd"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp" />
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -50,119 +112,234 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/textView_Line"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="4"
-                        android:fontFamily="@font/inter_bold"
-                        android:gravity="center"
-                        android:text="Number"
-                        android:textColor="#FFFFFF"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/textView_Duration"
+                        <TextView
+                            android:id="@+id/textView_PreviousLocation"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:text="Previous Location"
+                            android:textAlignment="center"
+                            android:textColor="#FFFFFF" />
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Duration"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16dp" />
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:src="@drawable/ic_baseline_directions_bus_24" />
+
+                        <TextView
+                            android:id="@+id/textView_Distance"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Distance"
+                            android:textAlignment="center"
+                            android:textColor="#FFFFFF" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView_NextLocation"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:text="NextLocation"
+                            android:textAlignment="center"
+                            android:textColor="#FFFFFF" />
+                    </LinearLayout>
+
                 </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/textView_StopNumber"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="15"
-                        android:textAlignment="textEnd"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/textView5"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Stops"
-                        android:textAlignment="textEnd"
-                        android:textColor="#FFFFFF"
-                        android:textSize="16sp" />
-                </LinearLayout>
-
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/bustimingview"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
-                <LinearLayout
+                <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent">
 
                     <TextView
-                        android:id="@+id/textView_PreviousLocation"
-                        android:layout_width="match_parent"
+                        android:id="@+id/ServiceNumber"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:text="Previous Location"
-                        android:textAlignment="center"
-                        android:textColor="#FFFFFF" />
-                </LinearLayout>
+                        android:layout_weight="1.2"
+                        android:padding="10sp"
+                        android:text="busNumber"
+                        android:textColor="#000000"
+                        android:textSize="16sp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:src="@drawable/ic_baseline_directions_bus_24" />
-
-                    <TextView
-                        android:id="@+id/textView_Distance"
-                        android:layout_width="match_parent"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Distance"
-                        android:textAlignment="center"
-                        android:textColor="#FFFFFF" />
-                </LinearLayout>
+                        android:layout_weight="1">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                        <ImageView
+                            android:id="@+id/NextBus1Feature"
+                            android:layout_width="22dp"
+                            android:layout_height="0dp"
+                            android:layout_marginTop="10dp"
+                            android:src="@drawable/wheelchair_green"
+                            app:layout_constraintBottom_toTopOf="@+id/NextBus1Type"
+                            app:layout_constraintEnd_toStartOf="@+id/NextBus1"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="1.0"></ImageView>
 
-                    <TextView
-                        android:id="@+id/textView_NextLocation"
-                        android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/NextBus1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingLeft="0sp"
+                            android:paddingTop="5sp"
+                            android:paddingRight="5sp"
+                            android:text="Bus1"
+                            android:textAlignment="textEnd"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/NextBus1Type"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5sp"
+                            android:paddingRight="5sp"
+                            android:paddingBottom="1sp"
+                            android:text="Bus1Type"
+                            android:textAlignment="textEnd"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/NextBus1" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:text="NextLocation"
-                        android:textAlignment="center"
-                        android:textColor="#FFFFFF" />
-                </LinearLayout>
+                        android:layout_weight="1">
 
+                        <TextView
+                            android:id="@+id/NextBus2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingLeft="0sp"
+                            android:paddingTop="5sp"
+                            android:paddingRight="5sp"
+                            android:text="Bus2"
+                            android:textAlignment="textEnd"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/NextBus2Type"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5sp"
+                            android:paddingRight="5sp"
+                            android:paddingBottom="1sp"
+                            android:text="Bus2Type"
+                            android:textAlignment="textEnd"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/NextBus2" />
+
+                        <ImageView
+                            android:id="@+id/NextBus2Feature"
+                            android:layout_width="22dp"
+                            android:layout_height="0dp"
+                            android:layout_marginTop="10dp"
+                            android:src="@drawable/wheelchair_green"
+                            app:layout_constraintBottom_toTopOf="@+id/NextBus2Type"
+                            app:layout_constraintEnd_toStartOf="@+id/NextBus2"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="1.0"></ImageView>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/NextBus3"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:paddingLeft="0sp"
+                            android:paddingTop="5sp"
+                            android:paddingRight="5sp"
+                            android:text="Bus3"
+                            android:textAlignment="textEnd"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/NextBus3Type"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5sp"
+                            android:paddingRight="5sp"
+                            android:paddingBottom="1sp"
+                            android:text="Bus3Type"
+                            android:textAlignment="textEnd"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/NextBus3" />
+
+                        <ImageView
+                            android:id="@+id/NextBus3Feature"
+                            android:layout_width="22dp"
+                            android:layout_height="0dp"
+                            android:layout_marginTop="10dp"
+                            android:src="@drawable/wheelchair_green"
+                            app:layout_constraintBottom_toTopOf="@+id/NextBus3Type"
+                            app:layout_constraintEnd_toStartOf="@+id/NextBus3"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="1.0"></ImageView>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </TableRow>
             </LinearLayout>
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!--<TextView
             android:id="@+id/textViewDuration"

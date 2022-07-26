@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -97,7 +96,6 @@ import sg.edu.np.mad.transportme.BusStop;
 import sg.edu.np.mad.transportme.BusStopAdapter;
 import sg.edu.np.mad.transportme.DistanceCalculator;
 import sg.edu.np.mad.transportme.R;
-import sg.edu.np.mad.transportme.ReminderService;
 import sg.edu.np.mad.transportme.Route;
 import sg.edu.np.mad.transportme.WeekActivity;
 import sg.edu.np.mad.transportme.api.ApiBusStopService;
@@ -229,9 +227,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         noReminderLayout.setVisibility(View.VISIBLE);
                         swipeLayoutRemind.setVisibility(View.GONE);
                         remindInfoLayout.setVisibility(View.GONE);
-                    }
-                    else
-                    {
+                    } else {
                         noReminderLayout.setVisibility(View.GONE);
                         swipeLayoutRemind.setVisibility(View.VISIBLE);
                         remindInfoLayout.setVisibility(View.VISIBLE);
@@ -247,7 +243,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         Intent recievingEnd = getIntent();
         String gotoprofile = recievingEnd.getStringExtra("Profile");
-        if (gotoprofile != null){
+        if (gotoprofile != null) {
             mapandrv.setVisibility(View.INVISIBLE);
             fragmentlayout.setVisibility(View.VISIBLE);
             replaceFragment(new ProfileFragment());
@@ -277,11 +273,18 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+            final String[] LOCATION_PERMS = {
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            };
+
+            final int LOCATION_REQUEST = 1337;
+
+            requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
             Toast.makeText(MainActivity.this, "Check Location and Connection Settings", Toast.LENGTH_LONG).show();
 
             return;
-        }
-        else {
+        } else {
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) { //Comments in this section is the same as the one in the LocationManager.NETWORK_PROVIDER
                 swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -623,7 +626,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);
             rv.setAdapter(adapter);
             rv.setLayoutManager(layout);
-            orv .setVisibility(View.GONE);
+            orv.setVisibility(View.GONE);
             rv.setVisibility(View.VISIBLE);
         }
         fragmentlayout.setVisibility(View.INVISIBLE); //Set fragment to invisible, show map and main recycler view to help with loading times
@@ -665,6 +668,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         map.animateCamera(cu);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void removemarker(List<Marker> mList, Polyline line) {
         if (line != null) {
             line.remove();
@@ -688,6 +692,17 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+            final String[] LOCATION_PERMS = {
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+            };
+
+            final int LOCATION_REQUEST = 1337;
+
+            requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
             return;
         }
         Location location = locationManager.getLastKnownLocation(provider);
@@ -702,17 +717,31 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         map.animateCamera(cu);
     }
 
-    private void replaceFragment(Fragment fragment){ //Replace fragment for nav bar
+    private void replaceFragment(Fragment fragment) { //Replace fragment for nav bar
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout,fragment);
+        fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
     }
 
-    @SuppressLint("MissingPermission")
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            final String[] LOCATION_PERMS = {
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            };
+
+            final int LOCATION_REQUEST = 1337;
+
+            requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
+            return;
+        }
         map.setMyLocationEnabled(true);
 
     }
@@ -780,6 +809,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 fareintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(fareintent);
                 break;
+            case R.id.nav_privacy:
+                Intent privacyintent = new Intent(MainActivity.this, PrivacyPolicyActivty.class);
+                privacyintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(privacyintent);
+                break;
             case R.id.nav_rate:
                 Uri uri = Uri.parse("market://details?id=sg.edu.np.mad.transportme");
                 Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
@@ -802,6 +836,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "Download the Best Bus App In Singapore! \n\n https://play.google.com/store/apps/details?id=sg.edu.np.mad.transportme");
                 startActivity(Intent.createChooser(sendIntent,"Share With"));
                 break;
+
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
@@ -816,7 +851,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void selectImage() {
-        final CharSequence[] options = {"Choose from Gallery","Cancel" };
+        final CharSequence[] options = {"Take Photo","Choose from Gallery","Cancel" };
         /*final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };*/
         ImageView image = new ImageView(this);
         image.setImageResource(R.drawable.bus_stop_next_to_pond);
