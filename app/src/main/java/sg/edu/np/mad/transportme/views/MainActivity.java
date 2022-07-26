@@ -22,7 +22,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -42,7 +41,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -62,7 +60,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -87,7 +84,6 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,6 +91,7 @@ import java.util.List;
 import sg.edu.np.mad.transportme.BusStop;
 import sg.edu.np.mad.transportme.BusStopAdapter;
 import sg.edu.np.mad.transportme.DistanceCalculator;
+import sg.edu.np.mad.transportme.PrivacyPolicyActivty;
 import sg.edu.np.mad.transportme.R;
 import sg.edu.np.mad.transportme.Route;
 import sg.edu.np.mad.transportme.WeekActivity;
@@ -713,6 +710,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 fareintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(fareintent);
                 break;
+            case R.id.nav_privacy:
+                Intent privacyintent = new Intent(MainActivity.this, PrivacyPolicyActivty.class);
+                privacyintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(privacyintent);
+                break;
             case R.id.nav_rate:
                 Uri uri = Uri.parse("market://details?id=sg.edu.np.mad.transportme");
                 Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
@@ -735,6 +737,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "Download the Best Bus App In Singapore! \n\n https://play.google.com/store/apps/details?id=sg.edu.np.mad.transportme");
                 startActivity(Intent.createChooser(sendIntent,"Share With"));
                 break;
+
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
@@ -749,7 +752,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void selectImage() {
-        final CharSequence[] options = {"Choose from Gallery","Cancel" };
+        final CharSequence[] options = {"Take Photo","Choose from Gallery","Cancel" };
         /*final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };*/
         ImageView image = new ImageView(this);
         image.setImageResource(R.drawable.bus_stop_next_to_pond);
