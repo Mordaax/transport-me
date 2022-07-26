@@ -5,6 +5,9 @@ import static sg.edu.np.mad.transportme.user.LoginPage.globalEmail;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalFavouriteBusStop;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalName;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalCloseness;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalReminder;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalReminderBusService;
+import static sg.edu.np.mad.transportme.user.LoginPage.grbsChange;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -14,7 +17,9 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,7 +90,6 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         DatabaseReference reference;
-
         reference = db.getReference("User");
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         TextInputEditText username = rootView.findViewById(R.id.profileuserName);
@@ -151,7 +155,9 @@ public class ProfileFragment extends Fragment {
                 editor.apply();
                 globalName = "";
                 globalEmail = "";
-
+                globalReminder = null;
+                globalReminderBusService = "";
+                grbsChange = new MutableLiveData<>();
                 LoginPage.SignedIn = false;
                 globalFavouriteBusStop.clear();
                 startActivity(intent); //user gets directed to login page after signing out

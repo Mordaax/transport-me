@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -80,6 +82,18 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                             for (int i = 0 ; i< globalBusStops.size(); i++){
                                 if (busStopCode.equals(globalBusStops.get(i).getBusStopCode())){
                                     globalFavouriteBusStop.add(globalBusStops.get(i)); //Update globalFavoruiteBusStop with favourited bus Stops
+                                }
+                            }
+                        }
+                        if(snapshot.child(globalName).child("Reminder") != null && globalReminder == null && globalReminderBusService.equals(""))
+                        {
+                            globalReminderBusService = snapshot.child(globalName).child("Reminder").child("BusService").getValue().toString();
+                            String reminderBusStop = snapshot.child(globalName).child("Reminder").child("BusStop").getValue().toString();
+                            for (BusStop bs : globalBusStops)
+                            {
+                                if(reminderBusStop.equals(bs.getBusStopCode()))
+                                {
+                                    globalReminder = bs;
                                 }
                             }
                         }
@@ -185,7 +199,9 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
 
                     }
                 });
+
                 break;
+
 
             case R.id.gotoregisterpage: //when register is pressed
                 startActivity(new Intent(this, RegistrationPage.class));
