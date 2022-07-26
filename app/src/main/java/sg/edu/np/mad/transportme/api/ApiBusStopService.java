@@ -89,6 +89,7 @@ public class ApiBusStopService {
     public void getBusService(ArrayList<BusStop> nearBusStops, VolleyResponseListener2 volleyResponseListener2){
         ArrayList<BusStop> busStopsService = new ArrayList<>();
         String busStopsUrl = "https://mad-assignment-backend.herokuapp.com/BusCodes?codes=";
+
         for (int i = 0; i < nearBusStops.size();i++){
             String code = nearBusStops.get(i).getBusStopCode();
             if (i !=0){
@@ -98,13 +99,13 @@ public class ApiBusStopService {
                 busStopsUrl = busStopsUrl+code;
             }
         }
-
+        Log.d("Hello", busStopsUrl);
         JsonObjectRequest jsonObjectRequestBusStop = new JsonObjectRequest(Request.Method.GET, busStopsUrl, null,
                 new Response.Listener<JSONObject>() {
                     @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("Yes", response.toString());
+                        Log.d("Hello", response.toString());
                         try {
                             //Load api Data into objects
                             JSONArray jsonArrayBusStops = response.getJSONArray("Results");
@@ -148,6 +149,7 @@ public class ApiBusStopService {
                                 nearBusStop.setBusServices(busServices);
                                 nearBusStopLoaded.add(nearBusStop);
                             }
+                            Log.d("Helloloaded", nearBusStopLoaded.toString());
                             volleyResponseListener2.onResponse(nearBusStopLoaded); //Call the onResponse callback in MainActivity
 
                         } catch (JSONException e) {
