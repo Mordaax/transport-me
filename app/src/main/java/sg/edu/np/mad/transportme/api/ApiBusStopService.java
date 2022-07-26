@@ -99,13 +99,11 @@ public class ApiBusStopService {
                 busStopsUrl = busStopsUrl+code;
             }
         }
-        Log.d("Hello", busStopsUrl);
         JsonObjectRequest jsonObjectRequestBusStop = new JsonObjectRequest(Request.Method.GET, busStopsUrl, null,
                 new Response.Listener<JSONObject>() {
                     @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("Hello", response.toString());
                         try {
                             //Load api Data into objects
                             JSONArray jsonArrayBusStops = response.getJSONArray("Results");
@@ -149,7 +147,6 @@ public class ApiBusStopService {
                                 nearBusStop.setBusServices(busServices);
                                 nearBusStopLoaded.add(nearBusStop);
                             }
-                            Log.d("Helloloaded", nearBusStopLoaded.toString());
                             volleyResponseListener2.onResponse(nearBusStopLoaded); //Call the onResponse callback in MainActivity
 
                         } catch (JSONException e) {
@@ -159,7 +156,6 @@ public class ApiBusStopService {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("TAG", error.getMessage(), error);
                 volleyResponseListener2.onError("Cannot Get data"); //Call onError Callback in main Activity
             }
         });
