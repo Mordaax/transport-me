@@ -1,14 +1,25 @@
 package sg.edu.np.mad.transportme;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.content.Context.LOCATION_SERVICE;
+import static sg.edu.np.mad.transportme.ReminderApplication.CHANNEL_ID_2;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalFavouriteBusStop;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalName;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalRemindCloseness;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalReminder;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalReminderBusService;
 import static sg.edu.np.mad.transportme.user.LoginPage.grbsChange;
 
+import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Notification;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.InputType;
@@ -27,24 +38,33 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import sg.edu.np.mad.transportme.api.ApiBusStopService;
 import sg.edu.np.mad.transportme.user.LoginPage;
 import sg.edu.np.mad.transportme.views.MainActivity;
 
 public class BusStopAdapter
         extends RecyclerView.Adapter<BusStopViewHolder>        //just like list, need declare <data type>
 {
+    private Boolean tooClose = false;
     ArrayList<BusStop> data;
     Context c;
     FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/");     //Initialise database instance
@@ -297,6 +317,29 @@ public class BusStopAdapter
 
     private void isValidBusService(BusStop bs, BusStopViewHolder holder, DatabaseReference reference)
     {
+        tooClose = false;
+        LocationManager locationManager = (LocationManager) c.getSystemService(LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(c, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(c, ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+        {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 6000, 10, new LocationListener() {
+                @Override
+                public void onLocationChanged(@NonNull Location location) {
+                    Double Latitude = location.getLatitude(); //Get latitude and logitude
+                    Double Longitude = location.getLongitude();
+
+                    LatLng latLng = new LatLng(Latitude, Longitude);
+                    if(SphericalUtil.computeDistanceBetween(latLng,new LatLng(bs.getLatitude(),bs.getLongitude())) < globalRemindCloseness)
+                    {
+                        tooClose = true;
+                    }
+                }
+            });
+        }
+        if (tooClose)
+        {
+            Toast.makeText(c, "Destination is too near!", Toast.LENGTH_LONG).show();
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(c);
         builder.setTitle("What bus will you be riding?");
         final EditText input = new EditText(c) ;

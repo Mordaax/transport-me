@@ -40,6 +40,7 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
     public static MutableLiveData<String> grbsChange = new MutableLiveData<>();
     public static ArrayList<BusStop> globalFavouriteBusStop = new ArrayList<>();
     public static Double globalCloseness;
+    public static Double globalRemindCloseness = 100.0;
     //private TextView register;
     private EditText editTextEmail, editTextPassword;
     private Button signIn, register;
