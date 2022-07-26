@@ -7,6 +7,7 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -103,6 +104,7 @@ public class ApiBusStopService {
                     @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void onResponse(JSONObject response) {
+                        Log.d("Yes", response.toString());
                         try {
                             //Load api Data into objects
                             JSONArray jsonArrayBusStops = response.getJSONArray("Results");
@@ -159,6 +161,10 @@ public class ApiBusStopService {
                 volleyResponseListener2.onError("Cannot Get data"); //Call onError Callback in main Activity
             }
         });
+        jsonObjectRequestBusStop.setRetryPolicy(new DefaultRetryPolicy(
+                9000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         MySingleton.getInstance(context).addToRequestQueue(jsonObjectRequestBusStop); //Add to request queue
 
         volleyResponseListener2.onResponse(busStopsService);
