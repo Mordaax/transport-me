@@ -98,7 +98,15 @@ public class ProfileFragment extends Fragment {
         SeekBar closenessSeekBar = rootView.findViewById(R.id.seekBar);
         TextView closenessTextView = rootView.findViewById(R.id.closeness);
         //allowing user to change the distance radius of bus stops around the user
-        closenessTextView.setText("Bus Stop Radius ("+ String.valueOf((int) (globalCloseness*1000)) +" Meters)");
+        String radiustext;
+        try{
+            radiustext = "Bus Stop Radius ("+ String.valueOf((int) (globalCloseness*1000)) +" Meters)";
+        } catch (Exception e) {
+            radiustext = "Bus Stop Radius (300 Meters)";
+            e.printStackTrace();
+        }
+        globalCloseness = Double.valueOf(300);
+        closenessTextView.setText(radiustext);
         closenessSeekBar.setProgress((int) (globalCloseness*10));
         closenessSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

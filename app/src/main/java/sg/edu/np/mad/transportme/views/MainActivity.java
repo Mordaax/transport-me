@@ -117,6 +117,7 @@ import sg.edu.np.mad.transportme.user.ProfileFragment;
 
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
+    public static String networkprovider = LocationManager.GPS_PROVIDER;
     LinearLayout mapandrv;
     FrameLayout fragmentlayout;
     LinearLayout reminderView;      //CHANGE TO SCROLLVIEW LATER
@@ -303,11 +304,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             return;
         } else {
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) { //Comments in this section is the same as the one in the LocationManager.NETWORK_PROVIDER
+
+            if (locationManager.isProviderEnabled(networkprovider)) { //Comments in this section is the same as the one in the LocationManager.NETWORK_PROVIDER
                 swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 10, new LocationListener() { //Every 60 seconds or 10m change, run code
+                        locationManager.requestLocationUpdates(networkprovider, 60000, 10, new LocationListener() { //Every 60 seconds or 10m change, run code
                             @Override
                             public void onLocationChanged(@NonNull Location location) {
                                 Double Latitude = location.getLatitude(); //Get latitude and logitude
@@ -365,11 +367,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 swipeLayoutRemind.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 6000, 10, new LocationListener() {
+                        locationManager.requestLocationUpdates(networkprovider, 6000, 10, new LocationListener() {
                             @Override
                             public void onLocationChanged(@NonNull Location location) {
-                                if (globalReminder != null)
-                                {
+                                if (globalReminder != null) {
                                     Double Latitude = location.getLatitude(); //Get latitude and logitude
                                     Double Longitude = location.getLongitude();
 
@@ -385,44 +386,42 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     rv.setAdapter(adapter);
                                     rv.setLayoutManager(layout);
 
-                                    LatLng destnLL = new LatLng(globalReminder.getLatitude(),globalReminder.getLongitude());
-                                    Double destnDist = SphericalUtil.computeDistanceBetween(latLng,destnLL);
+                                    LatLng destnLL = new LatLng(globalReminder.getLatitude(), globalReminder.getLongitude());
+                                    Double destnDist = SphericalUtil.computeDistanceBetween(latLng, destnLL);
                                     TextView remindDestnDist = findViewById(R.id.remindDestnDist);
                                     String display = String.format("%.2f", destnDist / 1000) + "km\nLeft to " + globalReminder.getDescription();
                                     remindDestnDist.setText(display);
 
                                     ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);
-                                    apiBusStopService.getBusRoute(globalReminderBusService,new ApiBusStopService.VolleyResponseListener3() { //Call API for bus route
+                                    apiBusStopService.getBusRoute(globalReminderBusService, new ApiBusStopService.VolleyResponseListener3() { //Call API for bus route
                                         @Override
                                         public void onError(String message) {
-                                            Toast.makeText(MainActivity.this,"Cannot Get Bus Route, Check Location and Connection",Toast.LENGTH_LONG).show();
+                                            Toast.makeText(MainActivity.this, "Cannot Get Bus Route, Check Location and Connection", Toast.LENGTH_LONG).show();
                                         }
+
                                         @Override
                                         public void onResponse(ArrayList<BusStop> busStopRouteLoaded) {
                                             Integer index = busStopRouteLoaded.lastIndexOf(globalReminder);
-                                            if(destnDist <= globalRemindCloseness)
-                                            {
+                                            if (destnDist <= globalRemindCloseness) {
                                                 ArrayList<BusStop> busStopDist = new ArrayList<>();
-                                                for (BusStop bs : busStopRouteLoaded)
-                                                {
-                                                    bs.setDistanceToLocation(SphericalUtil.computeDistanceBetween(latLng, new LatLng(bs.getLatitude(),bs.getLongitude())));
+                                                for (BusStop bs : busStopRouteLoaded) {
+                                                    bs.setDistanceToLocation(SphericalUtil.computeDistanceBetween(latLng, new LatLng(bs.getLatitude(), bs.getLongitude())));
                                                     busStopDist.add(bs);
                                                 }
                                                 Collections.sort(busStopDist);
 
                                                 Integer closestBusStopIndex = busStopRouteLoaded.indexOf(busStopDist.get(0));
-                                                if(index - closestBusStopIndex < 2)
-                                                {
-                                                    Notification notification = new NotificationCompat.Builder(MainActivity.this,CHANNEL_ID_2)
+                                                if (index - closestBusStopIndex < 2) {
+                                                    Notification notification = new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID_2)
                                                             .setSmallIcon(R.drawable.app_logo_vector)
                                                             .setContentTitle("Reminder to Alight")
-                                                            .setContentText("You are arriving "+ globalReminder.getDescription() + "!")
+                                                            .setContentText("You are arriving " + globalReminder.getDescription() + "!")
                                                             .setPriority(NotificationCompat.PRIORITY_HIGH)
                                                             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                                                             .build();
 
                                                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(MainActivity.this);
-                                                    notificationManager.notify(1,notification);
+                                                    notificationManager.notify(1, notification);
 
                                                     reminderReference.setValue(null);
                                                 }
@@ -437,7 +436,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 });
 
                 // Main location request when the app first loads
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 10, new LocationListener() {
+                locationManager.requestLocationUpdates(networkprovider, 60000, 10, new LocationListener() {
                     @Override
                     public void onLocationChanged(@NonNull Location location) {
                         Double Latitude = location.getLatitude();
@@ -447,8 +446,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         LatLng latLng = new LatLng(Latitude, Longitude);
                         Geocoder geocoder = new Geocoder(getApplicationContext());
 
-                        if(globalReminder != null)
-                        {
+                        if (globalReminder != null) {
                             ArrayList<BusStop> remindBusStop = new ArrayList<>();
                             remindBusStop.add(globalReminder);
                             RecyclerView rv = findViewById(R.id.recyclerViewRemind); //Load recyclerview when they onresponse is recieved
@@ -457,46 +455,44 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             rv.setAdapter(adapter);
                             rv.setLayoutManager(layout);
 
-                            LatLng destnLL = new LatLng(globalReminder.getLatitude(),globalReminder.getLongitude());
-                            Double destnDist = SphericalUtil.computeDistanceBetween(latLng,destnLL);
+                            LatLng destnLL = new LatLng(globalReminder.getLatitude(), globalReminder.getLongitude());
+                            Double destnDist = SphericalUtil.computeDistanceBetween(latLng, destnLL);
                             TextView remindDestnDist = findViewById(R.id.remindDestnDist);
                             String display = String.format("%.2f", destnDist / 1000) + "km\nLeft to " + globalReminder.getDescription();
                             remindDestnDist.setText(display);
 
 
                             ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);
-                            apiBusStopService.getBusRoute(globalReminderBusService,new ApiBusStopService.VolleyResponseListener3() { //Call API for bus route
+                            apiBusStopService.getBusRoute(globalReminderBusService, new ApiBusStopService.VolleyResponseListener3() { //Call API for bus route
                                 @Override
                                 public void onError(String message) {
-                                    Toast.makeText(MainActivity.this,"Cannot Get Bus Route, Check Location and Connection",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(MainActivity.this, "Cannot Get Bus Route, Check Location and Connection", Toast.LENGTH_LONG).show();
                                 }
+
                                 @Override
                                 public void onResponse(ArrayList<BusStop> busStopRouteLoaded) {
                                     Integer index = busStopRouteLoaded.lastIndexOf(globalReminder);
 
-                                    if(destnDist <= globalRemindCloseness)
-                                    {
+                                    if (destnDist <= globalRemindCloseness) {
                                         ArrayList<BusStop> busStopDist = new ArrayList<>();
-                                        for (BusStop bs : busStopRouteLoaded)
-                                        {
-                                            bs.setDistanceToLocation(SphericalUtil.computeDistanceBetween(latLng, new LatLng(bs.getLatitude(),bs.getLongitude())));
+                                        for (BusStop bs : busStopRouteLoaded) {
+                                            bs.setDistanceToLocation(SphericalUtil.computeDistanceBetween(latLng, new LatLng(bs.getLatitude(), bs.getLongitude())));
                                             busStopDist.add(bs);
                                         }
                                         Collections.sort(busStopDist);
 
                                         Integer closestBusStopIndex = busStopRouteLoaded.indexOf(busStopDist.get(0));
-                                        if(index - closestBusStopIndex < 2 && reached != true)
-                                        {
-                                            Notification notification = new NotificationCompat.Builder(MainActivity.this,CHANNEL_ID_2)
+                                        if (index - closestBusStopIndex < 2 && reached != true) {
+                                            Notification notification = new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID_2)
                                                     .setSmallIcon(R.drawable.app_logo_vector)
                                                     .setContentTitle("Reminder to Alight")
-                                                    .setContentText("You are arriving "+ globalReminder.getDescription() + "!")
+                                                    .setContentText("You are arriving " + globalReminder.getDescription() + "!")
                                                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                                                     .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                                                     .build();
 
                                             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(MainActivity.this);
-                                            notificationManager.notify(1,notification);
+                                            notificationManager.notify(1, notification);
 
                                             reminderReference.setValue(null);
                                         }
@@ -548,7 +544,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                     }
                 });
-            } else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) { //This section is similar to the LocationManager.GPS_PROVIDER section above
+            } /*else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) { //This section is similar to the LocationManager.GPS_PROVIDER section above
                 //For users to refresh the recyclerview, runs the location reqeust updates
                 swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -792,7 +788,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                     }
                 });
-            }
+            }*/
         }
         grbsChange.observe(this, new Observer<String>() {
             @Override

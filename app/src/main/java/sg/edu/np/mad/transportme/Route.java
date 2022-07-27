@@ -3,6 +3,7 @@ package sg.edu.np.mad.transportme;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION;
 import static sg.edu.np.mad.transportme.views.LoadingScreen.globalBusStops;
+import static sg.edu.np.mad.transportme.views.MainActivity.networkprovider;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -199,8 +200,8 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
 
             return;
         } else {
-            if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 2, new LocationListener() { //Every 60 seconds or 10m change, run code
+            if (locationManager.isProviderEnabled(networkprovider)) {
+                locationManager.requestLocationUpdates(networkprovider, 1000, 2, new LocationListener() { //Every 60 seconds or 10m change, run code
                     @Override
                     public void onLocationChanged(@NonNull Location location) {
                         Log.d("location", "location changed");
@@ -222,11 +223,11 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                             }
                         });
                         LatLng latLng = new LatLng(Latitude, Longitude);
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
+
                     }
                 });
             }
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            /*if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 2, new LocationListener() { //Every 60 seconds or 10m change, run code
                     @Override
                     public void onLocationChanged(@NonNull Location location) {
@@ -249,7 +250,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
                     }
                 });
-            }
+            }*/
 
 
         }
