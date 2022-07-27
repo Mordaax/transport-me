@@ -77,6 +77,10 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 6. Nav Bar Design
 7. Login UI
 8. Registration UI
+#### Assignment 2
+9. Implemented weekly calendar view 
+10. Function to add transportation fares and display daily total and integrate with calendar
+11. Insights page with monthly total and pie chart using AnyChart
 
 ### Tristan Tan Jun Xian
 1. Login Page
