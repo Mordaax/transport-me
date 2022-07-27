@@ -7,6 +7,7 @@ import static sg.edu.np.mad.transportme.user.LoginPage.globalName;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalRemindCloseness;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalReminder;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalReminderBusService;
+import static sg.edu.np.mad.transportme.views.MainActivity.networkprovider;
 
 import android.Manifest;
 import android.app.Notification;
@@ -82,7 +83,7 @@ public class ReminderService extends Service {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
         {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 6000, 10, locationListener = new LocationListener() {
+            locationManager.requestLocationUpdates(networkprovider, 6000, 10, locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(@NonNull Location location) {
                     Log.e("no i am not","no");
