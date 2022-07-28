@@ -43,6 +43,7 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -80,6 +81,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -98,15 +100,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.maps.android.SphericalUtil;
 
-import java.lang.reflect.Array;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 
+import sg.edu.np.mad.transportme.BusService;
 import sg.edu.np.mad.transportme.BusStop;
 import sg.edu.np.mad.transportme.BusStopAdapter;
 import sg.edu.np.mad.transportme.DistanceCalculator;
+import sg.edu.np.mad.transportme.NextBus;
 import sg.edu.np.mad.transportme.PrivacyPolicyActivty;
 import sg.edu.np.mad.transportme.R;
 import sg.edu.np.mad.transportme.ReminderService;
@@ -118,6 +122,7 @@ import sg.edu.np.mad.transportme.user.ProfileFragment;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
     public static String networkprovider = LocationManager.GPS_PROVIDER;
+    public static ArrayList<Marker> mlistlocation;
     LinearLayout mapandrv;
     FrameLayout fragmentlayout;
     LinearLayout reminderView;      //CHANGE TO SCROLLVIEW LATER
@@ -1103,7 +1108,24 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             super.onBackPressed();
         }
     }
+    public void addBusLocations(BusService currentService){
+        ArrayList<NextBus> nextbuses = currentService.getNextBuses();
+        mlistlocation = new ArrayList<>();
 
+        for (NextBus nextbus : nextbuses){
+            LatLng latlongbus = new LatLng(Double.valueOf(nextbus.getLatitude()), Double.valueOf(nextbus.getLongitude()));
+            MarkerOptions marker = new MarkerOptions().position(latlongbus).title(currentService.getServiceNumber());
+            Bitmap icon = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888);
+            Drawable shape = getResources().getDrawable(R.drawable.ic_baseline_directions_bus_yellow_24);
+            Canvas canvas = new Canvas(icon);
+            shape.setBounds(0, 0, icon.getWidth(), icon.getHeight());
+            shape.draw(canvas);
+            Marker busmarker = map.addMarker(new MarkerOptions().position(latlongbus).title(currentService.getServiceNumber()).icon(BitmapDescriptorFactory.fromBitmap(icon)));
+            mlistlocation.add(busmarker);
+        }
+
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(nextbuses.get(0).getLatitude()), Double.valueOf(nextbuses.get(0).getLongitude())), 16.2f));
+    }
     private void selectImage() {
         final CharSequence[] options = {"Take Photo","Choose from Gallery","Cancel" };
         /*final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };*/
@@ -1268,4 +1290,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
 }
