@@ -2,12 +2,17 @@ package sg.edu.np.mad.transportme;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION;
+import static sg.edu.np.mad.transportme.ReminderApplication.CHANNEL_ID_2;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalReminder;
 import static sg.edu.np.mad.transportme.views.LoadingScreen.globalBusStops;
-
+import static sg.edu.np.mad.transportme.views.MainActivity.networkprovider;
+import android.speech.tts.TextToSpeech;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -17,9 +22,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Notification;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -32,6 +39,8 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.speech.tts.TextToSpeech;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -55,12 +64,14 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Dash;
 import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.Gap;
@@ -70,15 +81,18 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.navigation.NavigationView;
+import com.google.maps.android.SphericalUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import sg.edu.np.mad.transportme.user.ProfileFragment;
 import sg.edu.np.mad.transportme.views.CarparkActivity;
@@ -93,7 +107,10 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
     String currentLocation = "";
     Spinner traveloption;
     String travelmode = "transit";
-
+    Boolean notificationchoice = false;
+    ArrayList<RouteStep> routestepsreminder;
+    TextToSpeech t1;
+    Boolean drivingchoice;
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +119,20 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.routemap);
         mapFragment.getMapAsync(this);
+        ImageView notificationbellimage = findViewById(R.id.notificationbellimage);
+        notificationbellimage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(notificationchoice == false){
+                    notificationbellimage.setImageResource(R.drawable.filled_bell);
+                    notificationchoice = true;
+                }
+                else if(notificationchoice == true){
+                    notificationbellimage.setImageResource(R.drawable.grey_bell);
+                    notificationchoice = false;
+                }
+            }
+        });
 
         ImageView DropdownMenu = findViewById(R.id.dropdown_icon);
         LinearLayout dropdown = findViewById(R.id.dropdownmenu);
@@ -199,8 +230,8 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
 
             return;
         } else {
-            if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 2, new LocationListener() { //Every 60 seconds or 10m change, run code
+            if (locationManager.isProviderEnabled(networkprovider)) {
+                locationManager.requestLocationUpdates(networkprovider, 2000, 2, new LocationListener() { //Every 60 seconds or 10m change, run code
                     @Override
                     public void onLocationChanged(@NonNull Location location) {
                         Log.d("location", "location changed");
@@ -222,11 +253,37 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                             }
                         });
                         LatLng latLng = new LatLng(Latitude, Longitude);
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
+                        if (notificationchoice){
+                            try{
+                                for (int i = 0;i<routestepsreminder.size();i++){
+                                    RouteStep routestep = routestepsreminder.get(i);
+                                    Double destnDist = SphericalUtil.computeDistanceBetween(latLng,routestep.Latlongend);
+                                    if (destnDist<=100.0){
+                                        if(routestep.TravelMode!="Drive"){
+                                            Notification notification = new NotificationCompat.Builder(getApplicationContext(),CHANNEL_ID_2)
+                                                    .setSmallIcon(R.drawable.app_logo_vector)
+                                                    .setContentTitle(!routestep.TravelMode.equals("Walk")? "Remember to alight":"You are close!")
+                                                    .setContentText("You are arriving at "+ routestep.NextLocation + "!")
+                                                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                                                    .build();
+
+                                            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+                                            notificationManager.notify(1,notification);
+                                            routestepsreminder.remove(routestep);
+                                            Log.d("YEs","Yes");
+                                        }
+                                    }
+
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 });
             }
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            /*if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 2, new LocationListener() { //Every 60 seconds or 10m change, run code
                     @Override
                     public void onLocationChanged(@NonNull Location location) {
@@ -249,7 +306,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f));
                     }
                 });
-            }
+            }*/
 
 
         }
@@ -358,7 +415,12 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                                     if (travelmode.equals("WALKING")){
                                         /*polylineOptions.color(ContextCompat.getColor(Route.this, R.color.purple_500));*/
                                         polylineOptions.color(Color.parseColor("#62d431"));
-
+                                        MarkerOptions marker = new MarkerOptions().position(latlongstart);
+                                        marker.icon(bitmapDescriptorFromVector(Route.this,R.drawable.ic_baseline_lens_24));
+                                        mMap.addMarker(marker);
+                                        marker = new MarkerOptions().position(latlongend);
+                                        marker.icon(bitmapDescriptorFromVector(Route.this,R.drawable.ic_baseline_lens_24));
+                                        mMap.addMarker(marker);
                                         /*List<PatternItem> pattern = Arrays.asList(
                                                 new Dot(), new Gap(20), new Dash(30), new Gap(20));
                                         polylineOptions.setPattern(pattern);*/
@@ -403,6 +465,14 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                                         stepcoordinates.add(latlongstart);
                                         bounds.include(latlongend);
                                         stepcoordinates.add(latlongend);
+                                        MarkerOptions marker = new MarkerOptions().position(latlongstart);
+                                        marker.icon(bitmapDescriptorFromVector(Route.this,R.drawable.ic_baseline_lens_blue_24));
+                                        mMap.addMarker(marker);
+
+                                        marker = new MarkerOptions().position(latlongend);
+                                        marker.icon(bitmapDescriptorFromVector(Route.this,R.drawable.ic_baseline_lens_blue_24));
+                                        mMap.addMarker(marker);
+
                                     }
 
                                     RouteStep currentStep = new RouteStep(latlongstart,latlongend,travelMode,instructions, distance,duration,previousLocation,nextLocation);
@@ -434,6 +504,12 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
 
                         /*mMap.addMarker(new MarkerOptions().position(new LatLng(1.3595533, 103.94306)));
                         mMap.addMarker(new MarkerOptions().position(new LatLng(1.3212432, 103.7743509)));*/
+                        routestepsreminder = new ArrayList<>();
+                        if (notificationchoice){
+                            for (int i=1; i<routeSteps.size()-1; i++){
+                                routestepsreminder.add(routeSteps.get(i));
+                            }
+                        }
 
 
                         final LatLngBounds boundsbuilt = bounds.build();
@@ -556,7 +632,6 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                 Intent intentcarpark = new Intent(Route.this, CarparkActivity.class);
                 intentcarpark.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intentcarpark);
-                navigationView.setCheckedItem(R.id.nav_carpark);
                 finish();
                 break;
             case R.id.nav_profile:
@@ -576,7 +651,6 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                 Intent fareintent = new Intent(Route.this, WeekActivity.class);
                 fareintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(fareintent);
-                navigationView.setCheckedItem(R.id.nav_fares);
                 finish();
                 break;
             case R.id.nav_rate:

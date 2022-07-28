@@ -230,14 +230,12 @@ public class CarparkActivity extends AppCompatActivity implements NavigationView
                 Intent routeintent = new Intent(CarparkActivity.this, Route.class);
                 routeintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(routeintent);
-                navigationView.setCheckedItem(R.id.nav_route);
                 finish();
                 break;
             case R.id.nav_fares:
                 Intent fareintent = new Intent(CarparkActivity.this, WeekActivity.class);
                 fareintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(fareintent);
-                navigationView.setCheckedItem(R.id.nav_fares);
                 finish();
                 break;
             case R.id.nav_rate:
