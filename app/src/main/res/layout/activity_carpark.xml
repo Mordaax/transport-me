@@ -46,6 +46,17 @@
 
         </RelativeLayout>
 
+        <EditText
+            android:id="@+id/carparkSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/ic_baseline_search_24"
+            android:hint="Search for carpark"
+            android:imeOptions="actionSearch"
+            android:padding="20dp"
+            android:singleLine="true"
+            android:inputType="textAutoComplete"
+            />
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/carparkRecyclerView"
             android:layout_width="match_parent"
