@@ -53,19 +53,19 @@ public class CarparkAdapter
 
         holder.CarparkDescription.setText(carpark_content.Development);
 
-        if (carpark_content.LotType == "C"){
+        if (carpark_content.LotType.equals("C")){
             holder.CarLotsAvailable.setText(carpark_content.AvailableLots);
-            holder.MotorLotsAvailable.setText("--");
-            holder.TruckLotsAvailable.setText("--");
+            holder.MotorLotsAvailable.setText("---");
+            holder.TruckLotsAvailable.setText("---");
         }
-        else if (carpark_content.LotType == "Y"){
-            holder.CarLotsAvailable.setText("--");
+        else if (carpark_content.LotType.equals("Y")){
+            holder.CarLotsAvailable.setText("---");
             holder.MotorLotsAvailable.setText(carpark_content.AvailableLots);
-            holder.TruckLotsAvailable.setText("--");
+            holder.TruckLotsAvailable.setText("---");
         }
         else{
-            holder.CarLotsAvailable.setText("--");
-            holder.MotorLotsAvailable.setText("--");
+            holder.CarLotsAvailable.setText("---");
+            holder.MotorLotsAvailable.setText("---");
             holder.TruckLotsAvailable.setText(carpark_content.AvailableLots);
         }
 

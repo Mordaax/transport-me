@@ -25,7 +25,12 @@
                 android:id="@+id/carparkDesc"
                 android:layout_width="157dp"
                 android:layout_height="56dp"
-                android:text="Description" />
+                android:text="Description"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:paddingLeft="8dp"
+                android:paddingTop="8dp"
+                />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
