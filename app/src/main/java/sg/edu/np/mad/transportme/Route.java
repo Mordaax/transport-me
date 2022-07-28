@@ -2,6 +2,8 @@ package sg.edu.np.mad.transportme;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION;
+import static sg.edu.np.mad.transportme.ReminderApplication.CHANNEL_ID_2;
+import static sg.edu.np.mad.transportme.user.LoginPage.globalReminder;
 import static sg.edu.np.mad.transportme.views.LoadingScreen.globalBusStops;
 import static sg.edu.np.mad.transportme.views.MainActivity.networkprovider;
 
@@ -9,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -18,9 +22,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Notification;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -33,6 +39,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -71,12 +78,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.navigation.NavigationView;
+import com.google.maps.android.SphericalUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -94,7 +103,8 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
     String currentLocation = "";
     Spinner traveloption;
     String travelmode = "transit";
-
+    Boolean notificationchoice = false;
+    ArrayList<RouteStep> routestepsreminder;
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +113,20 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.routemap);
         mapFragment.getMapAsync(this);
+        ImageView notificationbellimage = findViewById(R.id.notificationbellimage);
+        notificationbellimage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(notificationchoice == false){
+                    notificationbellimage.setImageResource(R.drawable.filled_bell);
+                    notificationchoice = true;
+                }
+                else if(notificationchoice == true){
+                    notificationbellimage.setImageResource(R.drawable.grey_bell);
+                    notificationchoice = false;
+                }
+            }
+        });
 
         ImageView DropdownMenu = findViewById(R.id.dropdown_icon);
         LinearLayout dropdown = findViewById(R.id.dropdownmenu);
@@ -223,6 +247,28 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                             }
                         });
                         LatLng latLng = new LatLng(Latitude, Longitude);
+                        if (notificationchoice){
+                            try{
+                                for (RouteStep routestep : routestepsreminder){
+                                    Double destnDist = SphericalUtil.computeDistanceBetween(latLng,routestep.Latlongend);
+                                    if (destnDist<=100.0){
+                                        Notification notification = new NotificationCompat.Builder(getApplicationContext(),CHANNEL_ID_2)
+                                                .setSmallIcon(R.drawable.app_logo_vector)
+                                                .setContentTitle(!routestep.TravelMode.equals("Walk")? "Remember to alight":"You are close!")
+                                                .setContentText("You are arriving at "+ routestep.NextLocation + "!")
+                                                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                                                .build();
+
+                                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+                                        notificationManager.notify(1,notification);
+                                    }
+                                    routestepsreminder.remove(routestep);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
 
                     }
                 });
@@ -435,6 +481,12 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
 
                         /*mMap.addMarker(new MarkerOptions().position(new LatLng(1.3595533, 103.94306)));
                         mMap.addMarker(new MarkerOptions().position(new LatLng(1.3212432, 103.7743509)));*/
+                        routestepsreminder = new ArrayList<>();
+                        if (notificationchoice){
+                            for (int i=1; i<routeSteps.size()-1; i++){
+                                routestepsreminder.add(routeSteps.get(i));
+                            }
+                        }
 
 
                         final LatLngBounds boundsbuilt = bounds.build();
@@ -557,7 +609,6 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                 Intent intentcarpark = new Intent(Route.this, CarparkActivity.class);
                 intentcarpark.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intentcarpark);
-                navigationView.setCheckedItem(R.id.nav_carpark);
                 finish();
                 break;
             case R.id.nav_profile:
@@ -577,7 +628,6 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                 Intent fareintent = new Intent(Route.this, WeekActivity.class);
                 fareintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(fareintent);
-                navigationView.setCheckedItem(R.id.nav_fares);
                 finish();
                 break;
             case R.id.nav_rate:
