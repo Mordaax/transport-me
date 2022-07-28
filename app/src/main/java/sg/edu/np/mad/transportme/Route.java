@@ -6,7 +6,7 @@ import static sg.edu.np.mad.transportme.ReminderApplication.CHANNEL_ID_2;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalReminder;
 import static sg.edu.np.mad.transportme.views.LoadingScreen.globalBusStops;
 import static sg.edu.np.mad.transportme.views.MainActivity.networkprovider;
-
+import android.speech.tts.TextToSpeech;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,6 +40,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.speech.tts.TextToSpeech;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -63,12 +64,14 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Dash;
 import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.Gap;
@@ -89,6 +92,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import sg.edu.np.mad.transportme.user.ProfileFragment;
 import sg.edu.np.mad.transportme.views.CarparkActivity;
@@ -105,6 +109,8 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
     String travelmode = "transit";
     Boolean notificationchoice = false;
     ArrayList<RouteStep> routestepsreminder;
+    TextToSpeech t1;
+    Boolean drivingchoice;
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -225,7 +231,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
             return;
         } else {
             if (locationManager.isProviderEnabled(networkprovider)) {
-                locationManager.requestLocationUpdates(networkprovider, 1000, 2, new LocationListener() { //Every 60 seconds or 10m change, run code
+                locationManager.requestLocationUpdates(networkprovider, 2000, 2, new LocationListener() { //Every 60 seconds or 10m change, run code
                     @Override
                     public void onLocationChanged(@NonNull Location location) {
                         Log.d("location", "location changed");
@@ -249,27 +255,31 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                         LatLng latLng = new LatLng(Latitude, Longitude);
                         if (notificationchoice){
                             try{
-                                for (RouteStep routestep : routestepsreminder){
+                                for (int i = 0;i<routestepsreminder.size();i++){
+                                    RouteStep routestep = routestepsreminder.get(i);
                                     Double destnDist = SphericalUtil.computeDistanceBetween(latLng,routestep.Latlongend);
                                     if (destnDist<=100.0){
-                                        Notification notification = new NotificationCompat.Builder(getApplicationContext(),CHANNEL_ID_2)
-                                                .setSmallIcon(R.drawable.app_logo_vector)
-                                                .setContentTitle(!routestep.TravelMode.equals("Walk")? "Remember to alight":"You are close!")
-                                                .setContentText("You are arriving at "+ routestep.NextLocation + "!")
-                                                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                                                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                                                .build();
+                                        if(routestep.TravelMode!="Drive"){
+                                            Notification notification = new NotificationCompat.Builder(getApplicationContext(),CHANNEL_ID_2)
+                                                    .setSmallIcon(R.drawable.app_logo_vector)
+                                                    .setContentTitle(!routestep.TravelMode.equals("Walk")? "Remember to alight":"You are close!")
+                                                    .setContentText("You are arriving at "+ routestep.NextLocation + "!")
+                                                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                                                    .build();
 
-                                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
-                                        notificationManager.notify(1,notification);
+                                            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+                                            notificationManager.notify(1,notification);
+                                            routestepsreminder.remove(routestep);
+                                            Log.d("YEs","Yes");
+                                        }
                                     }
-                                    routestepsreminder.remove(routestep);
+
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
-
                     }
                 });
             }
@@ -405,7 +415,12 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                                     if (travelmode.equals("WALKING")){
                                         /*polylineOptions.color(ContextCompat.getColor(Route.this, R.color.purple_500));*/
                                         polylineOptions.color(Color.parseColor("#62d431"));
-
+                                        MarkerOptions marker = new MarkerOptions().position(latlongstart);
+                                        marker.icon(bitmapDescriptorFromVector(Route.this,R.drawable.ic_baseline_lens_24));
+                                        mMap.addMarker(marker);
+                                        marker = new MarkerOptions().position(latlongend);
+                                        marker.icon(bitmapDescriptorFromVector(Route.this,R.drawable.ic_baseline_lens_24));
+                                        mMap.addMarker(marker);
                                         /*List<PatternItem> pattern = Arrays.asList(
                                                 new Dot(), new Gap(20), new Dash(30), new Gap(20));
                                         polylineOptions.setPattern(pattern);*/
@@ -450,6 +465,14 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                                         stepcoordinates.add(latlongstart);
                                         bounds.include(latlongend);
                                         stepcoordinates.add(latlongend);
+                                        MarkerOptions marker = new MarkerOptions().position(latlongstart);
+                                        marker.icon(bitmapDescriptorFromVector(Route.this,R.drawable.ic_baseline_lens_blue_24));
+                                        mMap.addMarker(marker);
+
+                                        marker = new MarkerOptions().position(latlongend);
+                                        marker.icon(bitmapDescriptorFromVector(Route.this,R.drawable.ic_baseline_lens_blue_24));
+                                        mMap.addMarker(marker);
+
                                     }
 
                                     RouteStep currentStep = new RouteStep(latlongstart,latlongend,travelMode,instructions, distance,duration,previousLocation,nextLocation);
