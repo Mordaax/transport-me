@@ -9,6 +9,8 @@ import static sg.edu.np.mad.transportme.user.LoginPage.globalRemindCloseness;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalReminder;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalReminderBusService;
 import static sg.edu.np.mad.transportme.user.LoginPage.grbsChange;
+import static sg.edu.np.mad.transportme.views.MainActivity.networkprovider;
+
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -321,7 +323,7 @@ public class BusStopAdapter
         LocationManager locationManager = (LocationManager) c.getSystemService(LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(c, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(c, ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
         {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 6000, 10, new LocationListener() {
+            locationManager.requestLocationUpdates(networkprovider, 6000, 10, new LocationListener() {
                 @Override
                 public void onLocationChanged(@NonNull Location location) {
                     Double Latitude = location.getLatitude(); //Get latitude and logitude

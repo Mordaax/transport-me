@@ -1,5 +1,7 @@
 package sg.edu.np.mad.transportme;
 
+import static sg.edu.np.mad.transportme.views.MainActivity.mlistlocation;
+
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -71,16 +73,18 @@ public class BusServiceAdapter
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final CharSequence[] options = {"Yes", "Cancel"};
+                final CharSequence[] options = {"Show Bus Location","Show Bus routes", "Cancel"};
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getRootView().getContext());
-                builder.setTitle("Show bus routes for " + content.getServiceNumber() + "?");
+                builder.setTitle(content.getServiceNumber());
                 builder.setIcon(R.drawable.appsplashicon);
                 builder.setItems(options, new DialogInterface.OnClickListener() {
                     @RequiresApi(api = Build.VERSION_CODES.M)
                     @Override
                     public void onClick(DialogInterface dialogInterface, int item) {
-
-                        if (options[item].equals("Yes")) {
+                        if(options[item].equals("Show Bus Location")){
+                            ((MainActivity) c).addBusLocations(content);
+                        }
+                        if (options[item].equals("Show Bus routes")) {
                             ((MainActivity) c).removemarker(mList, line);
                             line = null;
                             lList.clear();
@@ -125,6 +129,7 @@ public class BusServiceAdapter
                                                     line = null;
                                                     lList.clear();
                                                     mList.clear();
+                                                    mlistlocation.clear();
                                                 }
                                             });
                                     View snackbarLayout = snackbar.getView();

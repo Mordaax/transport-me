@@ -48,7 +48,7 @@ public class InsightsActivity extends AppCompatActivity {
 
         yearMonth.setText(date.format(formatter));
 
-
+        double Ttl = 0;
         final Pie pie = AnyChart.pie();  //creating the pie chart with values from each expense in the expensearraylist that corresponds to the chosen date
         List<DataEntry> dataEntryList = new ArrayList<>();
         double Bus = 0, Train = 0, Taxi = 0, Others = 0;
@@ -69,7 +69,7 @@ public class InsightsActivity extends AppCompatActivity {
                 }
             }
         }
-
+        Ttl = Bus + Train + Taxi + Others;
         double[] transportCosts = {Bus,Train,Taxi,Others};
         for (int i = 0; i < transportMode.length; i++) {
             dataEntryList.add(new ValueDataEntry(transportMode[i], transportCosts[i]));
@@ -77,10 +77,10 @@ public class InsightsActivity extends AppCompatActivity {
         pie.data(dataEntryList);
         anyChartView.setChart(pie);
         if (DoubleStream.of(transportCosts).sum() > 0){
-            expenseTV.setText("Total expenditure for "+date.format(formatter));
+            expenseTV.setText("Total expenditure for "+date.format(formatter) + ": $" + Ttl);
         }
         else{
-            expenseTV.setText("No expenses logged for "+date.format(formatter));
+            expenseTV.setText("No expenses logged for "+date.format(formatter) + ": $" + Ttl);
         }
 
 
@@ -110,6 +110,7 @@ public class InsightsActivity extends AppCompatActivity {
     public void initChart(Pie pie) { //used to update the pie when new date is chosen
         List<DataEntry> dataEntryList = new ArrayList<>();
         double Bus = 0, Train = 0, Taxi = 0, Others = 0;
+        double Ttl = 0;
         for (Expense expense : Expense.expenseArrayList){
             if(expense.getDate().getMonthValue() == date.getMonthValue() && expense.getDate().getYear() == date.getYear()){
                 if(expense.getSelected().equals("Bus")) {
@@ -129,15 +130,16 @@ public class InsightsActivity extends AppCompatActivity {
         }
 
         double[] transportCosts = {Bus,Train,Taxi,Others};
+        Ttl = Bus + Train + Taxi + Others;
         for (int i = 0; i < transportMode.length; i++) {
             dataEntryList.add(new ValueDataEntry(transportMode[i], transportCosts[i]));
         }
         pie.data(dataEntryList);
         if (DoubleStream.of(transportCosts).sum() > 0){
-            expenseTV.setText("Total expenditure for "+date.format(formatter));
+            expenseTV.setText("Total expenditure for "+date.format(formatter) + ": $" + Ttl);
         }
         else{
-            expenseTV.setText("No expenses logged for "+date.format(formatter));
+            expenseTV.setText("No expenses logged for "+date.format(formatter) + ": $" + Ttl);
         }
 
     }

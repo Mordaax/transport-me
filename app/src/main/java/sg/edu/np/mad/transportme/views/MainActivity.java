@@ -43,6 +43,7 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -80,6 +81,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -98,15 +100,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.maps.android.SphericalUtil;
 
-import java.lang.reflect.Array;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 
+import sg.edu.np.mad.transportme.BusService;
 import sg.edu.np.mad.transportme.BusStop;
 import sg.edu.np.mad.transportme.BusStopAdapter;
 import sg.edu.np.mad.transportme.DistanceCalculator;
+import sg.edu.np.mad.transportme.NextBus;
 import sg.edu.np.mad.transportme.PrivacyPolicyActivty;
 import sg.edu.np.mad.transportme.R;
 import sg.edu.np.mad.transportme.ReminderService;
@@ -117,6 +121,8 @@ import sg.edu.np.mad.transportme.user.ProfileFragment;
 
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
+    public static String networkprovider = LocationManager.GPS_PROVIDER;
+    public static ArrayList<Marker> mlistlocation;
     LinearLayout mapandrv;
     FrameLayout fragmentlayout;
     LinearLayout reminderView;      //CHANGE TO SCROLLVIEW LATER
@@ -303,11 +309,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             return;
         } else {
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) { //Comments in this section is the same as the one in the LocationManager.NETWORK_PROVIDER
+
+            if (locationManager.isProviderEnabled(networkprovider)) { //Comments in this section is the same as the one in the LocationManager.NETWORK_PROVIDER
                 swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 10, new LocationListener() { //Every 60 seconds or 10m change, run code
+                        locationManager.requestLocationUpdates(networkprovider, 60000, 10, new LocationListener() { //Every 60 seconds or 10m change, run code
                             @Override
                             public void onLocationChanged(@NonNull Location location) {
                                 Double Latitude = location.getLatitude(); //Get latitude and logitude
@@ -365,11 +372,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 swipeLayoutRemind.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 6000, 10, new LocationListener() {
+                        locationManager.requestLocationUpdates(networkprovider, 6000, 10, new LocationListener() {
                             @Override
                             public void onLocationChanged(@NonNull Location location) {
-                                if (globalReminder != null)
-                                {
+                                if (globalReminder != null) {
                                     Double Latitude = location.getLatitude(); //Get latitude and logitude
                                     Double Longitude = location.getLongitude();
 
@@ -385,44 +391,42 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     rv.setAdapter(adapter);
                                     rv.setLayoutManager(layout);
 
-                                    LatLng destnLL = new LatLng(globalReminder.getLatitude(),globalReminder.getLongitude());
-                                    Double destnDist = SphericalUtil.computeDistanceBetween(latLng,destnLL);
+                                    LatLng destnLL = new LatLng(globalReminder.getLatitude(), globalReminder.getLongitude());
+                                    Double destnDist = SphericalUtil.computeDistanceBetween(latLng, destnLL);
                                     TextView remindDestnDist = findViewById(R.id.remindDestnDist);
                                     String display = String.format("%.2f", destnDist / 1000) + "km\nLeft to " + globalReminder.getDescription();
                                     remindDestnDist.setText(display);
 
                                     ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);
-                                    apiBusStopService.getBusRoute(globalReminderBusService,new ApiBusStopService.VolleyResponseListener3() { //Call API for bus route
+                                    apiBusStopService.getBusRoute(globalReminderBusService, new ApiBusStopService.VolleyResponseListener3() { //Call API for bus route
                                         @Override
                                         public void onError(String message) {
-                                            Toast.makeText(MainActivity.this,"Cannot Get Bus Route, Check Location and Connection",Toast.LENGTH_LONG).show();
+                                            Toast.makeText(MainActivity.this, "Cannot Get Bus Route, Check Location and Connection", Toast.LENGTH_LONG).show();
                                         }
+
                                         @Override
                                         public void onResponse(ArrayList<BusStop> busStopRouteLoaded) {
                                             Integer index = busStopRouteLoaded.lastIndexOf(globalReminder);
-                                            if(destnDist <= globalRemindCloseness)
-                                            {
+                                            if (destnDist <= globalRemindCloseness) {
                                                 ArrayList<BusStop> busStopDist = new ArrayList<>();
-                                                for (BusStop bs : busStopRouteLoaded)
-                                                {
-                                                    bs.setDistanceToLocation(SphericalUtil.computeDistanceBetween(latLng, new LatLng(bs.getLatitude(),bs.getLongitude())));
+                                                for (BusStop bs : busStopRouteLoaded) {
+                                                    bs.setDistanceToLocation(SphericalUtil.computeDistanceBetween(latLng, new LatLng(bs.getLatitude(), bs.getLongitude())));
                                                     busStopDist.add(bs);
                                                 }
                                                 Collections.sort(busStopDist);
 
                                                 Integer closestBusStopIndex = busStopRouteLoaded.indexOf(busStopDist.get(0));
-                                                if(index - closestBusStopIndex < 2)
-                                                {
-                                                    Notification notification = new NotificationCompat.Builder(MainActivity.this,CHANNEL_ID_2)
+                                                if (index - closestBusStopIndex < 2) {
+                                                    Notification notification = new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID_2)
                                                             .setSmallIcon(R.drawable.app_logo_vector)
                                                             .setContentTitle("Reminder to Alight")
-                                                            .setContentText("You are arriving "+ globalReminder.getDescription() + "!")
+                                                            .setContentText("You are arriving " + globalReminder.getDescription() + "!")
                                                             .setPriority(NotificationCompat.PRIORITY_HIGH)
                                                             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                                                             .build();
 
                                                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(MainActivity.this);
-                                                    notificationManager.notify(1,notification);
+                                                    notificationManager.notify(1, notification);
 
                                                     reminderReference.setValue(null);
                                                 }
@@ -437,7 +441,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 });
 
                 // Main location request when the app first loads
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 10, new LocationListener() {
+                locationManager.requestLocationUpdates(networkprovider, 60000, 10, new LocationListener() {
                     @Override
                     public void onLocationChanged(@NonNull Location location) {
                         Double Latitude = location.getLatitude();
@@ -447,8 +451,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         LatLng latLng = new LatLng(Latitude, Longitude);
                         Geocoder geocoder = new Geocoder(getApplicationContext());
 
-                        if(globalReminder != null)
-                        {
+                        if (globalReminder != null) {
                             ArrayList<BusStop> remindBusStop = new ArrayList<>();
                             remindBusStop.add(globalReminder);
                             RecyclerView rv = findViewById(R.id.recyclerViewRemind); //Load recyclerview when they onresponse is recieved
@@ -457,46 +460,44 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             rv.setAdapter(adapter);
                             rv.setLayoutManager(layout);
 
-                            LatLng destnLL = new LatLng(globalReminder.getLatitude(),globalReminder.getLongitude());
-                            Double destnDist = SphericalUtil.computeDistanceBetween(latLng,destnLL);
+                            LatLng destnLL = new LatLng(globalReminder.getLatitude(), globalReminder.getLongitude());
+                            Double destnDist = SphericalUtil.computeDistanceBetween(latLng, destnLL);
                             TextView remindDestnDist = findViewById(R.id.remindDestnDist);
                             String display = String.format("%.2f", destnDist / 1000) + "km\nLeft to " + globalReminder.getDescription();
                             remindDestnDist.setText(display);
 
 
                             ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);
-                            apiBusStopService.getBusRoute(globalReminderBusService,new ApiBusStopService.VolleyResponseListener3() { //Call API for bus route
+                            apiBusStopService.getBusRoute(globalReminderBusService, new ApiBusStopService.VolleyResponseListener3() { //Call API for bus route
                                 @Override
                                 public void onError(String message) {
-                                    Toast.makeText(MainActivity.this,"Cannot Get Bus Route, Check Location and Connection",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(MainActivity.this, "Cannot Get Bus Route, Check Location and Connection", Toast.LENGTH_LONG).show();
                                 }
+
                                 @Override
                                 public void onResponse(ArrayList<BusStop> busStopRouteLoaded) {
                                     Integer index = busStopRouteLoaded.lastIndexOf(globalReminder);
 
-                                    if(destnDist <= globalRemindCloseness)
-                                    {
+                                    if (destnDist <= globalRemindCloseness) {
                                         ArrayList<BusStop> busStopDist = new ArrayList<>();
-                                        for (BusStop bs : busStopRouteLoaded)
-                                        {
-                                            bs.setDistanceToLocation(SphericalUtil.computeDistanceBetween(latLng, new LatLng(bs.getLatitude(),bs.getLongitude())));
+                                        for (BusStop bs : busStopRouteLoaded) {
+                                            bs.setDistanceToLocation(SphericalUtil.computeDistanceBetween(latLng, new LatLng(bs.getLatitude(), bs.getLongitude())));
                                             busStopDist.add(bs);
                                         }
                                         Collections.sort(busStopDist);
 
                                         Integer closestBusStopIndex = busStopRouteLoaded.indexOf(busStopDist.get(0));
-                                        if(index - closestBusStopIndex < 2 && reached != true)
-                                        {
-                                            Notification notification = new NotificationCompat.Builder(MainActivity.this,CHANNEL_ID_2)
+                                        if (index - closestBusStopIndex < 2 && reached != true) {
+                                            Notification notification = new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID_2)
                                                     .setSmallIcon(R.drawable.app_logo_vector)
                                                     .setContentTitle("Reminder to Alight")
-                                                    .setContentText("You are arriving "+ globalReminder.getDescription() + "!")
+                                                    .setContentText("You are arriving " + globalReminder.getDescription() + "!")
                                                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                                                     .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                                                     .build();
 
                                             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(MainActivity.this);
-                                            notificationManager.notify(1,notification);
+                                            notificationManager.notify(1, notification);
 
                                             reminderReference.setValue(null);
                                         }
@@ -548,7 +549,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                     }
                 });
-            } else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) { //This section is similar to the LocationManager.GPS_PROVIDER section above
+            } /*else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) { //This section is similar to the LocationManager.GPS_PROVIDER section above
                 //For users to refresh the recyclerview, runs the location reqeust updates
                 swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -792,7 +793,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                     }
                 });
-            }
+            }*/
         }
         grbsChange.observe(this, new Observer<String>() {
             @Override
@@ -1107,7 +1108,24 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             super.onBackPressed();
         }
     }
+    public void addBusLocations(BusService currentService){
+        ArrayList<NextBus> nextbuses = currentService.getNextBuses();
+        mlistlocation = new ArrayList<>();
 
+        for (NextBus nextbus : nextbuses){
+            LatLng latlongbus = new LatLng(Double.valueOf(nextbus.getLatitude()), Double.valueOf(nextbus.getLongitude()));
+            MarkerOptions marker = new MarkerOptions().position(latlongbus).title(currentService.getServiceNumber());
+            Bitmap icon = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888);
+            Drawable shape = getResources().getDrawable(R.drawable.ic_baseline_directions_bus_yellow_24);
+            Canvas canvas = new Canvas(icon);
+            shape.setBounds(0, 0, icon.getWidth(), icon.getHeight());
+            shape.draw(canvas);
+            Marker busmarker = map.addMarker(new MarkerOptions().position(latlongbus).title(currentService.getServiceNumber()).icon(BitmapDescriptorFactory.fromBitmap(icon)));
+            mlistlocation.add(busmarker);
+        }
+
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(nextbuses.get(0).getLatitude()), Double.valueOf(nextbuses.get(0).getLongitude())), 16.2f));
+    }
     private void selectImage() {
         final CharSequence[] options = {"Take Photo","Choose from Gallery","Cancel" };
         /*final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };*/
@@ -1272,4 +1290,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
 }
