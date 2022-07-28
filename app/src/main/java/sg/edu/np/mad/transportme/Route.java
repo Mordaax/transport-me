@@ -3,9 +3,12 @@ package sg.edu.np.mad.transportme;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION;
 import static sg.edu.np.mad.transportme.ReminderApplication.CHANNEL_ID_2;
+import static sg.edu.np.mad.transportme.ReminderApplication.getContext;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalReminder;
 import static sg.edu.np.mad.transportme.views.LoadingScreen.globalBusStops;
 import static sg.edu.np.mad.transportme.views.MainActivity.networkprovider;
+
+import android.app.Activity;
 import android.speech.tts.TextToSpeech;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -46,6 +49,7 @@ import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -241,6 +245,8 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                         routeButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+                                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                                 mMap.clear();
                                 String from = String.valueOf(atcfrom.getText());
                                 String to = String.valueOf(actto.getText());

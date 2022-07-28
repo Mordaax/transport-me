@@ -62,10 +62,12 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -100,6 +102,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.maps.android.SphericalUtil;
 
+import java.io.File;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -109,6 +112,7 @@ import java.util.List;
 import sg.edu.np.mad.transportme.BusService;
 import sg.edu.np.mad.transportme.BusStop;
 import sg.edu.np.mad.transportme.BusStopAdapter;
+import sg.edu.np.mad.transportme.BusStopDBHandler;
 import sg.edu.np.mad.transportme.DistanceCalculator;
 import sg.edu.np.mad.transportme.NextBus;
 import sg.edu.np.mad.transportme.PrivacyPolicyActivty;
@@ -121,7 +125,7 @@ import sg.edu.np.mad.transportme.user.ProfileFragment;
 
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
-    public static String networkprovider = LocationManager.GPS_PROVIDER;
+    public static String networkprovider = LocationManager.NETWORK_PROVIDER;
     public static ArrayList<Marker> mlistlocation;
     LinearLayout mapandrv;
     FrameLayout fragmentlayout;
@@ -153,7 +157,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        if(globalBusStops.isEmpty()){
+            BusStopDBHandler busStopDBHandler = new BusStopDBHandler(MainActivity.this,null,null,1);
+            globalBusStops = busStopDBHandler.getBusStops();
+        }
         swipeRefreshLayout = findViewById(R.id.swipeLayout);
         ProgressDialog progressDialog = new ProgressDialog(MainActivity.this, R.style.MyAlertDialogStyle); //Show Loading icon when the user first loads
         progressDialog.show();
@@ -1126,13 +1133,39 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(nextbuses.get(0).getLatitude()), Double.valueOf(nextbuses.get(0).getLongitude())), 16.2f));
     }
+    public static final int CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE = 1777;
     private void selectImage() {
-        final CharSequence[] options = {"Take Photo","Choose from Gallery","Cancel" };
+        final CharSequence[] options = {"Choose from Gallery","Cancel" };
         /*final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };*/
         ImageView image = new ImageView(this);
         image.setImageResource(R.drawable.bus_stop_next_to_pond);
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Choose Image to Scan");
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View view = inflater.inflate(R.layout.cameraalertdialog,null);
+        ImageView helloimage = view.findViewById(R.id.busstopimageview);
+        helloimage.setImageResource(R.drawable.bus_stop_next_to_pond);
+
+        Button selectImageButton = view.findViewById(R.id.buttonselectimage);
+        Button cancelImageButton = view.findViewById(R.id.buttoncancel);
+        AlertDialog alertDialog = new AlertDialog.Builder(this).setView(view).create();
+
+        selectImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(pickPhoto , 1);
+                alertDialog.cancel();
+            }
+        });
+        cancelImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.cancel();
+            }
+        });
+
+        alertDialog.show();
+        /*builder.setTitle("Choose Image to Scan");
         builder.setIcon(R.drawable.appsplashicon);
         builder.setView(image);
         builder.setItems(options, new DialogInterface.OnClickListener() {
@@ -1145,9 +1178,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     values.put(MediaStore.Images.Media.TITLE, "New Picture");
                     values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
                     image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
+                    Log.d("Hell", image_uri.toString());
                     Intent takePicture = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    takePicture.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-                    startActivityForResult(takePicture,0);
+                    *//*Intent takePicture = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);*//*
+                    File file = new File(Environment.getExternalStorageDirectory()+File.separator + "image.jpg");
+                    takePicture.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+                    startActivityForResult(takePicture, CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE);
+                    *//*takePicture.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);*//*
+                    *//*startActivityForResult(takePicture,0);*//*
 
                 } else if (options[item].equals("Choose from Gallery")) {
                     Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -1158,7 +1196,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
-        builder.show();
+        builder.show();*/
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1167,16 +1205,33 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             switch (requestCode) {
                 case 0:
                     if (resultCode == RESULT_OK /*&& data != null*/) {
-                        try{
+                        if (requestCode == CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE)
+                        {
+                            //Get our saved file into a bitmap object:
+
+                            File file = new File(Environment.getExternalStorageDirectory()+File.separator +
+                                    "image.jpg");
+                            Bitmap bitmap = decodeSampledBitmapFromFile(file.getAbsolutePath(), 1000, 700);
+                            TextRecognizer textRecognizer = new TextRecognizer.Builder(this).build();
+                            Frame frameImage = new Frame.Builder().setBitmap(bitmap).build();
+                            SparseArray<TextBlock> textBlockSpaceArray = textRecognizer.detect(frameImage);
+                        }
+                        /*try{
+                            Bitmap b = (Bitmap)data.getExtras().get("data");
+                            Log.d("Hell", b.toString());
+
                             ArrayList<BusStop> cameraBusStops = new ArrayList<>();
                             Bitmap selectedImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image_uri);
-                            /*Bitmap selectedImage = (Bitmap) data.getExtras().get("data");*/
+                            *//*Bitmap selectedImage = (Bitmap) data.getExtras().get("data");*//*
                             selectedImage = getResizedBitmap(selectedImage,1000);
                             TextRecognizer textRecognizer = new TextRecognizer.Builder(this).build();
-                            Frame frameImage = new Frame.Builder().setBitmap(selectedImage).build();
+                            Frame frameImage = new Frame.Builder().setBitmap(b).build();
                             SparseArray<TextBlock> textBlockSpaceArray = textRecognizer.detect(frameImage);
+
+
                             for (int i =0; i<textBlockSpaceArray.size();i++){
                                 TextBlock textBlock = textBlockSpaceArray.get(textBlockSpaceArray.keyAt(i));
+                                Log.d("Hello",textBlock.getValue());
                                 for (int x=0; i< globalBusStops.size(); i++){
                                     BusStop currentStop = globalBusStops.get(i);
                                     if (textBlock.getValue().equalsIgnoreCase(currentStop.getDescription()) ||
@@ -1215,7 +1270,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                         }
                         catch(Exception e){
-                        }
+                        }*/
 
                     }
 
@@ -1298,5 +1353,37 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
+    public static Bitmap decodeSampledBitmapFromFile(String path, int reqWidth, int reqHeight)
+    { // BEST QUALITY MATCH
 
+        //First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+
+        // Calculate inSampleSize, Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        int inSampleSize = 1;
+
+        if (height > reqHeight)
+        {
+            inSampleSize = Math.round((float)height / (float)reqHeight);
+        }
+        int expectedWidth = width / inSampleSize;
+
+        if (expectedWidth > reqWidth)
+        {
+            //if(Math.round((float)width / (float)reqWidth) > inSampleSize) // If bigger SampSize..
+            inSampleSize = Math.round((float)width / (float)reqWidth);
+        }
+
+        options.inSampleSize = inSampleSize;
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+
+        return BitmapFactory.decodeFile(path, options);
+    }
 }
