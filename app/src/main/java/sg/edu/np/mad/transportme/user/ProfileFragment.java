@@ -168,6 +168,7 @@ public class ProfileFragment extends Fragment {
                 grbsChange = new MutableLiveData<>();
                 LoginPage.SignedIn = false;
                 globalFavouriteBusStop.clear();
+                getActivity().finish();
                 startActivity(intent); //user gets directed to login page after signing out
             }
         });
