@@ -2,6 +2,7 @@ package sg.edu.np.mad.transportme;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.content.Context.LOCATION_SERVICE;
+import static androidx.core.app.ActivityCompat.requestPermissions;
 import static sg.edu.np.mad.transportme.ReminderApplication.CHANNEL_ID_2;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalFavouriteBusStop;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalName;
@@ -9,14 +10,17 @@ import static sg.edu.np.mad.transportme.user.LoginPage.globalRemindCloseness;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalReminder;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalReminderBusService;
 import static sg.edu.np.mad.transportme.user.LoginPage.grbsChange;
+import static sg.edu.np.mad.transportme.views.MainActivity.currentLocation;
 import static sg.edu.np.mad.transportme.views.MainActivity.networkprovider;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Geocoder;
 import android.location.Location;
@@ -24,6 +28,9 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import android.text.InputType;
 import android.text.method.DigitsKeyListener;
 import android.transition.AutoTransition;
@@ -43,6 +50,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -66,7 +74,6 @@ import sg.edu.np.mad.transportme.views.MainActivity;
 public class BusStopAdapter
         extends RecyclerView.Adapter<BusStopViewHolder>        //just like list, need declare <data type>
 {
-    private Boolean tooClose = false;
     ArrayList<BusStop> data;
     Context c;
     FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/");     //Initialise database instance
@@ -75,7 +82,8 @@ public class BusStopAdapter
         this.c = c;
         this.data = data;
     }
-
+    private static Boolean tooClose = false;
+    private static Boolean bgPermReq = false;
     @NonNull
     @Override
     public BusStopViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -171,6 +179,10 @@ public class BusStopAdapter
             public void onClick(View view) {
                 if(isNetworkAvailable())
                 {
+                    if(ContextCompat.checkSelfPermission(c, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED && !bgPermReq)
+                    {
+                        BackgroundAlert(((MainActivity)c));
+                    }
                     DatabaseReference reference = db.getReference()
                             .child("User")
                             //.child(firebaseUser.getUid())
@@ -317,80 +329,78 @@ public class BusStopAdapter
         }
     }
 
-    private void isValidBusService(BusStop bs, BusStopViewHolder holder, DatabaseReference reference)
+    private void checkCloseNess(BusStop bs)
     {
         tooClose = false;
-        LocationManager locationManager = (LocationManager) c.getSystemService(LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(c, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(c, ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-        {
-            locationManager.requestLocationUpdates(networkprovider, 6000, 10, new LocationListener() {
-                @Override
-                public void onLocationChanged(@NonNull Location location) {
-                    Double Latitude = location.getLatitude(); //Get latitude and logitude
-                    Double Longitude = location.getLongitude();
 
-                    LatLng latLng = new LatLng(Latitude, Longitude);
-                    if(SphericalUtil.computeDistanceBetween(latLng,new LatLng(bs.getLatitude(),bs.getLongitude())) < globalRemindCloseness)
-                    {
-                        tooClose = true;
-                    }
-                }
-            });
+        //Log.e("dis",""+SphericalUtil.computeDistanceBetween(currentLocation,new LatLng(bs.getLatitude(),bs.getLongitude())));
+
+        if(SphericalUtil.computeDistanceBetween(currentLocation,new LatLng(bs.getLatitude(),bs.getLongitude())) < globalRemindCloseness)
+        {
+            tooClose = true;
         }
+
+    }
+
+    private void isValidBusService(BusStop bs, BusStopViewHolder holder, DatabaseReference reference)
+    {
+        checkCloseNess(bs);
         if (tooClose)
         {
             Toast.makeText(c, "Destination is too near!", Toast.LENGTH_LONG).show();
-            return;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(c);
-        builder.setTitle("What bus will you be riding?");
-        final EditText input = new EditText(c) ;
-        String inputBusService;
-        input.setPadding(
-                c.getResources().getDimensionPixelOffset(R.dimen.dp_64),
-                c.getResources().getDimensionPixelOffset(R.dimen.dp_10),
-                c.getResources().getDimensionPixelOffset(R.dimen.dp_30),
-                c.getResources().getDimensionPixelOffset(R.dimen.dp_10)
-        );
-        input.setKeyListener(DigitsKeyListener.getInstance("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"));
-        input.setRawInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
-        builder.setIcon(R.drawable.appsplashicon);
-        builder.setCancelable(false);
-        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                String inputBusService = input.getText().toString().toUpperCase();
-                for(BusService busServ : bs.getBusServices())
-                {
-                    if(inputBusService.equals(busServ.getServiceNumber()))
+        else
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(c);
+            builder.setTitle("What bus will you be riding?");
+            final EditText input = new EditText(c) ;
+            String inputBusService;
+            input.setPadding(
+                    c.getResources().getDimensionPixelOffset(R.dimen.dp_64),
+                    c.getResources().getDimensionPixelOffset(R.dimen.dp_10),
+                    c.getResources().getDimensionPixelOffset(R.dimen.dp_30),
+                    c.getResources().getDimensionPixelOffset(R.dimen.dp_10)
+            );
+            input.setKeyListener(DigitsKeyListener.getInstance("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+            input.setRawInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+            builder.setIcon(R.drawable.appsplashicon);
+            builder.setCancelable(false);
+            builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    String inputBusService = input.getText().toString().toUpperCase();
+                    for(BusService busServ : bs.getBusServices())
                     {
-                        globalReminderBusService = inputBusService;
+                        if(inputBusService.equals(busServ.getServiceNumber()))
+                        {
+                            globalReminderBusService = inputBusService;
+                        }
+                    }
+                    if (!globalReminderBusService.equals(""))
+                    {
+                        holder.Reminder.setImageResource(R.drawable.filled_bell);
+                        holder.Reminder.setTag("Remind");
+                        globalReminder = bs;
+                        reference.child("BusStop").setValue(bs.getBusStopCode());
+                        reference.child("BusService").setValue(inputBusService);
+                        Toast.makeText(c, "Remind when arriving " + bs.getDescription(), Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        Toast.makeText(c, "Invalid Bus Service!", Toast.LENGTH_LONG).show();
                     }
                 }
-                if (!globalReminderBusService.equals(""))
-                {
-                    holder.Reminder.setImageResource(R.drawable.filled_bell);
-                    holder.Reminder.setTag("Remind");
-                    globalReminder = bs;
-                    reference.child("BusStop").setValue(bs.getBusStopCode());
-                    reference.child("BusService").setValue(inputBusService);
-                    Toast.makeText(c, "Remind when arriving " + bs.getDescription(), Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    Toast.makeText(c, "Invalid Bus Service!", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
 
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
+                }
+            });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
     }
 
     @Override
@@ -412,5 +422,56 @@ public class BusStopAdapter
         catch(NullPointerException e){
             return false;
         }
+    }
+    private void BackgroundAlert(Activity context)
+    {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
+        builder.setTitle("Background Location Use");
+        String action = "";
+        if (Build.VERSION.SDK_INT < 30)
+        {
+            action = "Request permissions for accessing background location.";
+        }
+        else
+        {
+            action = "redirect you to the settings page to set Location Permissions to 'Allow all the time'";
+        }
+
+        builder.setMessage("TransportMe collects location data to track location only when the app is in the background." +
+                "\nThis enables us to send you a notification when you are near to your destination set." +
+                "\n\nAccepting will " + action +
+                "\nNote: NO location data is ever saved or sent.");
+        builder.setIcon(R.drawable.appsplashicon);
+        builder.setCancelable(false);
+        builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (Build.VERSION.SDK_INT < 30)
+                {
+                    final String[] BACKGROUND_PERM={
+                            Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                    };
+                    final int BACKGROUND_REQUEST=1338;
+                    requestPermissions(context,BACKGROUND_PERM,BACKGROUND_REQUEST);
+                }
+                else
+                {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", context.getPackageName(), null);
+                    intent.setData(uri);
+                    context.startActivityForResult(intent, 0);
+                }
+            }
+        });
+        builder.setNegativeButton("Deny", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Toast.makeText(c,"TransportMe will not be able to track location while app is in the background.", Toast.LENGTH_LONG).show();
+            }
+        });
+        androidx.appcompat.app.AlertDialog alert = builder.create();
+        alert.show();
+        bgPermReq = true;
     }
 }
