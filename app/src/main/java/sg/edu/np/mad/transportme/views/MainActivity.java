@@ -125,7 +125,8 @@ import sg.edu.np.mad.transportme.user.ProfileFragment;
 
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
-    public static String networkprovider = LocationManager.NETWORK_PROVIDER;
+    public static String networkprovider = LocationManager.GPS_PROVIDER;
+    public static LatLng currentLocation = null;
     public static ArrayList<Marker> mlistlocation;
     LinearLayout mapandrv;
     FrameLayout fragmentlayout;
@@ -203,6 +204,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 //.child(firebaseUser.getUid())
                 .child(globalName)
                 .child("Reminder");
+
+        Log.e("build",""+Build.VERSION.SDK_INT );
+
 
         mapandrv = findViewById(R.id.MapAndRV);
         fragmentlayout = findViewById(R.id.frame_layout);
@@ -388,6 +392,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
                                     LatLng latLng = new LatLng(Latitude, Longitude);
+                                    currentLocation = latLng;
+
                                     Geocoder geocoder = new Geocoder(getApplicationContext());
 
                                     ArrayList<BusStop> remindBusStop = new ArrayList<>();
@@ -434,7 +440,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                                                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(MainActivity.this);
                                                     notificationManager.notify(1, notification);
-
                                                     reminderReference.setValue(null);
                                                 }
                                             }
@@ -456,6 +461,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
                         LatLng latLng = new LatLng(Latitude, Longitude);
+                        currentLocation = latLng;
+
                         Geocoder geocoder = new Geocoder(getApplicationContext());
 
                         if (globalReminder != null) {
@@ -556,7 +563,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                     }
                 });
-            } /*else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) { //This section is similar to the LocationManager.GPS_PROVIDER section above
+
+            }/* else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) { //This section is similar to the LocationManager.GPS_PROVIDER section above
                 //For users to refresh the recyclerview, runs the location reqeust updates
                 swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -690,6 +698,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         });
                     }
                 });
+
                 // Main location request when the app first loads
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60000, 10, new LocationListener() {
                     @Override
@@ -806,6 +815,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onChanged(String changedValue) {
                 reminderUpdate(reminderButton, findViewById(R.id.recyclerViewRemind));
+
             }
         });
         new Handler().postDelayed(new Runnable() {      //Gives app time to load global variables from Login Page before setting value
@@ -831,8 +841,28 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         super.onPause();
         if (globalReminder != null)
         {
-            startReminderService();
-            reached = false;
+            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED)   //if no bg perms granted and foreground tracking not activated
+            {
+                Intent notificationIntent = new Intent(this, MainActivity.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                        0, notificationIntent, 0);
+                Notification noPermNotif = new NotificationCompat.Builder(this,CHANNEL_ID_2)
+                        .setSmallIcon(R.drawable.app_logo_vector)
+                        .setContentTitle("TransportMe Cannot Track Your Location")
+                        .setContentIntent(pendingIntent)
+                        .setContentText("Please set Location Permissions to 'Allow all the time' so we can notify you even when the app is in the background!")
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                        .build();
+
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+                notificationManager.notify(1,noPermNotif);
+            }
+            else
+            {
+                startReminderService();
+                reached = false;
+            }
         }
     }
 
@@ -850,6 +880,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     .child("Reminder");
             reminderReference.setValue(null);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopReminderService();
     }
 
     public void startReminderService()
@@ -1091,10 +1127,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 try {
                     startActivity(goToMarket);
                 } catch (ActivityNotFoundException e) {
-                startActivity(new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("https://play.google.com/store/apps/details?id=sg.edu.np.mad.transportme")));
-                break;
-            }
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://play.google.com/store/apps/details?id=sg.edu.np.mad.transportme")));
+                    break;
+                }
             case R.id.nav_share:
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
@@ -1185,7 +1221,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     takePicture.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
                     startActivityForResult(takePicture, CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE);
                     *//*takePicture.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);*//*
-                    *//*startActivityForResult(takePicture,0);*//*
+         *//*startActivityForResult(takePicture,0);*//*
 
                 } else if (options[item].equals("Choose from Gallery")) {
                     Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
