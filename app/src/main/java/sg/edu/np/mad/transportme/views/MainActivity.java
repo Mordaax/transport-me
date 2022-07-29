@@ -308,9 +308,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             final String[] LOCATION_PERMS = {
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    Manifest.permission.READ_EXTERNAL_STORAGE
             };
 
             final int LOCATION_REQUEST = 1337;
@@ -997,9 +995,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             final String[] LOCATION_PERMS = {
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    Manifest.permission.READ_EXTERNAL_STORAGE
             };
 
             final int LOCATION_REQUEST = 1337;
@@ -1156,18 +1152,23 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mlistlocation = new ArrayList<>();
 
         for (NextBus nextbus : nextbuses){
-            LatLng latlongbus = new LatLng(Double.valueOf(nextbus.getLatitude()), Double.valueOf(nextbus.getLongitude()));
-            MarkerOptions marker = new MarkerOptions().position(latlongbus).title(currentService.getServiceNumber());
-            Bitmap icon = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888);
-            Drawable shape = getResources().getDrawable(R.drawable.ic_baseline_directions_bus_yellow_24);
-            Canvas canvas = new Canvas(icon);
-            shape.setBounds(0, 0, icon.getWidth(), icon.getHeight());
-            shape.draw(canvas);
-            Marker busmarker = map.addMarker(new MarkerOptions().position(latlongbus).title(currentService.getServiceNumber()).icon(BitmapDescriptorFactory.fromBitmap(icon)));
-            mlistlocation.add(busmarker);
-        }
+            if (!nextbus.getLatitude().equals("")){
+                LatLng latlongbus = new LatLng(Double.valueOf(nextbus.getLatitude()), Double.valueOf(nextbus.getLongitude()));
+                MarkerOptions marker = new MarkerOptions().position(latlongbus).title(currentService.getServiceNumber());
+                Bitmap icon = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888);
+                Drawable shape = getResources().getDrawable(R.drawable.ic_baseline_directions_bus_yellow_24);
+                Canvas canvas = new Canvas(icon);
+                shape.setBounds(0, 0, icon.getWidth(), icon.getHeight());
+                shape.draw(canvas);
+                Marker busmarker = map.addMarker(new MarkerOptions().position(latlongbus).title(currentService.getServiceNumber()).icon(BitmapDescriptorFactory.fromBitmap(icon)));
+                mlistlocation.add(busmarker);
+            }
 
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(nextbuses.get(0).getLatitude()), Double.valueOf(nextbuses.get(0).getLongitude())), 16.2f));
+        }
+        if (!nextbuses.get(0).getLatitude().equals("")){
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(nextbuses.get(0).getLatitude()), Double.valueOf(nextbuses.get(0).getLongitude())), 16.2f));
+
+        }
     }
     public static final int CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE = 1777;
     private void selectImage() {
