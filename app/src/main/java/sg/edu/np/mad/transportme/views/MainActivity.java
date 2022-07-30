@@ -43,6 +43,7 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -61,10 +62,12 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -80,6 +83,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -98,15 +102,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.maps.android.SphericalUtil;
 
-import java.lang.reflect.Array;
+import java.io.File;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 
+import sg.edu.np.mad.transportme.BusService;
 import sg.edu.np.mad.transportme.BusStop;
 import sg.edu.np.mad.transportme.BusStopAdapter;
+import sg.edu.np.mad.transportme.BusStopDBHandler;
 import sg.edu.np.mad.transportme.DistanceCalculator;
+import sg.edu.np.mad.transportme.NextBus;
 import sg.edu.np.mad.transportme.PrivacyPolicyActivty;
 import sg.edu.np.mad.transportme.R;
 import sg.edu.np.mad.transportme.ReminderService;
@@ -118,6 +126,8 @@ import sg.edu.np.mad.transportme.user.ProfileFragment;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
     public static String networkprovider = LocationManager.GPS_PROVIDER;
+    public static LatLng currentLocation = null;
+    public static ArrayList<Marker> mlistlocation;
     LinearLayout mapandrv;
     FrameLayout fragmentlayout;
     LinearLayout reminderView;      //CHANGE TO SCROLLVIEW LATER
@@ -148,7 +158,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        if(globalBusStops.isEmpty()){
+            BusStopDBHandler busStopDBHandler = new BusStopDBHandler(MainActivity.this,null,null,1);
+            globalBusStops = busStopDBHandler.getBusStops();
+        }
         swipeRefreshLayout = findViewById(R.id.swipeLayout);
         ProgressDialog progressDialog = new ProgressDialog(MainActivity.this, R.style.MyAlertDialogStyle); //Show Loading icon when the user first loads
         progressDialog.show();
@@ -191,6 +204,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 //.child(firebaseUser.getUid())
                 .child(globalName)
                 .child("Reminder");
+
+        Log.e("build",""+Build.VERSION.SDK_INT );
+
 
         mapandrv = findViewById(R.id.MapAndRV);
         fragmentlayout = findViewById(R.id.frame_layout);
@@ -292,9 +308,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             final String[] LOCATION_PERMS = {
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    Manifest.permission.READ_EXTERNAL_STORAGE
             };
 
             final int LOCATION_REQUEST = 1337;
@@ -376,6 +390,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
                                     LatLng latLng = new LatLng(Latitude, Longitude);
+                                    currentLocation = latLng;
+
                                     Geocoder geocoder = new Geocoder(getApplicationContext());
 
                                     ArrayList<BusStop> remindBusStop = new ArrayList<>();
@@ -422,7 +438,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                                                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(MainActivity.this);
                                                     notificationManager.notify(1, notification);
-
                                                     reminderReference.setValue(null);
                                                 }
                                             }
@@ -444,6 +459,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
                         LatLng latLng = new LatLng(Latitude, Longitude);
+                        currentLocation = latLng;
+
                         Geocoder geocoder = new Geocoder(getApplicationContext());
 
                         if (globalReminder != null) {
@@ -544,7 +561,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                     }
                 });
-            } /*else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) { //This section is similar to the LocationManager.GPS_PROVIDER section above
+
+            }/* else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) { //This section is similar to the LocationManager.GPS_PROVIDER section above
                 //For users to refresh the recyclerview, runs the location reqeust updates
                 swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -678,6 +696,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         });
                     }
                 });
+
                 // Main location request when the app first loads
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60000, 10, new LocationListener() {
                     @Override
@@ -794,6 +813,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onChanged(String changedValue) {
                 reminderUpdate(reminderButton, findViewById(R.id.recyclerViewRemind));
+
             }
         });
         new Handler().postDelayed(new Runnable() {      //Gives app time to load global variables from Login Page before setting value
@@ -819,8 +839,28 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         super.onPause();
         if (globalReminder != null)
         {
-            startReminderService();
-            reached = false;
+            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED)   //if no bg perms granted and foreground tracking not activated
+            {
+                Intent notificationIntent = new Intent(this, MainActivity.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                        0, notificationIntent, 0);
+                Notification noPermNotif = new NotificationCompat.Builder(this,CHANNEL_ID_2)
+                        .setSmallIcon(R.drawable.app_logo_vector)
+                        .setContentTitle("TransportMe Cannot Track Your Location")
+                        .setContentIntent(pendingIntent)
+                        .setContentText("Please set Location Permissions to 'Allow all the time' so we can notify you even when the app is in the background!")
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                        .build();
+
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+                notificationManager.notify(1,noPermNotif);
+            }
+            else
+            {
+                startReminderService();
+                reached = false;
+            }
         }
     }
 
@@ -838,6 +878,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     .child("Reminder");
             reminderReference.setValue(null);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopReminderService();
     }
 
     public void startReminderService()
@@ -949,9 +995,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             final String[] LOCATION_PERMS = {
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    Manifest.permission.READ_EXTERNAL_STORAGE
             };
 
             final int LOCATION_REQUEST = 1337;
@@ -1079,10 +1123,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 try {
                     startActivity(goToMarket);
                 } catch (ActivityNotFoundException e) {
-                startActivity(new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("https://play.google.com/store/apps/details?id=sg.edu.np.mad.transportme")));
-                break;
-            }
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://play.google.com/store/apps/details?id=sg.edu.np.mad.transportme")));
+                    break;
+                }
             case R.id.nav_share:
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
@@ -1103,14 +1147,62 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             super.onBackPressed();
         }
     }
+    public void addBusLocations(BusService currentService){
+        ArrayList<NextBus> nextbuses = currentService.getNextBuses();
+        mlistlocation = new ArrayList<>();
 
+        for (NextBus nextbus : nextbuses){
+            if (!nextbus.getLatitude().equals("")){
+                LatLng latlongbus = new LatLng(Double.valueOf(nextbus.getLatitude()), Double.valueOf(nextbus.getLongitude()));
+                MarkerOptions marker = new MarkerOptions().position(latlongbus).title(currentService.getServiceNumber());
+                Bitmap icon = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888);
+                Drawable shape = getResources().getDrawable(R.drawable.ic_baseline_directions_bus_yellow_24);
+                Canvas canvas = new Canvas(icon);
+                shape.setBounds(0, 0, icon.getWidth(), icon.getHeight());
+                shape.draw(canvas);
+                Marker busmarker = map.addMarker(new MarkerOptions().position(latlongbus).title(currentService.getServiceNumber()).icon(BitmapDescriptorFactory.fromBitmap(icon)));
+                mlistlocation.add(busmarker);
+            }
+
+        }
+        if (!nextbuses.get(0).getLatitude().equals("")){
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(nextbuses.get(0).getLatitude()), Double.valueOf(nextbuses.get(0).getLongitude())), 16.2f));
+
+        }
+    }
+    public static final int CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE = 1777;
     private void selectImage() {
-        final CharSequence[] options = {"Take Photo","Choose from Gallery","Cancel" };
+        final CharSequence[] options = {"Choose from Gallery","Cancel" };
         /*final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };*/
         ImageView image = new ImageView(this);
         image.setImageResource(R.drawable.bus_stop_next_to_pond);
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Choose Image to Scan");
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View view = inflater.inflate(R.layout.cameraalertdialog,null);
+        ImageView helloimage = view.findViewById(R.id.busstopimageview);
+        helloimage.setImageResource(R.drawable.bus_stop_next_to_pond);
+
+        Button selectImageButton = view.findViewById(R.id.buttonselectimage);
+        Button cancelImageButton = view.findViewById(R.id.buttoncancel);
+        AlertDialog alertDialog = new AlertDialog.Builder(this).setView(view).create();
+
+        selectImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(pickPhoto , 1);
+                alertDialog.cancel();
+            }
+        });
+        cancelImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.cancel();
+            }
+        });
+
+        alertDialog.show();
+        /*builder.setTitle("Choose Image to Scan");
         builder.setIcon(R.drawable.appsplashicon);
         builder.setView(image);
         builder.setItems(options, new DialogInterface.OnClickListener() {
@@ -1123,9 +1215,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     values.put(MediaStore.Images.Media.TITLE, "New Picture");
                     values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
                     image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
+                    Log.d("Hell", image_uri.toString());
                     Intent takePicture = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    takePicture.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-                    startActivityForResult(takePicture,0);
+                    *//*Intent takePicture = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);*//*
+                    File file = new File(Environment.getExternalStorageDirectory()+File.separator + "image.jpg");
+                    takePicture.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+                    startActivityForResult(takePicture, CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE);
+                    *//*takePicture.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);*//*
+         *//*startActivityForResult(takePicture,0);*//*
 
                 } else if (options[item].equals("Choose from Gallery")) {
                     Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -1136,7 +1233,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
-        builder.show();
+        builder.show();*/
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1145,16 +1242,33 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             switch (requestCode) {
                 case 0:
                     if (resultCode == RESULT_OK /*&& data != null*/) {
-                        try{
+                        if (requestCode == CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE)
+                        {
+                            //Get our saved file into a bitmap object:
+
+                            File file = new File(Environment.getExternalStorageDirectory()+File.separator +
+                                    "image.jpg");
+                            Bitmap bitmap = decodeSampledBitmapFromFile(file.getAbsolutePath(), 1000, 700);
+                            TextRecognizer textRecognizer = new TextRecognizer.Builder(this).build();
+                            Frame frameImage = new Frame.Builder().setBitmap(bitmap).build();
+                            SparseArray<TextBlock> textBlockSpaceArray = textRecognizer.detect(frameImage);
+                        }
+                        /*try{
+                            Bitmap b = (Bitmap)data.getExtras().get("data");
+                            Log.d("Hell", b.toString());
+
                             ArrayList<BusStop> cameraBusStops = new ArrayList<>();
                             Bitmap selectedImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image_uri);
-                            /*Bitmap selectedImage = (Bitmap) data.getExtras().get("data");*/
+                            *//*Bitmap selectedImage = (Bitmap) data.getExtras().get("data");*//*
                             selectedImage = getResizedBitmap(selectedImage,1000);
                             TextRecognizer textRecognizer = new TextRecognizer.Builder(this).build();
-                            Frame frameImage = new Frame.Builder().setBitmap(selectedImage).build();
+                            Frame frameImage = new Frame.Builder().setBitmap(b).build();
                             SparseArray<TextBlock> textBlockSpaceArray = textRecognizer.detect(frameImage);
+
+
                             for (int i =0; i<textBlockSpaceArray.size();i++){
                                 TextBlock textBlock = textBlockSpaceArray.get(textBlockSpaceArray.keyAt(i));
+                                Log.d("Hello",textBlock.getValue());
                                 for (int x=0; i< globalBusStops.size(); i++){
                                     BusStop currentStop = globalBusStops.get(i);
                                     if (textBlock.getValue().equalsIgnoreCase(currentStop.getDescription()) ||
@@ -1193,7 +1307,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                         }
                         catch(Exception e){
-                        }
+                        }*/
 
                     }
 
@@ -1267,5 +1381,46 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     break;
             }
         }
+    }
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+    public static Bitmap decodeSampledBitmapFromFile(String path, int reqWidth, int reqHeight)
+    { // BEST QUALITY MATCH
+
+        //First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+
+        // Calculate inSampleSize, Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        int inSampleSize = 1;
+
+        if (height > reqHeight)
+        {
+            inSampleSize = Math.round((float)height / (float)reqHeight);
+        }
+        int expectedWidth = width / inSampleSize;
+
+        if (expectedWidth > reqWidth)
+        {
+            //if(Math.round((float)width / (float)reqWidth) > inSampleSize) // If bigger SampSize..
+            inSampleSize = Math.round((float)width / (float)reqWidth);
+        }
+
+        options.inSampleSize = inSampleSize;
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+
+        return BitmapFactory.decodeFile(path, options);
     }
 }
