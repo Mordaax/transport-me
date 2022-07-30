@@ -34,7 +34,7 @@ public class ExpenseAdapter extends ArrayAdapter<Expense> {
         super(context, 0, expenseList);
     }
 
-    //setting up how each expense is to be displayed in the listview
+    //setting the expense values that is to be displayed in the listview
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

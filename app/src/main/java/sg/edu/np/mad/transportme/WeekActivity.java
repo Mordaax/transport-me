@@ -132,7 +132,7 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy");
         weekText.setText(WeekUtils.dateSelected.format(formatter)); //sets date in MMMM yyyy (eg. July 2022)
-        ArrayList<LocalDate> daysInWeekArray = new ArrayList<>();
+        ArrayList<LocalDate> daysInWeekArray = new ArrayList<>(); //the days in the week to be set by the adapter to the viewholder
         LocalDate chosenDate = weeksSunday(WeekUtils.dateSelected); //the sunday of the selected date
         LocalDate endDate = chosenDate.plusWeeks(1); //the next sunday after the selected date
         //populates the daysinweekarray with the week's dates and nothing more
@@ -141,7 +141,7 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
             daysInWeekArray.add(chosenDate);
             chosenDate = chosenDate.plusDays(1);
         }
-        //sets the calendar to match the week and dates
+        //sets the calendar to match the week and dates set in daysInWeekArray
         WeekAdapter weekAdapter = new WeekAdapter(daysInWeekArray, this);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 7);
         calendarRV.setLayoutManager(layoutManager);
@@ -178,8 +178,8 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
 
     //populates the listview with expenses in the array, showing the expenses for the day and the total expenses for the day
     private void setExpenseAdapter() {
-        ArrayList<Expense> daysExpense = Expense.expensePerDate(WeekUtils.dateSelected);
-        ExpenseAdapter expenseAdapter = new ExpenseAdapter(getApplicationContext(), daysExpense);
+        ArrayList<Expense> daysExpense = Expense.expensePerDate(WeekUtils.dateSelected); //gets the arraylist of expenses for the date selected
+        ExpenseAdapter expenseAdapter = new ExpenseAdapter(getApplicationContext(), daysExpense); //passes it into ExpenseAdapter to set the expense listview
         weekListView.setAdapter(expenseAdapter);
         double totalcost = 0;
         for (Expense expense : daysExpense){
