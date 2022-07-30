@@ -82,6 +82,7 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 10. Function to add transportation fares and display daily total
 11. Integration of transportation fares with calendar
 12. Insights page with monthly total and pie chart using AnyChart
+13. Sliding animations for transport fares page
 
 ### Tristan Tan Jun Xian
 1. Login Page
