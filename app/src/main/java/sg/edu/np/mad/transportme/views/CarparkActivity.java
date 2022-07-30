@@ -23,8 +23,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
@@ -41,6 +43,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import sg.edu.np.mad.transportme.BusStop;
@@ -89,7 +92,7 @@ public class CarparkActivity extends AppCompatActivity implements NavigationView
         apiCarparkService.getCarparkAvailability(carparkArrayList, new ApiCarparkService.VolleyResponseListener() {
             @Override
             public void onError(String message) {
-                Toast.makeText(CarparkActivity.this,"Cannot get Carpark Availability, Try again later",Toast.LENGTH_LONG).show();
+                Toast.makeText(CarparkActivity.this,"Cannot get Carparks, Try again later",Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -105,6 +108,63 @@ public class CarparkActivity extends AppCompatActivity implements NavigationView
 
                 recyclerView.setAdapter(adapter);
 
+            }
+        });
+        //Search feature in carpark availability
+        EditText carparkSearch = findViewById(R.id.carparkSearch);
+        carparkSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<Carpark> searchResult = new ArrayList<>(); //Reset ArrayList
+                //Log.d("Initial", carparkArrayList.toString());
+                //Log.d("searchString", carparkSearch.getText().toString());
+                for(Carpark c : carparkArrayList){
+                    //Log.d("carpark", c.Development);
+                    if(c.Development.toLowerCase().contains(carparkSearch.getText().toString().toLowerCase())){
+                        searchResult.add(c);
+                        //Toast.makeText(CarparkActivity.this, "Found it", Toast.LENGTH_LONG).show();
+                    }
+
+                }
+                if(searchResult.isEmpty()){
+                    Toast.makeText(CarparkActivity.this, "No result, check spelling",Toast.LENGTH_LONG).show();
+                }
+                else {
+                    CarparkAdapter adapter = new CarparkAdapter(CarparkActivity.this, searchResult);
+
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(CarparkActivity.this);
+                    linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                    recyclerView.setLayoutManager(linearLayoutManager);
+                    recyclerView.setHasFixedSize(true);
+                    recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+                    recyclerView.setAdapter(adapter);
+                }
+
+                /*
+                ApiCarparkService apiCarparkService = new ApiCarparkService(CarparkActivity.this);
+                apiCarparkService.getCarparkAvailability(carparkArrayList, new ApiCarparkService.VolleyResponseListener() {
+                    @Override
+                    public void onError(String message) {
+                        Toast.makeText(CarparkActivity.this,"Cannot get Carparks, Try again later",Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onResponse(ArrayList<Carpark> Carparks) {
+                        Log.d("a", Carparks.toString());
+                        for(int i = 0; i < Carparks.size(); i++){
+                            if (Carparks.get(i).Development.toLowerCase(Locale.ROOT).equals(carparkSearch.toString().toLowerCase(Locale.ROOT))){
+                                searchResult.add(Carparks.get(i));
+                                Toast.makeText(CarparkActivity.this, "Found it", Toast.LENGTH_LONG).show();
+                            }
+                            else {
+                                Toast.makeText(CarparkActivity.this, "No such place", Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                    }
+                });
+                 */
             }
         });
     }
@@ -170,14 +230,12 @@ public class CarparkActivity extends AppCompatActivity implements NavigationView
                 Intent routeintent = new Intent(CarparkActivity.this, Route.class);
                 routeintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(routeintent);
-                navigationView.setCheckedItem(R.id.nav_route);
                 finish();
                 break;
             case R.id.nav_fares:
                 Intent fareintent = new Intent(CarparkActivity.this, WeekActivity.class);
                 fareintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(fareintent);
-                navigationView.setCheckedItem(R.id.nav_fares);
                 finish();
                 break;
             case R.id.nav_rate:
