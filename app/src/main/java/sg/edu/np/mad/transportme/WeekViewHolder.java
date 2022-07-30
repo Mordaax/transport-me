@@ -31,3 +31,4 @@ public class WeekViewHolder extends RecyclerView.ViewHolder implements  View.OnC
         itemListener.onItemClick(getAdapterPosition(), daysInWeek.get(getAdapterPosition()));
     }
 }
+
