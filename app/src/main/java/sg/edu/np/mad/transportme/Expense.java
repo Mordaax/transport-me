@@ -23,14 +23,6 @@ public class Expense {
         this.date = date;
     }
 
-    //public LocalTime getTime() {
-        //return time;
-    //}
-
-    //public void setTime(LocalTime time) {
-        //this.time = time;
-    //}
-
     public String getCost() {
         return cost;
     }
