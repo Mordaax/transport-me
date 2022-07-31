@@ -66,6 +66,8 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 6. Firebase Implementation
 7. App Style and Theme Files
 8. Nav Bar Design
+#### Assignment 2
+9.
 
 ### Koo Wen Qi
 1. Map implementation
@@ -74,6 +76,8 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 4. Registration Page
 5. Database Handling
 6. Firebase Implementation
+#### Assignment 2
+10.
 
 ### Kyler Lee
 1. Creation of Logo
