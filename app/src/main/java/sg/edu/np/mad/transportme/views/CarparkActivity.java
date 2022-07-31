@@ -120,31 +120,6 @@ public class CarparkActivity extends AppCompatActivity implements NavigationView
 
                     recyclerView.setAdapter(adapter);
                 }
-
-                /*
-                ApiCarparkService apiCarparkService = new ApiCarparkService(CarparkActivity.this);
-                apiCarparkService.getCarparkAvailability(carparkArrayList, new ApiCarparkService.VolleyResponseListener() {
-                    @Override
-                    public void onError(String message) {
-                        Toast.makeText(CarparkActivity.this,"Cannot get Carparks, Try again later",Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onResponse(ArrayList<Carpark> Carparks) {
-                        Log.d("a", Carparks.toString());
-                        for(int i = 0; i < Carparks.size(); i++){
-                            if (Carparks.get(i).Development.toLowerCase(Locale.ROOT).equals(carparkSearch.toString().toLowerCase(Locale.ROOT))){
-                                searchResult.add(Carparks.get(i));
-                                Toast.makeText(CarparkActivity.this, "Found it", Toast.LENGTH_LONG).show();
-                            }
-                            else {
-                                Toast.makeText(CarparkActivity.this, "No such place", Toast.LENGTH_LONG).show();
-                            }
-                        }
-
-                    }
-                });
-                 */
             }
         });
     }
