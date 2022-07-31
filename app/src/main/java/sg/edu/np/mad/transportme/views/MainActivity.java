@@ -668,7 +668,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public void busrouteview(ArrayList<BusStop> busStopList) {
+    public void busrouteview(ArrayList<BusStop> busStopList) { //Replace the recyclerview to one that shows the bus routes
         SwipeRefreshLayout orv = findViewById(R.id.swipeLayout);
         RecyclerView rv = findViewById(R.id.busrouterecyclerView);
         if (busStopList.size() > 0) {
@@ -692,42 +692,42 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void busroute(Double latitude, Double longitude, BusStop currentStop, List<Marker> mList, List<LatLng> lList) {
-        LatLng latlongmarker = new LatLng(latitude, longitude);
+        LatLng latlongmarker = new LatLng(latitude, longitude); //Get the latitude and longitude of the bus stop
         Bitmap icon = Bitmap.createBitmap(15, 15, Bitmap.Config.ARGB_8888);
         Drawable shape = getResources().getDrawable(R.drawable.marker_icon);
         Canvas canvas = new Canvas(icon);
         shape.setBounds(0, 0, icon.getWidth(), icon.getHeight());
-        shape.draw(canvas);
-        Marker marker = map.addMarker(new MarkerOptions().position(latlongmarker).title(currentStop.getDescription()).icon(BitmapDescriptorFactory.fromBitmap(icon)));
-        lList.add(latlongmarker);
-        mList.add(marker);
+        shape.draw(canvas); //Drawing the marker icon
+        Marker marker = map.addMarker(new MarkerOptions().position(latlongmarker).title(currentStop.getDescription()).icon(BitmapDescriptorFactory.fromBitmap(icon))); //Adding in the marker
+        lList.add(latlongmarker); //Adding in the LatLng object to the list for later use (removing and polyline)
+        mList.add(marker); //Adding in the marker to the list for later use (removing and camerazoom)
     }
 
     public Polyline polyline(List<LatLng> lList) {
-        Polyline polyline = map.addPolyline(new PolylineOptions().addAll(lList).color(Color.RED));
-        return polyline;
+        Polyline polyline = map.addPolyline(new PolylineOptions().addAll(lList).color(Color.RED)); //Add a red polyline for every LatLng object in the list
+        return polyline; //Returns the polyline object for later use (removing)
     }
 
     public void camerazoom(List<Marker> mList) {
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        for (Marker m : mList) {
+        for (Marker m : mList) { //Takes in all the markers for builder object
             builder.include(m.getPosition());
         }
-        LatLngBounds bounds = builder.build();
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 30);
+        LatLngBounds bounds = builder.build(); //Adds in the boundary for camera zoom
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 30); //Zooms the camera according to the markers with padding so that it will not look too zoomed in
         map.animateCamera(cu);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void removemarker(List<Marker> mList, Polyline line) {
-        if (line != null) {
+        if (line != null) { //Removes the polyline if it is not removed alr
             line.remove();
         }
-        for (Marker m : mList) {
+        for (Marker m : mList) { //removes all the markers
 
             m.remove();
         }
-        SwipeRefreshLayout orv = findViewById(R.id.swipeLayout);
+        SwipeRefreshLayout orv = findViewById(R.id.swipeLayout); //change the recyclerview to show nearby busstops again
         RecyclerView rv = findViewById(R.id.busrouterecyclerView);
         rv.setVisibility(View.GONE);
         orv.setVisibility(View.VISIBLE);
@@ -754,7 +754,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
 
-        LatLng latLng = new LatLng(globalLatitude, globalLongitude);
+        LatLng latLng = new LatLng(globalLatitude, globalLongitude); //changes camera position to own pin
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(latLng)
                 .zoom(17f)
