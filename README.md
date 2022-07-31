@@ -48,7 +48,9 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 19. Extended Backened API for Bus Service Route
 20. App Rating Feature
 21. App Sharing Feature
-22. Fixed Issues With Bus Routes
+22. Privacy Policy Feature
+23. Fixed Issues With Bus Routes
+24. Fixed Issues accross the App
 
 ### Dalbert Chea Zhi Jun
 1. Main Page Nested Recycler View Implementation & UI
