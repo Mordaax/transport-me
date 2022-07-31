@@ -34,7 +34,7 @@ public class ExpenseAdapter extends ArrayAdapter<Expense> {
         super(context, 0, expenseList);
     }
 
-
+    //setting the expense values that is to be displayed in the listview
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -49,8 +49,6 @@ public class ExpenseAdapter extends ArrayAdapter<Expense> {
         expenseTransport.setText(expense.getSelected());
         expenseType.setText("$" + expense.getCost());
         return convertView;
-
-
 
     }
 }

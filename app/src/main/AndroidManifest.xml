@@ -7,8 +7,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
@@ -31,7 +29,7 @@
             android:name=".views.CarparkActivity"
             android:exported="true" />
         <activity
-            android:name=".Route"
+            android:name=".RouteActivity"
             android:exported="false" />
         <activity
             android:name=".AddExpenseActivity"

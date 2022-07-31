@@ -17,7 +17,18 @@
 
         <item name="android:navigationBarColor">@color/app_yellow</item>
 
+
+
     </style>
-    <style name="AppTheme" parent="AppTheme.Base"></style>
+    <style name="AppTheme" parent="AppTheme.Base">
+        <item name="android:windowAnimationStyle">@style/ActivityTransitionAnimation</item>
+    </style>
+
+    <style name="ActivityTransitionAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityCloseEnterAnimation">@anim/left_slidein</item>
+        <item name="android:activityOpenExitAnimation">@anim/left_slideout</item>
+        <item name="android:activityOpenEnterAnimation">@anim/right_slidein</item>
+        <item name="android:activityCloseExitAnimation">@anim/right_slideout</item>
+    </style>
 
 </resources>
