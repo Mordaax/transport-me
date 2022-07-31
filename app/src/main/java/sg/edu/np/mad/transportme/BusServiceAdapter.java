@@ -72,7 +72,7 @@ public class BusServiceAdapter
         BusService content = data.get(position);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view) { //When the bus stop recyclerview is clicked, will show the options
                 final CharSequence[] options = {"Show Bus Location","Show Bus routes", "Cancel"};
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getRootView().getContext());
                 builder.setTitle(content.getServiceNumber());
@@ -82,11 +82,11 @@ public class BusServiceAdapter
                     @Override
                     public void onClick(DialogInterface dialogInterface, int item) {
                         if(options[item].equals("Show Bus Location")){
-                            ((MainActivity) c).addBusLocations(content);
+                            ((MainActivity) c).addBusLocations(content); //Will show the location of the bus when pressed
                         }
                         if (options[item].equals("Show Bus routes")) {
-                            ((MainActivity) c).removemarker(mList, line);
-                            line = null;
+                            ((MainActivity) c).removemarker(mList, line); //Will remove any polyline and markers when the option is pressed to ensure that nothing goes wrong.
+                            line = null; //Clearing the variables and list so that it will be empty for a new bus route
                             lList.clear();
                             mList.clear();
                             ApiBusStopService apiBusStopService = new ApiBusStopService(c);
@@ -115,21 +115,21 @@ public class BusServiceAdapter
                                         }
                                     });
 
-                                    for(BusStop busStop : busStopRouteLoaded) {
+                                    for(BusStop busStop : busStopRouteLoaded) { //Loop through to put in marker 1 by 1
                                         ((MainActivity) c).busroute(busStop.getLatitude(), busStop.getLongitude(), busStop, mList, lList);
                                     }
-                                    ((MainActivity) c).camerazoom(mList);
-                                    line = ((MainActivity) c).polyline(lList);
-                                    Snackbar snackbar = Snackbar.make(view.getRootView(), "Showing route for "+content.getServiceNumber(), Snackbar.LENGTH_INDEFINITE);
+                                    ((MainActivity) c).camerazoom(mList); //Make the camera zoom based on the route
+                                    line = ((MainActivity) c).polyline(lList); //add in the polyline
+                                    Snackbar snackbar = Snackbar.make(view.getRootView(), "Showing route for "+content.getServiceNumber(), Snackbar.LENGTH_INDEFINITE); //make the snackbar appear everytime the bus routes are to be shown
                                     snackbar.setAction("cancel", new View.OnClickListener() {
                                                 @RequiresApi(api = Build.VERSION_CODES.M)
                                                 @Override
                                                 public void onClick(View view) {
-                                                    ((MainActivity) c).removemarker(mList, line);
-                                                    line = null;
+                                                    ((MainActivity) c).removemarker(mList, line); //When cancel is pressed, will remove the markers and polyline
+                                                    line = null; //Clear line for new bus route
 
                                                     try{
-                                                        lList.clear();
+                                                        lList.clear(); //Clears lists for later use, empty for a new bus route
                                                         mList.clear();
                                                         mlistlocation.clear();
                                                     } catch (Exception e){
