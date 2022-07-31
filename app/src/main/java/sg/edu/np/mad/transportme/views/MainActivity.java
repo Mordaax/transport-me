@@ -573,8 +573,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60000, 10, new LocationListener() {
                             @Override
                             public void onLocationChanged(@NonNull Location location) {
-                                Double Latitude = location.getLatitude();
-                                Double Longitude = location.getLongitude();
+                                
 
 
                                 LatLng latLng = new LatLng(Latitude, Longitude);
