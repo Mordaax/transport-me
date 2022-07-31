@@ -3,31 +3,24 @@ package sg.edu.np.mad.transportme;
 import static sg.edu.np.mad.transportme.views.LoadingScreen.globalBusStops;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,7 +35,6 @@ import java.util.List;
 
 import sg.edu.np.mad.transportme.api.ApiBusStopService;
 import sg.edu.np.mad.transportme.api.MySingleton;
-import sg.edu.np.mad.transportme.views.MainActivity;
 
 public class StepAdapter extends RecyclerView.Adapter<StepViewHolder> {
     ArrayList<RouteStep> data;
@@ -54,7 +46,7 @@ public class StepAdapter extends RecyclerView.Adapter<StepViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        if(position == 0 || position+1 == data.size()){
+        if(position == 0 || position+1 == data.size()){ //Set layout based on travel type, changes ICON and data displayed
             return 4;
         }
         if (data.get(position).TravelMode.equals("Walk")){
@@ -75,7 +67,7 @@ public class StepAdapter extends RecyclerView.Adapter<StepViewHolder> {
 
     @NonNull
     @Override
-    public StepViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public StepViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {//Set layout based on travel type, changes ICON and data displayed
         View item = null;
         if (viewType ==1)
             item = LayoutInflater.from(parent.getContext())
@@ -103,9 +95,9 @@ public class StepAdapter extends RecyclerView.Adapter<StepViewHolder> {
             @Override
             public void onClick(View view) {
                 if (content.stepcoordinates.size() > 0) {
-                    ((Route) c).moveMapCamera(content.stepcoordinates);
+                    ((RouteActivity) c).moveMapCamera(content.stepcoordinates);
                 }
-                if (content.TravelMode.equals("Bus")){
+                if (content.TravelMode.equals("Bus")){ //Used to get bus stop timing for the routing
                     String BusNumber = content.LineName;
                     for (int i=0;i<globallol.size();i++){
                         BusStop currentstop = globallol.get(i);
@@ -293,7 +285,7 @@ public class StepAdapter extends RecyclerView.Adapter<StepViewHolder> {
                 holder.line.setText(content.LineName);
                 holder.stopcount.setText(content.NumStops.toString());
                 if (content.TravelMode.equals("Subway")){
-                    holder.linearlayout_mrt.setBackgroundColor(Color.parseColor(content.LineColor));
+                    holder.linearlayout_mrt.setBackgroundColor(Color.parseColor(content.LineColor)); //Set background color based on
                 }
             }
         }

@@ -36,7 +36,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -288,7 +287,7 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
                 replaceFragment(new ProfileFragment());*/
                 break;
             case R.id.nav_route:
-                Intent routeintent = new Intent(WeekActivity.this, Route.class);
+                Intent routeintent = new Intent(WeekActivity.this, RouteActivity.class);
                 routeintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(routeintent);
                 finish();
@@ -310,6 +309,7 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
                             Uri.parse("https://play.google.com/store/apps/details?id=sg.edu.np.mad.transportme")));
                     break;
                 }
+                break;
             case R.id.nav_share:
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);

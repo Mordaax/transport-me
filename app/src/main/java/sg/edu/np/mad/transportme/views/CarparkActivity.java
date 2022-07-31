@@ -12,50 +12,30 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.material.navigation.NavigationView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 
-import sg.edu.np.mad.transportme.BusStop;
 import sg.edu.np.mad.transportme.Carpark;
 import sg.edu.np.mad.transportme.CarparkAdapter;
 import sg.edu.np.mad.transportme.PrivacyPolicyActivty;
 import sg.edu.np.mad.transportme.R;
-import sg.edu.np.mad.transportme.Route;
-import sg.edu.np.mad.transportme.StepAdapter;
+import sg.edu.np.mad.transportme.RouteActivity;
 import sg.edu.np.mad.transportme.WeekActivity;
 import sg.edu.np.mad.transportme.api.ApiCarparkService;
-import sg.edu.np.mad.transportme.api.MySingleton;
 
 public class CarparkActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     static final float END_SCALE = 0.7f;
@@ -227,7 +207,7 @@ public class CarparkActivity extends AppCompatActivity implements NavigationView
                 replaceFragment(new ProfileFragment());*/
                 break;
             case R.id.nav_route:
-                Intent routeintent = new Intent(CarparkActivity.this, Route.class);
+                Intent routeintent = new Intent(CarparkActivity.this, RouteActivity.class);
                 routeintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(routeintent);
                 finish();
@@ -253,6 +233,7 @@ public class CarparkActivity extends AppCompatActivity implements NavigationView
                             Uri.parse("https://play.google.com/store/apps/details?id=sg.edu.np.mad.transportme")));
                     break;
                 }
+                break;
             case R.id.nav_share:
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);

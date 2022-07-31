@@ -4,7 +4,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
-public class RouteStep {
+public class RouteStep { //Route step class for steps
     LatLng Latlongstart;
     LatLng Latlongend;
     String TravelMode;
