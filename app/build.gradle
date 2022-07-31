@@ -11,8 +11,8 @@ android {
         applicationId "sg.edu.np.mad.transportme"
         minSdk 21
         targetSdk 32
-        versionCode 18
-        versionName '2.01'
+        versionCode 20
+        versionName '2.2'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
