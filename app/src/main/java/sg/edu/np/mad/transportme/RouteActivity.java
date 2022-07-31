@@ -3,16 +3,12 @@ package sg.edu.np.mad.transportme;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION;
 import static sg.edu.np.mad.transportme.ReminderApplication.CHANNEL_ID_2;
-import static sg.edu.np.mad.transportme.ReminderApplication.getContext;
-import static sg.edu.np.mad.transportme.user.LoginPage.globalReminder;
 import static sg.edu.np.mad.transportme.views.LoadingScreen.globalBusStops;
 import static sg.edu.np.mad.transportme.views.MainActivity.networkprovider;
 
-import android.app.Activity;
 import android.speech.tts.TextToSpeech;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -24,12 +20,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -42,8 +36,6 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.speech.tts.TextToSpeech;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -68,21 +60,15 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.Dash;
-import com.google.android.gms.maps.model.Dot;
-import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.navigation.NavigationView;
 import com.google.maps.android.SphericalUtil;
@@ -92,17 +78,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
-import sg.edu.np.mad.transportme.user.ProfileFragment;
 import sg.edu.np.mad.transportme.views.CarparkActivity;
 import sg.edu.np.mad.transportme.views.MainActivity;
 
-public class Route extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemSelectedListener {
+
+//This is the activity used to Handle to Routing using Google directions API
+public class RouteActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemSelectedListener {
     DrawerLayout drawerLayout;
     LinearLayout contentView;
     NavigationView navigationView;
@@ -120,11 +104,11 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
-
+        // get map fragment
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.routemap);
         mapFragment.getMapAsync(this);
         ImageView notificationbellimage = findViewById(R.id.notificationbellimage);
-        notificationbellimage.setOnClickListener(new View.OnClickListener() {
+        notificationbellimage.setOnClickListener(new View.OnClickListener() { // Check if notification bell is clicked, toggle notifiation choice variable
             @Override
             public void onClick(View view) {
                 if(notificationchoice == false){
@@ -140,13 +124,13 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
 
         ImageView DropdownMenu = findViewById(R.id.dropdown_icon);
         LinearLayout dropdown = findViewById(R.id.dropdownmenu);
-        DropdownMenu.setOnClickListener(new View.OnClickListener() {
+        DropdownMenu.setOnClickListener(new View.OnClickListener() { // Dropdown image icon to show for from/to/route edit text
             @Override
             public void onClick(View view) {
                 if (dropdown.getVisibility() == View.VISIBLE) {
 
                     dropdown.setVisibility(View.GONE);
-                    TransitionManager.beginDelayedTransition(contentView, new AutoTransition());
+                    TransitionManager.beginDelayedTransition(contentView, new AutoTransition()); // Add Animation for dropdown, show and s
                 } else {
                     dropdown.setVisibility(View.VISIBLE);
                     TransitionManager.beginDelayedTransition(contentView, new AutoTransition());
@@ -154,21 +138,21 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
             }
         });
 
-        traveloption = findViewById(R.id.spinnerTransportType);
-        ArrayAdapter<CharSequence> travelmodeadapter = ArrayAdapter.createFromResource(this, R.array.travelmodes, android.R.layout.simple_spinner_item);
-        travelmodeadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        traveloption = findViewById(R.id.spinnerTransportType); //Get Transport type spinner
+        ArrayAdapter<CharSequence> travelmodeadapter = ArrayAdapter.createFromResource(this, R.array.travelmodes, android.R.layout.simple_spinner_item); //Create adapter for spinner object
+        travelmodeadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); //R.array.travelmodes set the menu items Driving and Public Transport
         traveloption.setAdapter(travelmodeadapter);
 
-        traveloption.setOnItemSelectedListener(this);
+        traveloption.setOnItemSelectedListener(this); //On click Listener to change dropdown menu tranport type. On click listener is defined below
 
         ImageView menuIcon = findViewById(R.id.menu_icon);
         contentView = findViewById(R.id.contentView);
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.bringToFront();
-        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.bringToFront();  // Side Navigation View
+        navigationView.setNavigationItemSelectedListener(this); //On click listner to handle side menu, defined below
         navigationView.setCheckedItem(R.id.nav_route);
-        menuIcon.setOnClickListener(new View.OnClickListener() {
+        menuIcon.setOnClickListener(new View.OnClickListener() { // Open and close side navigation drwaer
             @Override
             public void onClick(View view) {
                 if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
@@ -179,8 +163,8 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
         animateNavigationDrawer();
 
 
-        AutoCompleteTextView atcfrom = findViewById(R.id.actfrom);
-        AutoCompleteTextView actto = findViewById(R.id.actto);
+        AutoCompleteTextView atcfrom = findViewById(R.id.actfrom); // Autocomplete text view, uses bus stop roadname and name
+        AutoCompleteTextView actto = findViewById(R.id.actto); // Autocomplete text view, uses bus stop roadname and name
 
         ArrayList<String> searchStrings = new ArrayList<String>();
         for (int i = 0; i < globalBusStops.size(); i++) {
@@ -188,29 +172,30 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
             searchStrings.add(globalBusStops.get(i).getRoadName());
 
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, searchStrings);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, searchStrings); //Adapter for autocomplete text view
         atcfrom.setAdapter(adapter);
         actto.setAdapter(adapter);
 
-        atcfrom.setText("Current Location");
-        //makes it such that when user clicks on edit textbox, textbox is not automatically filled with "CHANGE PASSWORD"
+        atcfrom.setText("Current Location"); //Set from auto complete text view to "Current Location"
+        //makes it such that when user clicks on edit text,  edit text will be automatically filled with "Current Location"
         atcfrom.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
                 if (b) {
                     atcfrom.setText("");
-                } else /*if(b == false && password.getEditableText().equals(""))*/ {
+                } else {
                     if (!(atcfrom.getEditableText().length() > 0)) {
-                        atcfrom.setText("Current Location");
+                        atcfrom.setText("Current Location"); // Automatically set text back to current location
                     }
                 }
             }
         });
-        TextView placeholder = findViewById(R.id.textviewplaceholder);
-        Button routeButton = findViewById(R.id.buttonRoute);
+        TextView placeholder = findViewById(R.id.textviewplaceholder);  // Default textview that will be removed when recycler view loads
+        Button routeButton = findViewById(R.id.buttonRoute); // Button used to route
 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+        // ask permission for location listener for map routing. Used for current location routing
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -228,43 +213,43 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
             final int LOCATION_REQUEST = 1337;
 
             requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
-            Toast.makeText(Route.this, "Check Location and Connection Settings", Toast.LENGTH_LONG).show();
+            Toast.makeText(RouteActivity.this, "Check Location and Connection Settings", Toast.LENGTH_LONG).show();
 
             return;
         } else {
             if (locationManager.isProviderEnabled(networkprovider)) {
-                locationManager.requestLocationUpdates(networkprovider, 2000, 2, new LocationListener() { //Every 60 seconds or 10m change, run code
+                locationManager.requestLocationUpdates(networkprovider, 2000, 2, new LocationListener() { //Every 2 seconds or 2m change, run code
                     @Override
                     public void onLocationChanged(@NonNull Location location) {
                         Log.d("location", "location changed");
                         Double Latitude = location.getLatitude(); //Get latitude and logitude
                         Double Longitude = location.getLongitude();
                         currentLocation = Latitude.toString() + "," + Longitude.toString();
-                        routeButton.setOnClickListener(new View.OnClickListener() {
+                        routeButton.setOnClickListener(new View.OnClickListener() { //Set on click listener for route button
                             @Override
                             public void onClick(View view) {
                                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                                mMap.clear();
-                                String from = String.valueOf(atcfrom.getText());
+                                imm.hideSoftInputFromWindow(view.getWindowToken(), 0); // Onclick close keyboard
+                                mMap.clear(); //Clear map of previous routing
+                                String from = String.valueOf(atcfrom.getText()); //Get from and destination
                                 String to = String.valueOf(actto.getText());
                                 if (to.equals("")) {
-                                    Toast.makeText(Route.this, "Please Add a location to route to", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(RouteActivity.this, "Please Add a location to route to", Toast.LENGTH_LONG).show();
                                 } else {
-                                    direction(from, to);
+                                    direction(from, to); //Call direction function, defined below used to run api and render map fragment
                                 }
                                 placeholder.setVisibility(View.GONE);
                             }
                         });
                         LatLng latLng = new LatLng(Latitude, Longitude);
-                        if (notificationchoice){
+                        if (notificationchoice){ //If notification is set, call notifications when user is near the destination
                             try{
                                 for (int i = 0;i<routestepsreminder.size();i++){
                                     RouteStep routestep = routestepsreminder.get(i);
-                                    Double destnDist = SphericalUtil.computeDistanceBetween(latLng,routestep.Latlongend);
-                                    if (destnDist<=100.0){
+                                    Double destnDist = SphericalUtil.computeDistanceBetween(latLng,routestep.Latlongend); //Get distance between user and location
+                                    if (destnDist<=100.0){ //If less than hundred meters create and run notification
                                         if(routestep.TravelMode!="Drive"){
-                                            Notification notification = new NotificationCompat.Builder(getApplicationContext(),CHANNEL_ID_2)
+                                            Notification notification = new NotificationCompat.Builder(getApplicationContext(),CHANNEL_ID_2) //Notification builder
                                                     .setSmallIcon(R.drawable.app_logo_vector)
                                                     .setContentTitle(!routestep.TravelMode.equals("Walk")? "Remember to alight":"You are close!")
                                                     .setContentText("You are arriving at "+ routestep.NextLocation + "!")
@@ -318,7 +303,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(GoogleMap googleMap) { //used to render map fragment and blue dot for current location
         mMap = googleMap;
         LatLng singapore = new LatLng(1.3521, 103.8198);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(singapore, 10f));
@@ -338,7 +323,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
         mMap.setMyLocationEnabled(true);
     }
 
-    private void direction(String From, String Destination){
+    private void direction(String From, String Destination){ //Function used to call directions
         RequestQueue requestQueue= Volley.newRequestQueue(this);
         ArrayList<RouteStep> routeSteps = new ArrayList<>();
         if (From.equals("Current Location")){
@@ -346,7 +331,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                 From = currentLocation;
             }
             else{
-                Toast.makeText(Route.this, "Cannot Get Current location", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RouteActivity.this, "Cannot Get Current location", Toast.LENGTH_SHORT).show();
             }
         }
         /*String url = "https://mad-assignment-backend.herokuapp.com/routetest";*/
@@ -356,19 +341,19 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                 .appendQueryParameter("origin",From)
                 .appendQueryParameter("mode",travelmode)
                 .appendQueryParameter("key","AIzaSyC5TLFoQWmsorYN0--un6BieG6VI2STONE")
-                .toString();
+                .toString(); //Create URL to call api
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response){
                 try {
                     String status = response.getString("status");
-                    if (status.equals("OK")) {
+                    if (status.equals("OK")) {//Call API and put data into objects and classes
                         JSONArray routes = response.getJSONArray("routes");
 
                         ArrayList<LatLng> points;
                         LatLngBounds.Builder bounds = LatLngBounds.builder();
                         if(routes.length()<1){
-                            Toast.makeText(Route.this, "Cannot find route, be more specific", Toast.LENGTH_LONG).show();
+                            Toast.makeText(RouteActivity.this, "Cannot find route, be more specific", Toast.LENGTH_LONG).show();
                         }
 
                         for (int i = 0; i < routes.length(); i++) {
@@ -416,25 +401,23 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                                     String duration = steps.getJSONObject(k).getJSONObject("duration").getString("text");
                                     String previousLocation;
                                     String nextLocation;
-                                    if (travelmode.equals("WALKING")){
-                                        /*polylineOptions.color(ContextCompat.getColor(Route.this, R.color.purple_500));*/
+                                    if (travelmode.equals("WALKING")){ //If travel mode is walking, set different color to polyline
                                         polylineOptions.color(Color.parseColor("#62d431"));
                                         MarkerOptions marker = new MarkerOptions().position(latlongstart);
-                                        marker.icon(bitmapDescriptorFromVector(Route.this,R.drawable.ic_baseline_lens_24));
+                                        marker.icon(bitmapDescriptorFromVector(RouteActivity.this,R.drawable.ic_baseline_lens_24));
                                         mMap.addMarker(marker);
                                         marker = new MarkerOptions().position(latlongend);
-                                        marker.icon(bitmapDescriptorFromVector(Route.this,R.drawable.ic_baseline_lens_24));
+                                        marker.icon(bitmapDescriptorFromVector(RouteActivity.this,R.drawable.ic_baseline_lens_24));
                                         mMap.addMarker(marker);
-                                        /*List<PatternItem> pattern = Arrays.asList(
-                                                new Dot(), new Gap(20), new Dash(30), new Gap(20));
-                                        polylineOptions.setPattern(pattern);*/
                                         travelMode = "Walk";
+
+                                        //Used to if it is the starting or ending location
                                         previousLocation = k==0?start_address: steps.getJSONObject(k-1).getJSONObject("transit_details").getJSONObject("arrival_stop").getString("name");
                                         nextLocation = k==steps.length()-1? end_address: steps.getJSONObject(k+1).getJSONObject("transit_details").getJSONObject("departure_stop").getString("name");
 
                                     }
-                                    else if (travelmode.equals("TRANSIT")){
-                                        JSONObject transitline = steps.getJSONObject(k).getJSONObject("transit_details").getJSONObject("line");
+                                    else if (travelmode.equals("TRANSIT")){ //If travel mode is public transport, set a different polyline color
+                                        JSONObject transitline = steps.getJSONObject(k).getJSONObject("transit_details").getJSONObject("line"); //Grab data based on line(also used for bus number)
                                         String transitlinecolor = transitline.getString("color");
                                         travelMode = transitline.getJSONObject("vehicle").getString("name");
                                         if (travelMode.equals("Bus")){
@@ -443,14 +426,14 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                                         polylineOptions.color(Color.parseColor(transitlinecolor));
 
                                         MarkerOptions marker = new MarkerOptions().position(latlongstart);
-                                        marker.icon(bitmapDescriptorFromVector(Route.this,R.drawable.ic_baseline_lens_24));
+                                        marker.icon(bitmapDescriptorFromVector(RouteActivity.this,R.drawable.ic_baseline_lens_24));
                                         mMap.addMarker(marker);
 
                                         bounds.include(latlongstart);
                                         stepcoordinates.add(latlongstart);
 
                                         marker = new MarkerOptions().position(latlongend);
-                                        marker.icon(bitmapDescriptorFromVector(Route.this,R.drawable.ic_baseline_lens_24));
+                                        marker.icon(bitmapDescriptorFromVector(RouteActivity.this,R.drawable.ic_baseline_lens_24));
                                         mMap.addMarker(marker);
 
                                         bounds.include(latlongend);
@@ -460,25 +443,25 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                                         nextLocation = steps.getJSONObject(k).getJSONObject("transit_details").getJSONObject("arrival_stop").getString("name");
 
                                     }
-                                    else{
+                                    else{ // if travel mode is drive, set different polyline color.
                                         travelMode = "Drive";
                                         previousLocation = "Driving Previous Location";
                                         nextLocation = "Driving Next Location";
-                                        polylineOptions.color(Color.parseColor("#305978"));
+                                        polylineOptions.color(Color.parseColor("#305978"));//Use Blue Polyline
                                         bounds.include(latlongstart);
                                         stepcoordinates.add(latlongstart);
                                         bounds.include(latlongend);
                                         stepcoordinates.add(latlongend);
                                         MarkerOptions marker = new MarkerOptions().position(latlongstart);
-                                        marker.icon(bitmapDescriptorFromVector(Route.this,R.drawable.ic_baseline_lens_blue_24));
+                                        marker.icon(bitmapDescriptorFromVector(RouteActivity.this,R.drawable.ic_baseline_lens_blue_24)); //Icon for each waypoint for polyline
                                         mMap.addMarker(marker);
 
                                         marker = new MarkerOptions().position(latlongend);
-                                        marker.icon(bitmapDescriptorFromVector(Route.this,R.drawable.ic_baseline_lens_blue_24));
+                                        marker.icon(bitmapDescriptorFromVector(RouteActivity.this,R.drawable.ic_baseline_lens_blue_24));
                                         mMap.addMarker(marker);
 
                                     }
-
+                                    //Create currentstep object placed in CurrentStep arraylist used in main recycler view
                                     RouteStep currentStep = new RouteStep(latlongstart,latlongend,travelMode,instructions, distance,duration,previousLocation,nextLocation);
                                     currentStep.stepcoordinates = stepcoordinates;
                                     if (travelmode.equals("TRANSIT")) {
@@ -491,7 +474,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
 
                                     routeSteps.add(currentStep);
                                     polylineOptions.geodesic(true);
-                                    mMap.addPolyline(polylineOptions);
+                                    mMap.addPolyline(polylineOptions); //Add polyline accross the map
                                 }
                                 RouteStep lastRouteStep = new RouteStep();
                                 lastRouteStep.Instructions = "Arrive at "+ end_address;
@@ -499,9 +482,10 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                             }
 
                         }
+                        //Set adapter for routing recycler view
                         RecyclerView routerv = findViewById(R.id.routeRecyclerView);
-                        StepAdapter adapter = new StepAdapter(Route.this, routeSteps);
-                        LinearLayoutManager layout = new LinearLayoutManager(Route.this);
+                        StepAdapter adapter = new StepAdapter(RouteActivity.this, routeSteps);
+                        LinearLayoutManager layout = new LinearLayoutManager(RouteActivity.this);
 
                         routerv.setAdapter(adapter);
                         routerv.setLayoutManager(layout);
@@ -509,7 +493,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                         /*mMap.addMarker(new MarkerOptions().position(new LatLng(1.3595533, 103.94306)));
                         mMap.addMarker(new MarkerOptions().position(new LatLng(1.3212432, 103.7743509)));*/
                         routestepsreminder = new ArrayList<>();
-                        if (notificationchoice){
+                        if (notificationchoice){ // Set routestepsreminder routestep arraylist to the route steps from the second to second last indexes (First and last is used to show From and to location)
                             for (int i=1; i<routeSteps.size()-1; i++){
                                 routestepsreminder.add(routeSteps.get(i));
                             }
@@ -522,16 +506,17 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsbuilt, 30));
                     }
                 } catch(JSONException e){
-                    Toast.makeText(Route.this, "Check Location and Connection Settings", Toast.LENGTH_LONG).show();
+                    Toast.makeText(RouteActivity.this, "Check Location and Connection Settings", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
             }
         }, new Response.ErrorListener(){
             @Override
             public void onErrorResponse(VolleyError error){
-                Toast.makeText(Route.this, "Check Location and Connection Settings", Toast.LENGTH_LONG).show();
+                Toast.makeText(RouteActivity.this, "Check Location and Connection Settings", Toast.LENGTH_LONG).show();
             }
         });
+        //Retry if API fails
         RetryPolicy retryPolicy = new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         jsonObjectRequest.setRetryPolicy(retryPolicy);
         requestQueue.add(jsonObjectRequest);
@@ -544,7 +529,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
         final LatLngBounds boundsbuilt = bounds.build();
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsbuilt, 30));
     }
-    public static List<LatLng> decodePoly(final String encodedPath) {
+    public static List<LatLng> decodePoly(final String encodedPath) { //Decode polyline gotten by api to Latlong objects
         int len = encodedPath.length();
 
         // For speed we preallocate to an upper bound on the final length, then
@@ -579,7 +564,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
 
         return path;
     }
-    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) { //Get bitmap from vector for map marker icons
         Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
         vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
@@ -587,13 +572,13 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
-    private void animateNavigationDrawer(){
+    private void animateNavigationDrawer(){  //Used to animate navigation drawer
         /*drawerLayout.setScrimColor(getResources().getColor(com.google.android.material.R.color.));*/
         drawerLayout.setScrimColor(Color.parseColor("#e8c490"));
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-                final float diffScaledOffset = slideOffset * (1 - END_SCALE);
+                final float diffScaledOffset = slideOffset * (1 - END_SCALE); //Offset drawer and minimize main linear layout
                 final float offsetScale = 1 - diffScaledOffset;
                 contentView.setScaleX(offsetScale);
                 contentView.setScaleY(offsetScale);
@@ -623,7 +608,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) { //Routing for navigation items
         switch(item.getItemId()){
             case R.id.nav_home:
                 finish();
@@ -633,13 +618,13 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                 favourite = false;*/
                 break;
             case R.id.nav_carpark:
-                Intent intentcarpark = new Intent(Route.this, CarparkActivity.class);
+                Intent intentcarpark = new Intent(RouteActivity.this, CarparkActivity.class);
                 intentcarpark.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intentcarpark);
                 finish();
                 break;
             case R.id.nav_profile:
-                Intent intentMainActivity = new Intent(Route.this, MainActivity.class);
+                Intent intentMainActivity = new Intent(RouteActivity.this, MainActivity.class);
                 intentMainActivity.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 intentMainActivity.putExtra("Profile", "Yes");
 
@@ -652,12 +637,12 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
             case R.id.nav_route:
                 break;
             case R.id.nav_fares:
-                Intent fareintent = new Intent(Route.this, WeekActivity.class);
+                Intent fareintent = new Intent(RouteActivity.this, WeekActivity.class);
                 fareintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(fareintent);
                 finish();
                 break;
-            case R.id.nav_rate:
+            case R.id.nav_rate:  //used to create intent for navigation
                 Uri uri = Uri.parse("market://details?id=sg.edu.np.mad.transportme");
                 Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
                 // To count with Play market backstack, After pressing back button,
@@ -672,6 +657,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                             Uri.parse("https://play.google.com/store/apps/details?id=sg.edu.np.mad.transportme")));
                     break;
                 }
+                break;
             case R.id.nav_share:
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
@@ -680,10 +666,9 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
                 startActivity(Intent.createChooser(sendIntent,"Share With"));
                 break;
             case R.id.nav_privacy:
-                Intent privacyintent = new Intent(Route.this, PrivacyPolicyActivty.class);
+                Intent privacyintent = new Intent(RouteActivity.this, PrivacyPolicyActivty.class);
                 privacyintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(privacyintent);
-
                 break;
 
         }
@@ -692,7 +677,7 @@ public class Route extends FragmentActivity implements OnMapReadyCallback, Navig
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) { //On click listener for spinner choice
         String choice = adapterView.getItemAtPosition(i).toString();
         Log.d("travechoice", choice);
         if (choice.equals("Public Transport")){

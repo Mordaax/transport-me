@@ -29,7 +29,7 @@
             android:name=".views.CarparkActivity"
             android:exported="true" />
         <activity
-            android:name=".Route"
+            android:name=".RouteActivity"
             android:exported="false" />
         <activity
             android:name=".AddExpenseActivity"

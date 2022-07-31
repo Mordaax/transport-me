@@ -4,7 +4,6 @@ import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION;
 import static android.graphics.BitmapFactory.decodeResource;
 
-import static sg.edu.np.mad.transportme.BitmapResize.getResizedBitmap;
 import static sg.edu.np.mad.transportme.ReminderApplication.CHANNEL_ID_2;
 import static sg.edu.np.mad.transportme.ReminderService.reached;
 import static sg.edu.np.mad.transportme.user.LoginPage.globalCloseness;
@@ -28,7 +27,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,13 +36,10 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -52,7 +47,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -74,7 +68,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -103,7 +96,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.maps.android.SphericalUtil;
 
 import java.io.File;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -118,7 +110,7 @@ import sg.edu.np.mad.transportme.NextBus;
 import sg.edu.np.mad.transportme.PrivacyPolicyActivty;
 import sg.edu.np.mad.transportme.R;
 import sg.edu.np.mad.transportme.ReminderService;
-import sg.edu.np.mad.transportme.Route;
+import sg.edu.np.mad.transportme.RouteActivity;
 import sg.edu.np.mad.transportme.WeekActivity;
 import sg.edu.np.mad.transportme.api.ApiBusStopService;
 import sg.edu.np.mad.transportme.user.ProfileFragment;
@@ -231,7 +223,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     favourite = false;
                     break;
                 case R.id.favourites:
-                    mapandrv.setVisibility(View.INVISIBLE);
+                    mapandrv.setVisibility(View.INVISIBLE); //As the Map and RV is not a fragment, It has to be replaced Manually
                     cameraSearch.setVisibility(View.INVISIBLE);
                     fragmentlayout.setVisibility(View.VISIBLE);
                     replaceFragment(new FavouritesFragment());
@@ -398,7 +390,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                                     ArrayList<BusStop> remindBusStop = new ArrayList<>();
                                     remindBusStop.add(globalReminder);
-                                    RecyclerView rv = findViewById(R.id.recyclerViewRemind); //Load recyclerview when they onresponse is recieved
+                                    RecyclerView rv = findViewById(R.id.recyclerViewRemind); //Load recyclerview when they onresponse is recieved, code is similar to the top
                                     BusStopAdapter adapter = new BusStopAdapter(remindBusStop, MainActivity.this);
                                     LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);
                                     rv.setAdapter(adapter);
@@ -453,7 +445,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 });
 
                 // Main location request when the app first loads
-                locationManager.requestLocationUpdates(networkprovider, 60000, 10, new LocationListener() {
+                locationManager.requestLocationUpdates(networkprovider, 60000, 10, new LocationListener() { // Will refresh every 30 seconds
                     @Override
                     public void onLocationChanged(@NonNull Location location) {
                         Double Latitude = location.getLatitude();
@@ -854,7 +846,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 replaceFragment(new ProfileFragment());
                 break;
             case R.id.nav_route:
-                Intent routeintent = new Intent(MainActivity.this, Route.class);
+                Intent routeintent = new Intent(MainActivity.this, RouteActivity.class);
                 routeintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(routeintent);
                 break;
@@ -883,6 +875,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             Uri.parse("https://play.google.com/store/apps/details?id=sg.edu.np.mad.transportme")));
                     break;
                 }
+                break;
             case R.id.nav_share:
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
