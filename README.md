@@ -97,6 +97,11 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 3. Mrt Map
 4. Image Zoom
 5. Firebase Authentication
+#### Assignment 2
+6. API calling from LTA Datamall for Carpark Availability http://datamall2.mytransport.sg/ltaodataservice/CarParkAvailabilityv2
+7. Carpark Availability Page
+8. Carpark search feature
+9. Design page layout
 
 ## App Screenshots
 ![App Navigation](https://github.com/Mordaax/MAD-Assignment-TransportMe/blob/main/images/App%20Navigation.png)
