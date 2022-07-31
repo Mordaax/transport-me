@@ -67,7 +67,11 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 7. App Style and Theme Files
 8. Nav Bar Design
 #### Assignment 2
-9.
+9. Remind to Alight Bus Stop Feature (In App)
+10. Notification Channels
+11. Foreground Services
+12. Background Location Services (Remind to Alight in Background)
+13. MainActivity Organisation
 
 ### Koo Wen Qi
 1. Map implementation
