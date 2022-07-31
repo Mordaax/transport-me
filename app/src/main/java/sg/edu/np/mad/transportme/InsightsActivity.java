@@ -49,9 +49,11 @@ public class InsightsActivity extends AppCompatActivity {
         yearMonth.setText(date.format(formatter));
 
         double Ttl = 0;
-        final Pie pie = AnyChart.pie();  //creating the pie chart with values from each expense in the expensearraylist that corresponds to the chosen date
+        final Pie pie = AnyChart.pie();
+        //creating the pie chart with values from each expense in the expensearraylist that corresponds to the chosen date when insights button was first pressed
         List<DataEntry> dataEntryList = new ArrayList<>();
         double Bus = 0, Train = 0, Taxi = 0, Others = 0;
+        //Adding up expenditure per mode of transport using corresponding month and year chosen
         for (Expense expense : Expense.expenseArrayList){
             if(expense.getDate().getMonthValue() == date.getMonthValue() && expense.getDate().getYear() == date.getYear()){
                 if(expense.getSelected().equals("Bus")) {
@@ -70,12 +72,15 @@ public class InsightsActivity extends AppCompatActivity {
             }
         }
         Ttl = Bus + Train + Taxi + Others;
+        //4 different expense totals to display in pie chart stored in array, then store corresponding values in dataEntryList
         double[] transportCosts = {Bus,Train,Taxi,Others};
         for (int i = 0; i < transportMode.length; i++) {
             dataEntryList.add(new ValueDataEntry(transportMode[i], transportCosts[i]));
         }
+        //create pie with values in dataEntryList
         pie.data(dataEntryList);
         anyChartView.setChart(pie);
+        //setting total expenditure for chosen month
         if (DoubleStream.of(transportCosts).sum() > 0){
             expenseTV.setText("Total expenditure for "+date.format(formatter) + ": $" + Ttl);
         }
@@ -83,8 +88,8 @@ public class InsightsActivity extends AppCompatActivity {
             expenseTV.setText("No expenses logged for "+date.format(formatter) + ": $" + Ttl);
         }
 
-
-        monthBefore.setOnClickListener(new View.OnClickListener() { //changing the chosen date and recreating the pie to match the correct values
+        //changing to the previous month and recreating the pie to match the correct values
+        monthBefore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 date = date.minusMonths(1);
@@ -93,8 +98,8 @@ public class InsightsActivity extends AppCompatActivity {
 
             }
         });
-
-        monthAfter.setOnClickListener(new View.OnClickListener() { //changing the chosen date and recreating the pie to match the correct values
+        //changing to the next month and recreating the pie to match the correct values
+        monthAfter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 date = date.plusMonths(1);
@@ -106,8 +111,8 @@ public class InsightsActivity extends AppCompatActivity {
 
     }
 
-
-    public void initChart(Pie pie) { //used to update the pie when new date is chosen
+    //update the pie when new month is chosen
+    public void initChart(Pie pie) {
         List<DataEntry> dataEntryList = new ArrayList<>();
         double Bus = 0, Train = 0, Taxi = 0, Others = 0;
         double Ttl = 0;
@@ -142,5 +147,10 @@ public class InsightsActivity extends AppCompatActivity {
             expenseTV.setText("No expenses logged for "+date.format(formatter) + ": $" + Ttl);
         }
 
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.left_slidein, R.anim.right_slideout);
     }
 }

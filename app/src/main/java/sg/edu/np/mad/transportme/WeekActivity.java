@@ -36,7 +36,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -95,7 +94,7 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
 
 
 
-        weekBefore.setOnClickListener(new View.OnClickListener() {
+        weekBefore.setOnClickListener(new View.OnClickListener() { //displays the previous week
             @Override
             public void onClick(View view) {
                 WeekUtils.dateSelected = WeekUtils.dateSelected.minusWeeks(1);
@@ -103,48 +102,52 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
             }
         });
 
-        weekAfter.setOnClickListener(new View.OnClickListener() {
+        weekAfter.setOnClickListener(new View.OnClickListener() { //displays the next week
             @Override
             public void onClick(View view) {
                 WeekUtils.dateSelected = WeekUtils.dateSelected.plusWeeks(1);
                 setWeek();
             }
         });
-        log.setOnClickListener(new View.OnClickListener() {
+        log.setOnClickListener(new View.OnClickListener() { //brings user to log expense
             @Override
             public void onClick(View view) {
 
                 startActivity(toAddExpense);
+                overridePendingTransition(R.anim.right_slidein, R.anim.left_slideout);
             }
         });
 
-        insights.setOnClickListener(new View.OnClickListener() {
+        insights.setOnClickListener(new View.OnClickListener() { //allows user to check expense insight
             @Override
             public void onClick(View view) {
 
                 startActivity(toInsights);
+                overridePendingTransition(R.anim.right_slidein, R.anim.left_slideout);
             }
         });
     }
-    private void setWeek() {
+    private void setWeek() { //ensures the week from the calendar starts from a sunday every time
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy");
-        weekText.setText(WeekUtils.dateSelected.format(formatter)); //sets date in MMMM yyyy
-        ArrayList<LocalDate> daysInWeekArray = new ArrayList<>();
-        LocalDate chosenDate = weeksSunday(WeekUtils.dateSelected);
-        LocalDate endDate = chosenDate.plusWeeks(1);
+        weekText.setText(WeekUtils.dateSelected.format(formatter)); //sets date in MMMM yyyy (eg. July 2022)
+        ArrayList<LocalDate> daysInWeekArray = new ArrayList<>(); //the days in the week to be set by the adapter to the viewholder
+        LocalDate chosenDate = weeksSunday(WeekUtils.dateSelected); //the sunday of the selected date
+        LocalDate endDate = chosenDate.plusWeeks(1); //the next sunday after the selected date
+        //populates the daysinweekarray with the week's dates and nothing more
         while (chosenDate.isBefore(endDate))
         {
-            daysInWeekArray.add(chosenDate); //ensures it starts from a sunday every time
+            daysInWeekArray.add(chosenDate);
             chosenDate = chosenDate.plusDays(1);
         }
-
-        WeekAdapter monthAdapter = new WeekAdapter(daysInWeekArray, this);
+        //sets the calendar to match the week and dates set in daysInWeekArray
+        WeekAdapter weekAdapter = new WeekAdapter(daysInWeekArray, this);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 7);
         calendarRV.setLayoutManager(layoutManager);
-        calendarRV.setAdapter(monthAdapter);
+        calendarRV.setAdapter(weekAdapter);
     }
-    private static LocalDate weeksSunday(LocalDate current) //ensures it starts from a sunday every time
+    //ensures it starts from a sunday every time by selecting the sunday within the selected date's week
+    private static LocalDate weeksSunday(LocalDate current)
     {
         LocalDate prevWeek = current.minusWeeks(1);
 
@@ -160,21 +163,22 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
     }
 
     @Override
-    public void onItemClick(int position, LocalDate day) {
+    public void onItemClick(int position, LocalDate day) { //set the day to what the user clicked, display expenses accordingly
         WeekUtils.dateSelected = day;
         setWeek();
         setExpenseAdapter();
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume() { //set expense adapter if activity is restarted
         super.onResume();
         setExpenseAdapter();
     }
 
+    //populates the listview with expenses in the array, showing the expenses for the day and the total expenses for the day
     private void setExpenseAdapter() {
-        ArrayList<Expense> daysExpense = Expense.expensePerDate(WeekUtils.dateSelected);
-        ExpenseAdapter expenseAdapter = new ExpenseAdapter(getApplicationContext(), daysExpense);
+        ArrayList<Expense> daysExpense = Expense.expensePerDate(WeekUtils.dateSelected); //gets the arraylist of expenses for the date selected
+        ExpenseAdapter expenseAdapter = new ExpenseAdapter(getApplicationContext(), daysExpense); //passes it into ExpenseAdapter to set the expense listview
         weekListView.setAdapter(expenseAdapter);
         double totalcost = 0;
         for (Expense expense : daysExpense){
@@ -184,7 +188,7 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
         ttl.setText("Total: $"+totalcost);
 
     }
-
+    //retrieves expense data from database to populate the expense array which is to be used in setting the expense adapter
     private void setExpenseArray() {
         DatabaseReference reference = db.getReference() //Database Reference expense
                 .child("User")
@@ -194,7 +198,8 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!arraySet){
+                if (!arraySet){ //ensures the array is only set once per session
+                    //retrieving all expense data under the current user from firebase, respectively creating Expenses and adding it to the array
                     for (DataSnapshot expenses: snapshot.getChildren()) {
                         Log.w("date", expenses.child("Date").getValue().toString());
                         Log.w("cost", expenses.child("Cost").getValue().toString());
@@ -207,7 +212,7 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
                 SharedPreferences prefs =  getSharedPreferences("ExpenseData", MODE_PRIVATE);
                 arraySet = prefs.getString("arraySet", "").equals("");
                 Log.w("s", arraySet.toString());
-                setExpenseAdapter();
+                setExpenseAdapter(); //populate adapter with populated array
             }
 
 
@@ -282,7 +287,7 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
                 replaceFragment(new ProfileFragment());*/
                 break;
             case R.id.nav_route:
-                Intent routeintent = new Intent(WeekActivity.this, Route.class);
+                Intent routeintent = new Intent(WeekActivity.this, RouteActivity.class);
                 routeintent.addFlags(FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(routeintent);
                 finish();
@@ -304,6 +309,7 @@ public class WeekActivity extends AppCompatActivity implements WeekAdapter.ItemL
                             Uri.parse("https://play.google.com/store/apps/details?id=sg.edu.np.mad.transportme")));
                     break;
                 }
+                break;
             case R.id.nav_share:
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);

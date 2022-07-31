@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class WeekViewHolder extends RecyclerView.ViewHolder implements  View.OnClickListener{
+public class WeekViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
     private WeekAdapter.ItemListener itemListener;
     public View parent;
     public TextView dayInMonth;
@@ -26,6 +26,7 @@ public class WeekViewHolder extends RecyclerView.ViewHolder implements  View.OnC
         this.daysInWeek = daysInWeek;
     }
 
+    //when viewholder is clicked, set itemlistener with adapter position and date
     @Override
     public void onClick(View view) {
         itemListener.onItemClick(getAdapterPosition(), daysInWeek.get(getAdapterPosition()));

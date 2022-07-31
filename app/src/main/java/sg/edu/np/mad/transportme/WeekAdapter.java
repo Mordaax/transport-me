@@ -17,12 +17,12 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekViewHolder> {
 
     private ArrayList<LocalDate> daysInMonth;
     private ItemListener itemListener;
-
+    //receiving data to create viewholder with (total days in the month, adapter position and date)
     public WeekAdapter(ArrayList<LocalDate> dayInMonth, ItemListener itemListener) {
         this.daysInMonth = dayInMonth;
         this.itemListener = itemListener;
     }
-
+    //creating viewholder with necessary specifics (eg. layout, height)
     @NonNull
     @Override
     public WeekViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -31,7 +31,7 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekViewHolder> {
         layoutParams.height = (int) (parent.getHeight());
         return new WeekViewHolder(v, itemListener, daysInMonth);
     }
-
+    //binding received data to viewholder to display the dates in the weekly calendar
     @Override
     public void onBindViewHolder(@NonNull WeekViewHolder holder, int position) {
         LocalDate date = daysInMonth.get(position);
@@ -53,3 +53,4 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekViewHolder> {
 
 
 }
+

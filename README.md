@@ -17,11 +17,17 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 ## Features
 - 3 live bus timings are shown for each bus
 - Favoriting bus stops for quick and easy access 
-- Bus Timing Search based on StreetName
+- Bus Timing Search based on StreetName/ Bus Stop name / Service Number
 - Fast, real-time bus timing with a refresh rate of 1 minute 
 - Shows bus stops which are near you 
 - Adjustable 3 Dimensional map
 - Login Features for saved bus stops
+- User Routing with notifications on when to alight when using Directions API
+- Scan Bus Stop Sign to get bus Stop with Vision API and
+- Show Bus Service Route
+- Notify Where to alight
+- Route Fare Tracker
+- Carkpark Availability and Search
 
 ## Roles and Contributions
 
@@ -40,7 +46,7 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 12. Added confirm password
 13. Exception handling / Toast Messages
 14. Added Bus Stop refresh
-#### Assignment 2
+#### Cyrus Tan Assignment 2
 15. Routing from location to location with Google Directions API feature
 16. Bus Stop Text Recognizer with Google Vision API
 17. Side Navigation Menu with activities, fragments and Animation
@@ -48,7 +54,8 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 19. Extended Backened API for Bus Service Route
 20. App Rating Feature
 21. App Sharing Feature
-22. Fixed Issues With Bus Routes
+22. Privacy Policy Feature
+23. Fixed Issues accross the App
 
 ### Dalbert Chea Zhi Jun
 1. Main Page Nested Recycler View Implementation & UI
@@ -59,6 +66,12 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 6. Firebase Implementation
 7. App Style and Theme Files
 8. Nav Bar Design
+#### Assignment 2
+9. Remind to Alight Bus Stop Feature (In App)
+10. Notification Channels
+11. Foreground Services
+12. Background Location Services (Remind to Alight in Background)
+13. MainActivity Organisation
 
 ### Koo Wen Qi
 1. Map implementation
@@ -67,6 +80,11 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 4. Registration Page
 5. Database Handling
 6. Firebase Implementation
+#### Assignment 2
+7. Polyline of bus routes
+8. Showed markers on the map to signify each busstops used by the bus
+9. Snackbar shown to indicate bus route
+10. Recyclerview replaced to see the busstops of the bus when the option is pressed
 
 ### Kyler Lee
 1. Creation of Logo
@@ -82,6 +100,7 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 10. Function to add transportation fares and display daily total
 11. Integration of transportation fares with calendar
 12. Insights page with monthly total and pie chart using AnyChart
+13. Sliding animations for transport fares page
 
 ### Tristan Tan Jun Xian
 1. Login Page
@@ -89,6 +108,11 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 3. Mrt Map
 4. Image Zoom
 5. Firebase Authentication
+#### Assignment 2
+6. API calling from LTA Datamall for Carpark Availability http://datamall2.mytransport.sg/ltaodataservice/CarParkAvailabilityv2
+7. Carpark Availability Page
+8. Carpark search feature
+9. Design page layout
 
 ## App Screenshots
 ![App Navigation](https://github.com/Mordaax/MAD-Assignment-TransportMe/blob/main/images/App%20Navigation.png)
@@ -101,10 +125,6 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 
 ## Emulator vs phones
 Due to location provider issues, both emulator and android phone cannot work together. 
-For eumlator, line 136 (GPS provider) Comes before line 248 (Network provider) - Github Build
-For phones(Release), Line 248 (Network provider) comes before line 136 (GPS provider) 
-For Android Studio Emulator (MainActivity)
-![image](https://user-images.githubusercontent.com/53942938/176345429-25eeaf57-9698-4788-a94a-de4d150a56cb.png)
-For Android Phone Release (Main Activity)
-![image](https://user-images.githubusercontent.com/53942938/176345703-2c11a6a0-decd-43b2-87f5-07981df424a8.png)
+For Emulator Change Location.Manager.NETWORK_PROVIDER to LocationManager.GPS_PROVIDER
+![image](https://user-images.githubusercontent.com/53942938/182011967-27fe3757-2386-47b0-8b7f-3cf09d8aa1dd.png)
 

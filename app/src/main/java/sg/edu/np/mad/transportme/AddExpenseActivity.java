@@ -77,8 +77,14 @@ public class AddExpenseActivity extends AppCompatActivity {
                 reference.child(id).child("Cost").setValue(cost);
                 reference.child(id).child("Selected").setValue(selected);
                 finish();
+
             }
         });
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.left_slidein, R.anim.right_slideout);
     }
 
 
