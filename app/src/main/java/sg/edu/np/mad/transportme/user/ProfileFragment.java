@@ -103,9 +103,10 @@ public class ProfileFragment extends Fragment {
             radiustext = "Bus Stop Radius ("+ String.valueOf((int) (globalCloseness*1000)) +" Meters)";
         } catch (Exception e) {
             radiustext = "Bus Stop Radius (300 Meters)";
+            globalCloseness = Double.valueOf(0.3);
             e.printStackTrace();
         }
-        globalCloseness = Double.valueOf(300);
+
         closenessTextView.setText(radiustext);
         closenessSeekBar.setProgress((int) (globalCloseness*10));
         closenessSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

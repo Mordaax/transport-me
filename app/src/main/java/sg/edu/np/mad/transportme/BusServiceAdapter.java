@@ -127,9 +127,15 @@ public class BusServiceAdapter
                                                 public void onClick(View view) {
                                                     ((MainActivity) c).removemarker(mList, line);
                                                     line = null;
-                                                    lList.clear();
-                                                    mList.clear();
-                                                    mlistlocation.clear();
+
+                                                    try{
+                                                        lList.clear();
+                                                        mList.clear();
+                                                        mlistlocation.clear();
+                                                    } catch (Exception e){
+                                                        Log.e("Error",e.toString());
+                                                    }
+
                                                 }
                                             });
                                     View snackbarLayout = snackbar.getView();

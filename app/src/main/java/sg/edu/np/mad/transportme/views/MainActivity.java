@@ -125,7 +125,7 @@ import sg.edu.np.mad.transportme.user.ProfileFragment;
 
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
-    public static String networkprovider = LocationManager.GPS_PROVIDER;
+    public static String networkprovider = LocationManager.NETWORK_PROVIDER;
     public static LatLng currentLocation = null;
     public static ArrayList<Marker> mlistlocation;
     LinearLayout mapandrv;
@@ -143,6 +143,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     FloatingActionButton cameraSearch;
     SwipeRefreshLayout swipeRefreshLayout;
     BottomNavigationView bottomNavigationView;
+    Double globalLatitude;
+    Double globalLongitude;
     static final float END_SCALE = 0.7f;
     ConstraintLayout contentView;
     public static Boolean favourite = false;
@@ -456,7 +458,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onLocationChanged(@NonNull Location location) {
                         Double Latitude = location.getLatitude();
                         Double Longitude = location.getLongitude();
-
+                        globalLatitude = Latitude;
+                        globalLongitude = Longitude;
 
                         LatLng latLng = new LatLng(Latitude, Longitude);
                         currentLocation = latLng;
@@ -1003,10 +1006,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
             return;
         }
-        Location location = locationManager.getLastKnownLocation(provider);
+        /*Location location = locationManager.getCurrentLocation();
         double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
-        LatLng latLng = new LatLng(latitude, longitude);
+        double longitude = location.getLongitude();*/
+        LatLng latLng = new LatLng(globalLatitude, globalLongitude);
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(latLng)
                 .zoom(17f)
