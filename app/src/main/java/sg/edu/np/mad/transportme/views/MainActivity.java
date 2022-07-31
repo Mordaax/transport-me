@@ -761,9 +761,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
             return;
         }
-        /*Location location = locationManager.getCurrentLocation();
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();*/
+
         LatLng latLng = new LatLng(globalLatitude, globalLongitude);
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(latLng)
@@ -960,38 +958,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         alertDialog.show();
-        /*builder.setTitle("Choose Image to Scan");
-        builder.setIcon(R.drawable.appsplashicon);
-        builder.setView(image);
-        builder.setItems(options, new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
-
-                if (options[item].equals("Take Photo")) {
-                    ContentValues values = new ContentValues();
-                    values.put(MediaStore.Images.Media.TITLE, "New Picture");
-                    values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
-                    image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
-                    Log.d("Hell", image_uri.toString());
-                    Intent takePicture = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    *//*Intent takePicture = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);*//*
-                    File file = new File(Environment.getExternalStorageDirectory()+File.separator + "image.jpg");
-                    takePicture.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-                    startActivityForResult(takePicture, CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE);
-                    *//*takePicture.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);*//*
-         *//*startActivityForResult(takePicture,0);*//*
-
-                } else if (options[item].equals("Choose from Gallery")) {
-                    Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pickPhoto , 1);
-
-                } else if (options[item].equals("Cancel")) {
-                    dialog.dismiss();
-                }
-            }
-        });
-        builder.show();*/
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1011,61 +977,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             Frame frameImage = new Frame.Builder().setBitmap(bitmap).build();
                             SparseArray<TextBlock> textBlockSpaceArray = textRecognizer.detect(frameImage);
                         }
-                        /*try{
-                            Bitmap b = (Bitmap)data.getExtras().get("data");
-                            Log.d("Hell", b.toString());
-
-                            ArrayList<BusStop> cameraBusStops = new ArrayList<>();
-                            Bitmap selectedImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image_uri);
-                            *//*Bitmap selectedImage = (Bitmap) data.getExtras().get("data");*//*
-                            selectedImage = getResizedBitmap(selectedImage,1000);
-                            TextRecognizer textRecognizer = new TextRecognizer.Builder(this).build();
-                            Frame frameImage = new Frame.Builder().setBitmap(b).build();
-                            SparseArray<TextBlock> textBlockSpaceArray = textRecognizer.detect(frameImage);
-
-
-                            for (int i =0; i<textBlockSpaceArray.size();i++){
-                                TextBlock textBlock = textBlockSpaceArray.get(textBlockSpaceArray.keyAt(i));
-                                Log.d("Hello",textBlock.getValue());
-                                for (int x=0; i< globalBusStops.size(); i++){
-                                    BusStop currentStop = globalBusStops.get(i);
-                                    if (textBlock.getValue().equalsIgnoreCase(currentStop.getDescription()) ||
-                                            textBlock.getValue().equals(currentStop.getBusStopCode()) ||
-                                            textBlock.getValue().equalsIgnoreCase(currentStop.getRoadName())){
-                                        cameraBusStops.add(currentStop);
-                                        LatLng latlongmarker = new LatLng(currentStop.getLatitude(), currentStop.getLongitude());
-                                        map.addMarker(new MarkerOptions().position(latlongmarker).title(currentStop.getDescription()));
-                                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlongmarker, 16.2f));
-                                    }
-                                }
-
-                            }
-                            if(cameraBusStops.size() > 0){
-                                Toast.makeText(MainActivity.this,"Bus Stop Recognized, loading Bus Stop",Toast.LENGTH_LONG).show();
-                                ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);
-                                apiBusStopService.getBusService(cameraBusStops,new ApiBusStopService.VolleyResponseListener2() { //Call API for nearby bus stops
-                                    @Override
-                                    public void onError(String message) {
-                                        Toast.makeText(MainActivity.this,"Cannot Get Bus Stop, Check Location and Connection Settings",Toast.LENGTH_LONG).show();
-                                    }
-                                    @Override
-                                    public void onResponse(ArrayList<BusStop> busStopsLoaded) {
-                                        RecyclerView rv = findViewById(R.id.recyclerView);
-                                        BusStopAdapter adapter = new BusStopAdapter(busStopsLoaded,MainActivity.this);
-                                        LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);
-                                        rv.setAdapter(adapter);
-                                        rv.setLayoutManager(layout);
-                                    }
-                                });
-                            }
-                            else{
-                                Toast.makeText(MainActivity.this,"Cannot Recognize Text Choose Another Photo",Toast.LENGTH_LONG).show();
-
-                            }
-
-                        }
-                        catch(Exception e){
-                        }*/
 
                     }
 
