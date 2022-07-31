@@ -77,7 +77,10 @@ Designed for all commuters, TransportMe provides fast and easy access to bus tim
 5. Database Handling
 6. Firebase Implementation
 #### Assignment 2
-10.
+7. Polyline of bus routes
+8. Showed markers on the map to signify each busstops used by the bus
+9. Snackbar shown to indicate bus route
+10. Recyclerview replaced to see the busstops of the bus when the option is pressed
 
 ### Kyler Lee
 1. Creation of Logo
