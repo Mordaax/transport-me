@@ -70,30 +70,30 @@ public class ReminderService extends Service {
                 .child("Reminder");
 
 
-        Intent notificationIntent = new Intent(this, MainActivity.class);
+        Intent notificationIntent = new Intent(this, MainActivity.class);       //Create intent to mainactivity for pending intent
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
 
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)        //Create the notification for foreground services
                 .setContentTitle("Reminder")
-                .setContentText("TransportMe will notify you closer to " + globalReminder.getDescription())
+                .setContentText("TransportMe will notify you closer to " + globalReminder.getDescription()) //Set attributes and state destn
                 .setSmallIcon(R.drawable.app_logo_vector)
                 .setOngoing(true)
                 .build();
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED)
-        {
-            locationManager.requestLocationUpdates(networkprovider, 6000, 10, locationListener = new LocationListener() {
+        {   //Check if sufficient permissions are granted (Background Loc. Perms)
+            locationManager.requestLocationUpdates(networkprovider, 6000, 10, locationListener = new LocationListener() {   //Check every 10 seconds or every 10m moved by the user
                 @Override
                 public void onLocationChanged(@NonNull Location location) {
-                    if (globalReminder != null)
+                    if (globalReminder != null)     //If destination is set
                     {
                         Double Latitude = location.getLatitude(); //Get latitude and logitude
                         Double Longitude = location.getLongitude();
 
 
-                        LatLng latLng = new LatLng(Latitude, Longitude);
+                        LatLng latLng = new LatLng(Latitude, Longitude);        //Set user latlng
                         Geocoder geocoder = new Geocoder(getApplicationContext());
 
 
@@ -111,22 +111,22 @@ public class ReminderService extends Service {
                                 {
                                     try
                                     {
-                                        Integer index = busStopRouteLoaded.lastIndexOf(globalReminder);
-                                        LatLng destnLL = new LatLng(globalReminder.getLatitude(),globalReminder.getLongitude());
-                                        Double destnDist = SphericalUtil.computeDistanceBetween(latLng,destnLL);
+                                        Integer index = busStopRouteLoaded.lastIndexOf(globalReminder);     //Get index of destination
+                                        LatLng destnLL = new LatLng(globalReminder.getLatitude(),globalReminder.getLongitude());    //Set latlng for destination
+                                        Double destnDist = SphericalUtil.computeDistanceBetween(latLng,destnLL);    //Calculate distance between user and destination
                                         Log.e("destndist",""+destnDist);
-                                        if(destnDist <= globalRemindCloseness)
+                                        if(destnDist <= globalRemindCloseness)      //If user is in 100m radius of destn
                                         {
                                             ArrayList<BusStop> busStopDist = new ArrayList<>();
-                                            for (BusStop bs : busStopRouteLoaded)
+                                            for (BusStop bs : busStopRouteLoaded)       //Loop through bus stops in the route and calculate dist from the user
                                             {
                                                 bs.setDistanceToLocation(SphericalUtil.computeDistanceBetween(latLng, new LatLng(bs.getLatitude(),bs.getLongitude())));
                                                 busStopDist.add(bs);
                                             }
-                                            Collections.sort(busStopDist);
+                                            Collections.sort(busStopDist);      //Sort bus stops according to distance to the user with nearest being first
 
-                                            Integer closestBusStopIndex = busStopRouteLoaded.indexOf(busStopDist.get(0));
-                                            if(index - closestBusStopIndex < 2 || reached)
+                                            Integer closestBusStopIndex = busStopRouteLoaded.indexOf(busStopDist.get(0));   //Get nearest bus stop index
+                                            if(index - closestBusStopIndex < 2 || reached)  //if nearest bus stop is less than 2 bus stops away from destn
                                             {
                                                 Notification notification = new NotificationCompat.Builder(context,CHANNEL_ID_2)
                                                         .setSmallIcon(R.drawable.app_logo_vector)
@@ -155,7 +155,7 @@ public class ReminderService extends Service {
             });
         }
 
-        startForeground(1, notification);
+        startForeground(1, notification);       //Start foreground service
 
 
         return START_NOT_STICKY;

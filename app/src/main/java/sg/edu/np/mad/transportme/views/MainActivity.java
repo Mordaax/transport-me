@@ -248,7 +248,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     replaceFragment(new MrtMapFragment());
                     break;
                 case R.id.notify:
-                    reminderView.setVisibility(View.VISIBLE);
+                    reminderView.setVisibility(View.VISIBLE);   //Set remind components to visible, and original and other recycler views to be GONE
                     mapandrv.setVisibility(View.VISIBLE);
                     fragmentlayout.setVisibility(View.INVISIBLE);
                     cameraSearch.setVisibility(View.INVISIBLE);
@@ -386,7 +386,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         locationManager.requestLocationUpdates(networkprovider, 6000, 10, new LocationListener() {
                             @Override
                             public void onLocationChanged(@NonNull Location location) {
-                                if (globalReminder != null) {
+                                if (globalReminder != null) {           //If there is a destination set
                                     Double Latitude = location.getLatitude(); //Get latitude and logitude
                                     Double Longitude = location.getLongitude();
 
@@ -404,10 +404,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                     rv.setAdapter(adapter);
                                     rv.setLayoutManager(layout);
 
-                                    LatLng destnLL = new LatLng(globalReminder.getLatitude(), globalReminder.getLongitude());
-                                    Double destnDist = SphericalUtil.computeDistanceBetween(latLng, destnLL);
+                                    LatLng destnLL = new LatLng(globalReminder.getLatitude(), globalReminder.getLongitude());   //Set the latitude and longitude for destination
+                                    Double destnDist = SphericalUtil.computeDistanceBetween(latLng, destnLL);       //Calculate distance between user and destn
                                     TextView remindDestnDist = findViewById(R.id.remindDestnDist);
-                                    String display = String.format("%.2f", destnDist / 1000) + "km\nLeft to " + globalReminder.getDescription();
+                                    String display = String.format("%.2f", destnDist / 1000) + "km\nLeft to " + globalReminder.getDescription();        //Display distance in km
                                     remindDestnDist.setText(display);
 
                                     ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);
@@ -420,27 +420,27 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                         @Override
                                         public void onResponse(ArrayList<BusStop> busStopRouteLoaded) {
                                             Integer index = busStopRouteLoaded.lastIndexOf(globalReminder);
-                                            if (destnDist <= globalRemindCloseness) {
+                                            if (destnDist <= globalRemindCloseness) {       //if destination is detected in 100m radius of user
                                                 ArrayList<BusStop> busStopDist = new ArrayList<>();
-                                                for (BusStop bs : busStopRouteLoaded) {
+                                                for (BusStop bs : busStopRouteLoaded) {     //Calculate distance between the user and bus stops of the route
                                                     bs.setDistanceToLocation(SphericalUtil.computeDistanceBetween(latLng, new LatLng(bs.getLatitude(), bs.getLongitude())));
                                                     busStopDist.add(bs);
                                                 }
-                                                Collections.sort(busStopDist);
+                                                Collections.sort(busStopDist);      //Sort the busstops according to how near they are to the user
 
-                                                Integer closestBusStopIndex = busStopRouteLoaded.indexOf(busStopDist.get(0));
-                                                if (index - closestBusStopIndex < 2) {
-                                                    Notification notification = new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID_2)
+                                                Integer closestBusStopIndex = busStopRouteLoaded.indexOf(busStopDist.get(0));       //Get nearest bus stop index of the route
+                                                if (index - closestBusStopIndex < 2) {      //If nearest bus stop is less than 2 bus stops away
+                                                    Notification notification = new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID_2)     //Create new notification with notification channel
                                                             .setSmallIcon(R.drawable.app_logo_vector)
                                                             .setContentTitle("Reminder to Alight")
-                                                            .setContentText("You are arriving " + globalReminder.getDescription() + "!")
+                                                            .setContentText("You are arriving " + globalReminder.getDescription() + "!")                    //Set notification attributes to show which bus stop user is arriving at
                                                             .setPriority(NotificationCompat.PRIORITY_HIGH)
                                                             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                                                             .build();
 
                                                     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(MainActivity.this);
-                                                    notificationManager.notify(1, notification);
-                                                    reminderReference.setValue(null);
+                                                    notificationManager.notify(1, notification);                                                        //Send the notification to the user
+                                                    reminderReference.setValue(null);       //Clear reminder in the Firebase RTDB (Which will also set globalReminder in app to null)
                                                 }
                                             }
                                         }
@@ -465,20 +465,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                         Geocoder geocoder = new Geocoder(getApplicationContext());
 
-                        if (globalReminder != null) {
+                        if (globalReminder != null) {       //if destination is set
                             ArrayList<BusStop> remindBusStop = new ArrayList<>();
                             remindBusStop.add(globalReminder);
-                            RecyclerView rv = findViewById(R.id.recyclerViewRemind); //Load recyclerview when they onresponse is recieved
+                            RecyclerView rv = findViewById(R.id.recyclerViewRemind);                        //Load recyclerview when the onresponse is received
                             BusStopAdapter adapter = new BusStopAdapter(remindBusStop, MainActivity.this);
                             LinearLayoutManager layout = new LinearLayoutManager(MainActivity.this);
                             rv.setAdapter(adapter);
                             rv.setLayoutManager(layout);
 
-                            LatLng destnLL = new LatLng(globalReminder.getLatitude(), globalReminder.getLongitude());
-                            Double destnDist = SphericalUtil.computeDistanceBetween(latLng, destnLL);
+                            LatLng destnLL = new LatLng(globalReminder.getLatitude(), globalReminder.getLongitude());   //Set latlng of destination
+                            Double destnDist = SphericalUtil.computeDistanceBetween(latLng, destnLL);                   //Calculate distance between user and destn
                             TextView remindDestnDist = findViewById(R.id.remindDestnDist);
-                            String display = String.format("%.2f", destnDist / 1000) + "km\nLeft to " + globalReminder.getDescription();
-                            remindDestnDist.setText(display);
+                            String display = String.format("%.2f", destnDist / 1000) + "km\nLeft to " + globalReminder.getDescription();        //Display distance in km
+                            remindDestnDist.setText(display);       //Display the distance
 
 
                             ApiBusStopService apiBusStopService = new ApiBusStopService(MainActivity.this);
@@ -492,28 +492,28 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 public void onResponse(ArrayList<BusStop> busStopRouteLoaded) {
                                     Integer index = busStopRouteLoaded.lastIndexOf(globalReminder);
 
-                                    if (destnDist <= globalRemindCloseness) {
+                                    if (destnDist <= globalRemindCloseness) {       //If destn is in 100m radius of user
                                         ArrayList<BusStop> busStopDist = new ArrayList<>();
-                                        for (BusStop bs : busStopRouteLoaded) {
+                                        for (BusStop bs : busStopRouteLoaded) {     //Calculate dist between user and each bus stop of route
                                             bs.setDistanceToLocation(SphericalUtil.computeDistanceBetween(latLng, new LatLng(bs.getLatitude(), bs.getLongitude())));
                                             busStopDist.add(bs);
                                         }
-                                        Collections.sort(busStopDist);
+                                        Collections.sort(busStopDist);              //Sort bus stops based on how near they are to user
 
-                                        Integer closestBusStopIndex = busStopRouteLoaded.indexOf(busStopDist.get(0));
-                                        if (index - closestBusStopIndex < 2 && reached != true) {
-                                            Notification notification = new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID_2)
+                                        Integer closestBusStopIndex = busStopRouteLoaded.indexOf(busStopDist.get(0));       //Get the nearest bus stop's index
+                                        if (index - closestBusStopIndex < 2 && reached != true) {       //Check if nearest bus stop is lesser than 2 bus stops away from destn, and if foreground services has cleared the notification and sent the notif already
+                                            Notification notification = new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID_2) //Make notification with notification channel
                                                     .setSmallIcon(R.drawable.app_logo_vector)
                                                     .setContentTitle("Reminder to Alight")
-                                                    .setContentText("You are arriving " + globalReminder.getDescription() + "!")
+                                                    .setContentText("You are arriving " + globalReminder.getDescription() + "!")        //Set attributes of notification
                                                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                                                     .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                                                     .build();
 
                                             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(MainActivity.this);
-                                            notificationManager.notify(1, notification);
+                                            notificationManager.notify(1, notification);        //Send notification
 
-                                            reminderReference.setValue(null);
+                                            reminderReference.setValue(null);       //Remove reminder in Firebase RTDB (Which will also set globalReminder in app to null)
                                         }
                                     }
                                 }
@@ -813,9 +813,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
         grbsChange.observe(this, new Observer<String>() {
             @Override
-            public void onChanged(String changedValue) {
+            public void onChanged(String changedValue) {        //If globalReminder changes, update the button (to show or not show)
                 reminderUpdate(reminderButton, findViewById(R.id.recyclerViewRemind));
-
             }
         });
         new Handler().postDelayed(new Runnable() {      //Gives app time to load global variables from Login Page before setting value
@@ -824,13 +823,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 grbsChange.setValue(globalReminderBusService);
             }
         }, 6500);
-        cancelReminderButton.setOnClickListener(new View.OnClickListener() {
+        cancelReminderButton.setOnClickListener(new View.OnClickListener() {    //Cancel button in notification page to reset all reminders
             @Override
             public void onClick(View view) {
                 swipeLayoutRemind.setVisibility(View.GONE);
                 remindInfoLayout.setVisibility(View.GONE);
                 noReminderLayout.setVisibility(View.VISIBLE);
-                reminderReference.setValue(null);
+                reminderReference.setValue(null);       //Remove reminder in Firebase RTDB (Which will also set globalReminder in app to null)
             }
         });
 
@@ -843,12 +842,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         {
             if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED)   //if no bg perms granted and foreground tracking not activated
             {
-                Intent notificationIntent = new Intent(this, MainActivity.class);
+                Intent notificationIntent = new Intent(this, MainActivity.class);       //Make intent for pending intent
                 PendingIntent pendingIntent = PendingIntent.getActivity(this,
                         0, notificationIntent, 0);
-                Notification noPermNotif = new NotificationCompat.Builder(this,CHANNEL_ID_2)
+                Notification noPermNotif = new NotificationCompat.Builder(this,CHANNEL_ID_2)    //Make new notification with notification channel
                         .setSmallIcon(R.drawable.app_logo_vector)
-                        .setContentTitle("TransportMe Cannot Track Your Location")
+                        .setContentTitle("TransportMe Cannot Track Your Location")              //Set attributes and inform user that the app cannot track their location
                         .setContentIntent(pendingIntent)
                         .setContentText("Please set Location Permissions to 'Allow all the time' so we can notify you even when the app is in the background!")
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -856,11 +855,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         .build();
 
                 NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-                notificationManager.notify(1,noPermNotif);
+                notificationManager.notify(1,noPermNotif);      //Send the notification
             }
             else
             {
-                startReminderService();
+                startReminderService();     //if background location perms are granted, start foreground service
                 reached = false;
             }
         }
@@ -869,7 +868,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onResume() {
         super.onResume();
-        stopReminderService();
+        stopReminderService();      //Stop the foreground service whenever the app comes back from onpause background
         if (reached == true)
         {
             FirebaseDatabase db = FirebaseDatabase.getInstance("https://transportme-c607f-default-rtdb.asia-southeast1.firebasedatabase.app/");     //Initialise database instance
@@ -878,34 +877,34 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     //.child(firebaseUser.getUid())
                     .child(globalName)
                     .child("Reminder");
-            reminderReference.setValue(null);
+            reminderReference.setValue(null);   //Remove reminder in Firebase RTDB (Which will also set globalReminder in app to null)
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopReminderService();
+        stopReminderService();      //Stop the foreground service if app is completely closed
     }
 
     public void startReminderService()
     {
-        Intent serviceIntent = new Intent(this, ReminderService.class);
-        ContextCompat.startForegroundService(this, serviceIntent);
+        Intent serviceIntent = new Intent(this, ReminderService.class);         //Make intent to reminder foreground service
+        ContextCompat.startForegroundService(this, serviceIntent);                   //Start reminder foreground service
     }
 
     public void stopReminderService()
     {
-        Intent serviceIntent = new Intent(this, ReminderService.class);
-        stopService(serviceIntent);
+        Intent serviceIntent = new Intent(this, ReminderService.class);     //Make intent to reminder foreground service
+        stopService(serviceIntent);                                                      //Start reminder foreground service
     }
 
-    public void reminderUpdate(Button reminderButton, RecyclerView rv) {
+    public void reminderUpdate(Button reminderButton, RecyclerView rv) {        //Function to check whether destn is set
         if (!(globalReminder == null)) {
-            reminderButton.setText("Alight at " + globalReminder.getDescription());
+            reminderButton.setText("Alight at " + globalReminder.getDescription()); //If set, reveal a button that reminds the user to alight at destn
             reminderButton.setVisibility(View.VISIBLE);
         } else {
-            reminderButton.setVisibility(View.INVISIBLE);
+            reminderButton.setVisibility(View.INVISIBLE);                           //If not set, hide button
         }
     }
 
