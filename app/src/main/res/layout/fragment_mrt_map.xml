@@ -16,7 +16,7 @@
         android:text="MRT Map"
         android:textSize="24sp" />
 
-    <com.jsibbold.zoomage.ZoomageView
+    <sg.edu.np.mad.transportme.TouchImageView
         android:id="@+id/mrtMapImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -30,7 +30,7 @@
         app:zoomage_minScale="0.6"
         app:zoomage_maxScale="8"
         >
-    </com.jsibbold.zoomage.ZoomageView>
+    </sg.edu.np.mad.transportme.TouchImageView>
 
 
 </FrameLayout>

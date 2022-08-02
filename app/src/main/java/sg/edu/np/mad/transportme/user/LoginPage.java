@@ -87,14 +87,14 @@ public class LoginPage extends AppCompatActivity implements View.OnClickListener
                             }
                         }
                         if(snapshot.child(globalName).child("Reminder").child("BusStop").getValue() != null && snapshot.child(globalName).child("Reminder").child("BusService").getValue() != null && globalReminder == null && globalReminderBusService.equals(""))
-                        {
-                            globalReminderBusService = snapshot.child(globalName).child("Reminder").child("BusService").getValue().toString();
+                        {//if destination exists,
+                            globalReminderBusService = snapshot.child(globalName).child("Reminder").child("BusService").getValue().toString();  //set globalreminderbusservice to value in RTDB
                             String reminderBusStop = snapshot.child(globalName).child("Reminder").child("BusStop").getValue().toString();
                             for (BusStop bs : globalBusStops)
                             {
-                                if(reminderBusStop.equals(bs.getBusStopCode()))
+                                if(reminderBusStop.equals(bs.getBusStopCode())) //Loop through all bus stops to find bus stop with the same code
                                 {
-                                    globalReminder = bs;
+                                    globalReminder = bs;        //Set global reminder as bus stop
                                 }
                             }
                         }
