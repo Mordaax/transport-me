@@ -495,21 +495,25 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                             busStopDist.add(bs);
                                         }
                                         Collections.sort(busStopDist);              //Sort bus stops based on how near they are to user
+                                        try
+                                        {
+                                            Integer closestBusStopIndex = busStopRouteLoaded.indexOf(busStopDist.get(0));       //Get the nearest bus stop's index
+                                            if (index - closestBusStopIndex < 2 && reached != true) {       //Check if nearest bus stop is lesser than 2 bus stops away from destn, and if foreground services has cleared the notification and sent the notif already
+                                                Notification notification = new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID_2) //Make notification with notification channel
+                                                        .setSmallIcon(R.drawable.app_logo_vector)
+                                                        .setContentTitle("Reminder to Alight")
+                                                        .setContentText("You are arriving " + globalReminder.getDescription() + "!")        //Set attributes of notification
+                                                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                                        .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                                                        .build();
 
-                                        Integer closestBusStopIndex = busStopRouteLoaded.indexOf(busStopDist.get(0));       //Get the nearest bus stop's index
-                                        if (index - closestBusStopIndex < 2 && reached != true) {       //Check if nearest bus stop is lesser than 2 bus stops away from destn, and if foreground services has cleared the notification and sent the notif already
-                                            Notification notification = new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID_2) //Make notification with notification channel
-                                                    .setSmallIcon(R.drawable.app_logo_vector)
-                                                    .setContentTitle("Reminder to Alight")
-                                                    .setContentText("You are arriving " + globalReminder.getDescription() + "!")        //Set attributes of notification
-                                                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                                                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                                                    .build();
-
-                                            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(MainActivity.this);
-                                            notificationManager.notify(1, notification);        //Send notification
-
-                                            reminderReference.setValue(null);       //Remove reminder in Firebase RTDB (Which will also set globalReminder in app to null)
+                                                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(MainActivity.this);
+                                                notificationManager.notify(1, notification);        //Send notification
+                                                reminderReference.setValue(null);       //Remove reminder in Firebase RTDB (Which will also set globalReminder in app to null)
+                                            }
+                                        }
+                                        catch(Exception e){
+                                            Log.e("exc", e.toString());
                                         }
                                     }
                                 }
