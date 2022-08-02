@@ -437,10 +437,9 @@ public class BusStopAdapter
             action = "redirect you to the settings page to set Location Permissions to 'Allow all the time'";
         }
 
-        builder.setMessage("TransportMe collects location data to track location only when the app is in the background." +
+        builder.setMessage("TransportMe collects location data to enable the remind to alight feature, even when the app is not in use." + //Inform user about location policy of TransportMe
                 "\nThis enables us to send you a notification when you are near to your destination set." +
-                "\n\nAccepting will " + action +
-                "\nNote: NO location data is ever saved or sent.");
+                "\n\nAccepting will " + action);        //Tell user what will happen when they choose to accept
         builder.setIcon(R.drawable.appsplashicon);
         builder.setCancelable(false);
         builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
