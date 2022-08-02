@@ -117,7 +117,7 @@ import sg.edu.np.mad.transportme.user.ProfileFragment;
 
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
-    public static String networkprovider = LocationManager.NETWORK_PROVIDER;
+    public static String networkprovider = LocationManager.GPS_PROVIDER;
     public static LatLng currentLocation = null;
     public static ArrayList<Marker> mlistlocation;
     LinearLayout mapandrv;
@@ -419,20 +419,23 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                                     busStopDist.add(bs);
                                                 }
                                                 Collections.sort(busStopDist);
+                                                try{
+                                                    Integer closestBusStopIndex = busStopRouteLoaded.indexOf(busStopDist.get(0));
+                                                    if (index - closestBusStopIndex < 2 && reached != true) {
+                                                        Notification notification = new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID_2)
+                                                                .setSmallIcon(R.drawable.app_logo_vector)
+                                                                .setContentTitle("Reminder to Alight")
+                                                                .setContentText("You are arriving " + globalReminder.getDescription() + "!")
+                                                                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                                                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                                                                .build();
 
-                                                Integer closestBusStopIndex = busStopRouteLoaded.indexOf(busStopDist.get(0));
-                                                if (index - closestBusStopIndex < 2) {
-                                                    Notification notification = new NotificationCompat.Builder(MainActivity.this, CHANNEL_ID_2)
-                                                            .setSmallIcon(R.drawable.app_logo_vector)
-                                                            .setContentTitle("Reminder to Alight")
-                                                            .setContentText("You are arriving " + globalReminder.getDescription() + "!")
-                                                            .setPriority(NotificationCompat.PRIORITY_HIGH)
-                                                            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                                                            .build();
-
-                                                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(MainActivity.this);
-                                                    notificationManager.notify(1, notification);
-                                                    reminderReference.setValue(null);
+                                                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(MainActivity.this);
+                                                        notificationManager.notify(1, notification);
+                                                        reminderReference.setValue(null);
+                                                    }
+                                                } catch(Exception e){
+                                                    Log.e("exc", e.toString());
                                                 }
                                             }
                                         }

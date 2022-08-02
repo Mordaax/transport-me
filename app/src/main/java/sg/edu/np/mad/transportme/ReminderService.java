@@ -140,6 +140,7 @@ public class ReminderService extends Service {
                                                 NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
                                                 notificationManager.notify(1,notification);
                                                 reached = true;
+                                                reminderReference.setValue(null);
                                             }
                                         }
                                     }
