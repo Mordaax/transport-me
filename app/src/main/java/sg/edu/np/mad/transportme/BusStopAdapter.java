@@ -181,7 +181,8 @@ public class BusStopAdapter
                 {
                     if(ContextCompat.checkSelfPermission(c, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED && !bgPermReq)
                     {
-                        BackgroundAlert(((MainActivity)c));
+                        BackgroundAlert(((MainActivity)c)); //If background loc. perms not set to allow all the time and this has not been asked for this session,
+                                                            // create alert dialog to request for perms
                     }
                     DatabaseReference reference = db.getReference()
                             .child("User")
@@ -192,18 +193,17 @@ public class BusStopAdapter
                     {
                         if(!(globalReminder == null))               //If there is an existing bus stop for reminder
                         {
-                            AlertDialog.Builder reminderBuilder = new AlertDialog.Builder(c);
+                            AlertDialog.Builder reminderBuilder = new AlertDialog.Builder(c);       //Make alert dialog to ask user if he wishes to remove the existing destn
                             reminderBuilder.setTitle("Marked bus stop for reminder exists!");
                             reminderBuilder.setIcon(R.drawable.appsplashicon);
                             reminderBuilder.setMessage("Do you wish to remove " + globalReminder.getDescription() + " and mark this bus stop?");
                             reminderBuilder.setCancelable(false);
                             reminderBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    reference.setValue(null);
-                                    Toast.makeText(c,content.getDescription()+" Reminder Removed!",Toast.LENGTH_LONG).show();
-                                    isValidBusService(content, holder,reference);
-
+                                public void onClick(DialogInterface dialogInterface, int i) {   //if user confirms,
+                                    reference.setValue(null);   //Remove reminder in Firebase RTDB (Which will also set globalReminder in app to null)
+                                    Toast.makeText(c,content.getDescription()+" Reminder Removed!",Toast.LENGTH_LONG).show();   //Inform user that destn reminder is removed
+                                    isValidBusService(content, holder,reference);   //Ask user what bus he will be riding (More details at the function)
                                 }
                             });
                             reminderBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -217,18 +217,18 @@ public class BusStopAdapter
                         }
                         else    //If there is no existing bus stop marked for reminder
                         {
-                            isValidBusService(content, holder,reference);
+                            isValidBusService(content, holder,reference);   //Ask user what bus he will be riding
                         }
                     }
                     else        //If bell is filled yellow
                     {
-                        reference.setValue(null);
-                        Toast.makeText(c,content.getDescription()+" Reminder Removed!",Toast.LENGTH_LONG).show();
+                        reference.setValue(null);   //Remove reminder in Firebase RTDB (Which will also set globalReminder in app to null)
+                        Toast.makeText(c,content.getDescription()+" Reminder Removed!",Toast.LENGTH_LONG).show();   //inform user it has been removed
                     }
                 }
                 else        //If no internet connection
                 {
-                    //do something like toast no wifi cannot set reminder
+                    //Inform user destn cannot be set
                     Toast.makeText(c,"Internet connection unavailable, reminder cannot be set",Toast.LENGTH_LONG).show();
                 }
             }
@@ -282,6 +282,8 @@ public class BusStopAdapter
         }
     }
 
+    //Method that searches for the notification bus stop code when the Bus Stop card view is loaded in,
+    //and sets the bell to filled yellow if it exists
     private void isReminder(String busStopCode, ImageView reminderView, BusStop busStop)
     {
         if (isNetworkAvailable())           //Checks whether Wi-Fi/Mobile data is on before making a reference in firebase
@@ -296,21 +298,21 @@ public class BusStopAdapter
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (busStopCode.equals(snapshot.child("BusStop").getValue()) && snapshot.getValue() != null && snapshot.child("BusService").getValue() != null)
-                    {
+                    {   //if bus stop code matches and destn bus stop is set (exists in firebase RTDB)
                         reminderView.setImageResource(R.drawable.filled_bell);
                         reminderView.setTag("Remind");
-                        globalReminder = busStop;
+                        globalReminder = busStop;   //set destn to bus stop of the card view
                         globalReminderBusService = snapshot.child("BusService").getValue().toString();
                         grbsChange.setValue(globalReminderBusService);
                     }
                     else
                     {
-                        reminderView.setImageResource(R.drawable.grey_bell);
+                        reminderView.setImageResource(R.drawable.grey_bell);    //If it is not destination, bell stays grey
                         reminderView.setTag("False");
                     }
-                    if (snapshot.getValue() == null && snapshot.child("BusService").getValue() == null)
+                    if (snapshot.getValue() == null && snapshot.child("BusService").getValue() == null) //Whenever the reminder reference changes, checks whether it is null,
                     {
-                        globalReminder = null;
+                        globalReminder = null;                          //If null in RTDB, set all values to null or ""
                         globalReminderBusService = "";
                         grbsChange.setValue(globalReminderBusService);
                     }
@@ -336,22 +338,22 @@ public class BusStopAdapter
         //Log.e("dis",""+SphericalUtil.computeDistanceBetween(currentLocation,new LatLng(bs.getLatitude(),bs.getLongitude())));
 
         if(SphericalUtil.computeDistanceBetween(currentLocation,new LatLng(bs.getLatitude(),bs.getLongitude())) < globalRemindCloseness)
-        {
-            tooClose = true;
+        {//Check distance between user and bus stop they want to set destination as
+            tooClose = true;    //if within 100m radius, set tooclose to true and disallow setting that bus stop as destn
         }
 
     }
 
     private void isValidBusService(BusStop bs, BusStopViewHolder holder, DatabaseReference reference)
     {
-        checkCloseNess(bs);
+        checkCloseNess(bs); //Check closeness of bus stop
         if (tooClose)
         {
-            Toast.makeText(c, "Destination is too near!", Toast.LENGTH_LONG).show();
+            Toast.makeText(c, "Destination is too near!", Toast.LENGTH_LONG).show();    //if within 100m radius, dont allow user to set
         }
         else
         {
-            AlertDialog.Builder builder = new AlertDialog.Builder(c);
+            AlertDialog.Builder builder = new AlertDialog.Builder(c);       //If outside of 100m radius, make alert dialog
             builder.setTitle("What bus will you be riding?");
             final EditText input = new EditText(c) ;
             String inputBusService;
@@ -361,34 +363,34 @@ public class BusStopAdapter
                     c.getResources().getDimensionPixelOffset(R.dimen.dp_30),
                     c.getResources().getDimensionPixelOffset(R.dimen.dp_10)
             );
-            input.setKeyListener(DigitsKeyListener.getInstance("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+            input.setKeyListener(DigitsKeyListener.getInstance("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"));  //Input field only allow alphabets and letters
             input.setRawInputType(InputType.TYPE_CLASS_TEXT);
             builder.setView(input);
-            builder.setIcon(R.drawable.appsplashicon);
+            builder.setIcon(R.drawable.appsplashicon);      //Set attributes of alertdialog
             builder.setCancelable(false);
-            builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {    //set onclicklistener for when user presses confirm
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    String inputBusService = input.getText().toString().toUpperCase();
-                    for(BusService busServ : bs.getBusServices())
+                    String inputBusService = input.getText().toString().toUpperCase();      //Receive input from edittext and set all to uppercase
+                    for(BusService busServ : bs.getBusServices())                           //Get valid bus services of the destn
                     {
-                        if(inputBusService.equals(busServ.getServiceNumber()))
+                        if(inputBusService.equals(busServ.getServiceNumber()))              //if matches a bus service, set globalreminderbus service
                         {
                             globalReminderBusService = inputBusService;
                         }
                     }
-                    if (!globalReminderBusService.equals(""))
+                    if (!globalReminderBusService.equals(""))   //If globalreminderbusservice is set,
                     {
-                        holder.Reminder.setImageResource(R.drawable.filled_bell);
+                        holder.Reminder.setImageResource(R.drawable.filled_bell);   //set bell to filled
                         holder.Reminder.setTag("Remind");
-                        globalReminder = bs;
-                        reference.child("BusStop").setValue(bs.getBusStopCode());
+                        globalReminder = bs;                                        //global destn bus stop to bus stop of card view
+                        reference.child("BusStop").setValue(bs.getBusStopCode());   //set respective values in RTDB
                         reference.child("BusService").setValue(inputBusService);
-                        Toast.makeText(c, "Remind when arriving " + bs.getDescription(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(c, "Remind when arriving " + bs.getDescription(), Toast.LENGTH_SHORT).show();    //Inform user that app will remind when arriving
                     }
                     else
                     {
-                        Toast.makeText(c, "Invalid Bus Service!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(c, "Invalid Bus Service!", Toast.LENGTH_LONG).show();    //Inform user that the inputted bus service is invalid
                     }
                 }
             });
@@ -423,18 +425,18 @@ public class BusStopAdapter
             return false;
         }
     }
-    private void BackgroundAlert(Activity context)
+    private void BackgroundAlert(Activity context)  //Function to check if background location perms are granted
     {
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);       //Make alert dialog
         builder.setTitle("Background Location Use");
         String action = "";
-        if (Build.VERSION.SDK_INT < 30)
+        if (Build.VERSION.SDK_INT < 30) //If api < 30
         {
-            action = "Request permissions for accessing background location.";
+            action = "Request permissions for accessing background location.";      //Permissions can be directly requested
         }
         else
         {
-            action = "redirect you to the settings page to set Location Permissions to 'Allow all the time'";
+            action = "redirect you to the settings page to set Location Permissions to 'Allow all the time'";       //if api >= 30, permissions must be manually set by user to allow all the time
         }
 
         builder.setMessage("TransportMe collects location data to enable the remind to alight feature, even when the app is not in use." + //Inform user about location policy of TransportMe
@@ -445,7 +447,7 @@ public class BusStopAdapter
         builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                if (Build.VERSION.SDK_INT < 30)
+                if (Build.VERSION.SDK_INT < 30) //If accept and api < 30, permission is directly requested and user just has to press allow all the time
                 {
                     final String[] BACKGROUND_PERM={
                             Manifest.permission.ACCESS_BACKGROUND_LOCATION
@@ -453,24 +455,24 @@ public class BusStopAdapter
                     final int BACKGROUND_REQUEST=1338;
                     requestPermissions(context,BACKGROUND_PERM,BACKGROUND_REQUEST);
                 }
-                else
+                else    //if accept and api >= 30, user will be redirected to Settings where they have to set it manually to allow all the time for location perms
                 {
                     Intent intent = new Intent();
-                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS); //Intent to application (TransportMe) settings in Settings
                     Uri uri = Uri.fromParts("package", context.getPackageName(), null);
                     intent.setData(uri);
                     context.startActivityForResult(intent, 0);
                 }
             }
         });
-        builder.setNegativeButton("Deny", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Deny", new DialogInterface.OnClickListener() {   //If deny, inform user that they will not be notified if app is in background
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 Toast.makeText(c,"TransportMe will not be able to track location while app is in the background.", Toast.LENGTH_LONG).show();
             }
         });
-        androidx.appcompat.app.AlertDialog alert = builder.create();
-        alert.show();
-        bgPermReq = true;
+        androidx.appcompat.app.AlertDialog alert = builder.create();    //Create alert dialog
+        alert.show();       //Show Alert Dialog
+        bgPermReq = true;   //Set this to true so that it will not be asked again in this session
     }
 }

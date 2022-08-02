@@ -24,21 +24,21 @@ public class ReminderApplication extends Application {
 
     private void createNotificationChannels()
     {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)      //If API level higher than Oreo
         {
-            NotificationChannel serviceChannel = new NotificationChannel(
+            NotificationChannel serviceChannel = new NotificationChannel(       //Create first notification channel for foreground services
                     CHANNEL_ID,
                     "Reminder Service Channel",
                     NotificationManager.IMPORTANCE_DEFAULT
             );
-            NotificationChannel serviceChannel2 = new NotificationChannel(
+            NotificationChannel serviceChannel2 = new NotificationChannel(      //Create second notification channel for when notifying to alight
                     CHANNEL_ID_2,
                     "Reminder Alight Channel",
                     NotificationManager.IMPORTANCE_HIGH
             );
 
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(serviceChannel);
+            NotificationManager manager = getSystemService(NotificationManager.class);  //Create notification manager
+            manager.createNotificationChannel(serviceChannel);      //Create both notification channels
             manager.createNotificationChannel(serviceChannel2);
         }
     }
