@@ -1,4 +1,4 @@
-# MAD Assignment Transport Me
+## Transport Me
 
 Designed for all commuters, TransportMe provides fast and easy access to bus timings and ensures that you are never late for work. It lets you know the next bus's arrival time anywhere and anytime in Singapore, with up-to-date data directly sourced from the Land Transport Authority. 
 
